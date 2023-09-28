@@ -1,5 +1,7 @@
 class NoticeModel {
   String? id;
+  String? date;
+  String? time;
   String? title;
   String? description;
   num? timestamp;
@@ -8,6 +10,8 @@ class NoticeModel {
 
   NoticeModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
+    date = json['date'];
+    time = json['time'];
     title = json['title'];
     description = json['description'];
     timestamp = json['timestamp'];
@@ -16,6 +20,8 @@ class NoticeModel {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     data['id'] = this.id;
+    data['date'] = this.date;
+    data['time'] = this.time;
     data['title'] = this.title;
     data['description'] = this.description;
     data['timestamp'] = this.timestamp;

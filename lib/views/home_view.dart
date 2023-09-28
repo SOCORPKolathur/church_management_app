@@ -170,6 +170,28 @@ class _HomeViewState extends State<HomeView>
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        notices[i].date!,
+                                        style: GoogleFonts.openSans(
+                                          color: Colors.grey,
+                                          fontSize: Constants().getFontSize(context, "S"),
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      Text(
+                                        notices[i].time!,
+                                        style: GoogleFonts.openSans(
+                                          color: Colors.grey,
+                                          fontSize: Constants().getFontSize(context, "S"),
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 10),
                                   KText(
                                     text: notices[i].title!,
                                     style: GoogleFonts.openSans(
@@ -437,6 +459,28 @@ class _HomeViewState extends State<HomeView>
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  notice.date!,
+                                  style: GoogleFonts.openSans(
+                                    color: Colors.grey,
+                                    fontSize: Constants().getFontSize(context, "S"),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                Text(
+                                  notice.time!,
+                                  style: GoogleFonts.openSans(
+                                    color: Colors.grey,
+                                    fontSize: Constants().getFontSize(context, "S"),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 10),
                             const SizedBox(height: 4),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,

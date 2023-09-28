@@ -9,7 +9,8 @@ final FirebaseStorage fs = FirebaseStorage.instance;
 class ProductsFireCrud {
 
   static Stream<List<ProductModel>> fetchProducts() =>
-      ProductsCollection.orderBy("timestamp", descending: false)
+      FirebaseFirestore.instance.collection('Products')
+          .orderBy("timestamp", descending: false)
           .snapshots()
           .map((snapshot) => snapshot.docs
               .map((doc) => ProductModel.fromJson(doc.data() as Map<String,dynamic>))

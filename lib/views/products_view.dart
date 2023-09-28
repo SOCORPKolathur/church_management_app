@@ -33,6 +33,7 @@ class _ProductsViewState extends State<ProductsView> {
           builder: (ctx, snapshot) {
             if (snapshot.hasData) {
               List<ProductModel> products = snapshot.data!;
+              print(products.toString());
               return Column(
                 children: [
                   for (int i = 0; i < products.length; i++)
