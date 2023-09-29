@@ -5,9 +5,10 @@ import '../Widgets/kText.dart';
 import 'main_view.dart';
 
 class LanguagesView extends StatefulWidget {
-  const LanguagesView({super.key, required this.uid, required this.userDocId});
+  const LanguagesView({super.key, required this.uid, required this.phone, required this.userDocId});
 
   final String uid;
+  final String phone;
   final String userDocId;
 
   @override
@@ -157,7 +158,7 @@ class _LanguagesViewState extends State<LanguagesView> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (ctx) => MainView(uid: widget.uid,userDocId: widget.userDocId)));
+                                      builder: (ctx) => MainView(uid: widget.uid,phone: widget.phone,userDocId: widget.userDocId)));
                             },
                             child: Padding(
                               padding: const EdgeInsets.symmetric(

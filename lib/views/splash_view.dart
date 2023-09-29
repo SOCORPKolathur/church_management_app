@@ -27,12 +27,12 @@ class _SplashViewState extends State<SplashView> {
 
   Future<void> _navigateToNextScreen() async {
     var document = await FirebaseFirestore.instance.collection("Users").get();
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 2));
     if(user != null){
       for(int i=0;i<document.docs.length;i++){
         if(document.docs[i]['id']==user!.uid){
           Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (ctx) => MainView(uid: user!.uid, userDocId: document.docs[i].id)));
+              context, MaterialPageRoute(builder: (ctx) => MainView(uid: user!.uid,phone: user!.phoneNumber!, userDocId: document.docs[i].id)));
         }
       }
     }else {

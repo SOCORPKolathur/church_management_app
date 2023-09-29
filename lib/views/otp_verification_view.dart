@@ -176,7 +176,7 @@ class _OtpVerificationViewState extends State<OtpVerificationView> {
                                   Navigator.of(context).pushAndRemoveUntil(
                                       MaterialPageRoute(
                                           builder: (context) =>
-                                              MainView(uid: value.user!.uid,userDocId : userId)),
+                                              MainView(phone: value.user!.phoneNumber!, uid: value.user!.uid,userDocId : userId)),
                                       (Route<dynamic> route) => false);
                                   Fluttertoast.showToast(
                                       msg: "Logged In Successfully",

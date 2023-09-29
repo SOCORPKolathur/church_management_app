@@ -8,6 +8,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:motion_tab_bar_v2/motion-tab-bar.dart';
+import 'package:motion_tab_bar_v2/motion-tab-controller.dart';
 import '../Widgets/kText.dart';
 import '../constants.dart';
 import '../models/bottom_nav_item_model.dart';
@@ -24,10 +26,15 @@ import 'headers/product_header.dart';
 import 'home_view.dart';
 
 class MainView extends StatefulWidget {
-  const MainView({super.key, required this.uid, required this.userDocId});
+  const MainView(
+      {super.key,
+      required this.uid,
+      required this.userDocId,
+      required this.phone});
 
   final String uid;
   final String userDocId;
+  final String phone;
 
   @override
   State<MainView> createState() => _MainViewState();
@@ -35,6 +42,7 @@ class MainView extends StatefulWidget {
 
 class _MainViewState extends State<MainView>
     with SingleTickerProviderStateMixin {
+  MotionTabBarController? _motionTabBarController;
   int pageIndex = 0;
   int previousIndex = 0;
   int changingIndex = 50;
@@ -60,6 +68,16 @@ class _MainViewState extends State<MainView>
   double animateValue = 1;
 
   @override
+  void initState() {
+    _motionTabBarController = MotionTabBarController(
+      initialIndex: 0,
+      length: 5,
+      vsync: this,
+    );
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     List<BottomNavItem> bottomNavList = [
@@ -67,13 +85,13 @@ class _MainViewState extends State<MainView>
         name: "Home",
         icon: Icons.home,
         header: Container(),
-        page: const HomeView(),
+        page: HomeView(uid: widget.uid, userDocId: widget.userDocId,phone: widget.phone),
       ),
       BottomNavItem(
         name: "Events",
         icon: Icons.calendar_today_rounded,
         header: const EventHeader(),
-        page: const EventsView(),
+        page: EventsView(phone: widget.phone),
       ),
       BottomNavItem(
         name: "Products",
@@ -91,7 +109,7 @@ class _MainViewState extends State<MainView>
         name: "Profile",
         icon: Icons.person,
         header: Container(),
-        page: ProfileView(uid: widget.uid),
+        page: ProfileView(uid: widget.uid, userDocId: widget.userDocId),
       )
     ];
     return Scaffold(
@@ -99,19 +117,19 @@ class _MainViewState extends State<MainView>
         child: Container(
           height: size.height,
           width: size.width,
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              fit: BoxFit.cover,
-              opacity: 0.67,
-              image: AssetImage("assets/backimg.png"),
-            ),
-          ),
+          // decoration: const BoxDecoration(
+          //   image: DecorationImage(
+          //     fit: BoxFit.cover,
+          //     opacity: 0.67,
+          //     image: AssetImage("assets/cloud2.png"),
+          //   ),
+          // ),
           child: Stack(
             children: [
               Column(
                 children: [
                   SizedBox(
-                    height: size.height * 0.28,
+                    height: size.height * 0.38,
                     width: size.width,
                     child: Stack(
                       children: [
@@ -120,9 +138,9 @@ class _MainViewState extends State<MainView>
                           width: double.infinity,
                           decoration: const BoxDecoration(
                             image: DecorationImage(
-                              fit: BoxFit.fill,
+                              fit: BoxFit.cover,
                               image: AssetImage(
-                                "assets/dolomite-alps-peaks-italy 2.png",
+                                "assets/cloud1.png",
                               ),
                             ),
                           ),
@@ -134,10 +152,11 @@ class _MainViewState extends State<MainView>
                     child: Container(
                         width: size.width,
                         decoration: const BoxDecoration(
-                          image: DecorationImage(
-                            fit: BoxFit.fill,
-                            image: AssetImage("assets/backimg.png"),
-                          ),
+                          color: Color(0xffF9F9F9)
+                          // image: DecorationImage(
+                          //   fit: BoxFit.fill,
+                          //   image: AssetImage("assets/backimg.png"),
+                          // ),
                         )),
                   ),
                 ],
@@ -147,53 +166,46 @@ class _MainViewState extends State<MainView>
                 width: size.width,
                 color: Colors.white54,
               ),
-              AnimatedOpacity(
-                      duration: const Duration(milliseconds: 200),
-                      opacity: animateValue,
-                      curve: Curves.easeIn,
-                      onEnd: (){
-                        setState(() {
-                          animateValue = 1;
-                        });
-                      },
-                      child: Column(
-                        children: [
-                          StreamBuilder(
-                            stream: UserFireCrud.fetchUsersWithId(widget.uid),
-                            builder: (ctx, snapshot) {
-                              if (snapshot.hasData) {
-                                UserModel user = snapshot.data!;
-                                return SizedBox(
-                                  height: size.height * 0.28,
-                                  width: size.width,
-                                  child: Stack(
-                                    children: [
-                                      SizedBox(
-                                          height: size.height * 0.28,
-                                          width: double.infinity,
-                                          child: (pageIndex == 0 ||
-                                                  pageIndex == 4)
-                                              ? HomeHeader(
-                                                  user: user,
-                                                  userDocId: widget.userDocId)
-                                              : bottomNavList[pageIndex]
-                                                  .header!)
-                                    ],
-                                  ),
-                                );
-                              }
-                              return Container();
-                            },
-                          ),
-                          Expanded(
-                            child: SizedBox(
-                              width: size.width,
-                              child: bottomNavList[pageIndex].page!,
-                            ),
-                          ),
-                        ],
+              Column(
+                children: [
+                  // StreamBuilder(
+                  //   stream: UserFireCrud.fetchUsersWithId(widget.uid),
+                  //   builder: (ctx, snapshot) {
+                  //     if (snapshot.hasData) {
+                  //       UserModel user = snapshot.data!;
+                  //       return SizedBox(
+                  //         height: size.height * 0.28,
+                  //         width: size.width,
+                  //         child: Stack(
+                  //           children: [
+                  //             SizedBox(
+                  //                 height: size.height * 0.28,
+                  //                 width: double.infinity,
+                  //                 child: (pageIndex == 0 ||
+                  //                         pageIndex == 4)
+                  //                     ? HomeHeader(
+                  //                         user: user,
+                  //                         userDocId: widget.userDocId)
+                  //                     : bottomNavList[pageIndex]
+                  //                         .header!)
+                  //           ],
+                  //         ),
+                  //       );
+                  //     }
+                  //     return Container();
+                  //   },
+                  // ),
+                  Expanded(
+                    child: SizedBox(
+                      width: size.width,
+                      child: TabBarView(
+                      controller: _motionTabBarController,
+                      children: bottomNavList.map((e) => e.page!).toList(),
                       ),
-                    )
+                    ),
+                  ),
+                ],
+              )
             ],
           ),
         ),
@@ -203,42 +215,85 @@ class _MainViewState extends State<MainView>
   }
 
   bottomBar(List<BottomNavItem> list) {
-    return FFNavigationBar(
-      theme: FFNavigationBarTheme(
-        selectedItemTextStyle:
-            GoogleFonts.openSans(fontSize: 14, fontWeight: FontWeight.bold),
-        unselectedItemTextStyle:
-            GoogleFonts.openSans(fontSize: 12, fontWeight: FontWeight.bold),
-        barBackgroundColor: Constants().primaryAppColor,
-        selectedItemBorderColor: Constants().primaryAppColor,
-        selectedItemBackgroundColor: Colors.white,
-        selectedItemIconColor: Constants().primaryAppColor,
-        selectedItemLabelColor: Colors.white,
-        unselectedItemIconColor: Colors.white,
-        unselectedItemLabelColor: Colors.white,
-        showSelectedItemShadow: true,
+    return MotionTabBar(
+      controller: _motionTabBarController,
+      // ADD THIS if you need to change your tab programmatically
+      initialSelectedTab: "Home",
+      useSafeArea: true,
+      // default: true, apply safe area wrapper
+      labels: [
+        list[0].name!,
+        list[1].name!,
+        list[2].name!,
+        list[3].name!,
+        list[4].name!
+      ],
+      icons: [
+        list[0].icon!,
+        list[1].icon!,
+        list[2].icon!,
+        list[3].icon!,
+        list[4].icon!
+      ],
+      badges: [],
+      tabSize: 50,
+      tabBarHeight: 55,
+      textStyle: TextStyle(
+        fontSize: 12,
+        color: Constants().primaryAppColor,//Colors.white,
+        fontWeight: FontWeight.w500,
       ),
-      selectedIndex: pageIndex,
-      onSelectTab: (index) async {
+      tabIconColor: Constants().primaryAppColor,//Colors.white,
+      tabIconSize: 28.0,
+      tabIconSelectedSize: 26.0,
+      tabSelectedColor: Constants().primaryAppColor,//Colors.white,
+      tabIconSelectedColor: Colors.white,//Constants().primaryAppColor,
+      tabBarColor: Colors.white,//Constants().primaryAppColor,
+      onTabItemSelected: (int value) {
         setState(() {
-          animateValue = 0;
-        });
-        await Future.delayed(const Duration(milliseconds: 200));
-        setState(() {
-          pageIndex = index;
+          _motionTabBarController!.index = value;
         });
       },
-      items: list
-          .map(
-            (e) => FFNavigationBarItem(
-              iconData: e.icon!,
-              label: e.name!,
-              animationDuration: const Duration(seconds: 1),
-            ),
-          )
-          .toList(),
     );
   }
+
+  // bottomBar(List<BottomNavItem> list) {
+  //   return FFNavigationBar(
+  //     theme: FFNavigationBarTheme(
+  //       selectedItemTextStyle:
+  //           GoogleFonts.openSans(fontSize: 14, fontWeight: FontWeight.bold),
+  //       unselectedItemTextStyle:
+  //           GoogleFonts.openSans(fontSize: 12, fontWeight: FontWeight.bold),
+  //       barBackgroundColor: Constants().primaryAppColor,
+  //       selectedItemBorderColor: Constants().primaryAppColor,
+  //       selectedItemBackgroundColor: Colors.white,
+  //       selectedItemIconColor: Constants().primaryAppColor,
+  //       selectedItemLabelColor: Colors.white,
+  //       unselectedItemIconColor: Colors.white,
+  //       unselectedItemLabelColor: Colors.white,
+  //       showSelectedItemShadow: true,
+  //     ),
+  //     selectedIndex: pageIndex,
+  //     onSelectTab: (index) async {
+  //       setState(() {
+  //         animateValue = 0;
+  //       });
+  //       await Future.delayed(const Duration(milliseconds: 200));
+  //       setState(() {
+  //         pageIndex = index;
+  //       });
+  //     },
+  //     items: list
+  //         .map(
+  //           (e) => FFNavigationBarItem(
+  //             iconData: e.icon!,
+  //             label: e.name!,
+  //             animationDuration: const Duration(seconds: 1),
+  //           ),
+  //         )
+  //         .toList(),
+  //   );
+  // }
 
   showEditProfilePopUp(context, UserModel user) async {
     Size size = MediaQuery.of(context).size;
