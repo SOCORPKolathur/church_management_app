@@ -1,6 +1,9 @@
+import 'dart:math';
+import 'package:intl/intl.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:church_management_client/views/products_view.dart';
 import 'package:church_management_client/views/profile_view.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:ff_navigation_bar_plus/ff_navigation_bar_plus.dart';
 import 'package:ff_navigation_bar_plus/ff_navigation_bar_theme.dart';
@@ -18,7 +21,7 @@ import '../models/user_model.dart';
 import '../services/messages_firecrud.dart';
 import '../services/user_firecrud.dart';
 import 'community_view.dart';
-import 'events_view.dart';
+import 'connect_view.dart';
 import 'headers/community_header.dart';
 import 'headers/event_header.dart';
 import 'headers/home_header.dart';
@@ -91,7 +94,7 @@ class _MainViewState extends State<MainView>
         name: "Connect",
         icon: Icons.message,
         header: const EventHeader(),
-        page: EventsView(phone: widget.phone),
+        page: ConnectView(phone: widget.phone,userDocId: widget.userDocId,uid: widget.uid),
       ),
       BottomNavItem(
         name: "Products",
@@ -112,18 +115,14 @@ class _MainViewState extends State<MainView>
         page: ProfileView(uid: widget.uid, userDocId: widget.userDocId),
       )
     ];
+    //showTodayBibleVerse(context);
     return Scaffold(
+      backgroundColor: Constants().primaryAppColor,
       body: SafeArea(
         child: Container(
           height: size.height,
           width: size.width,
-          // decoration: const BoxDecoration(
-          //   image: DecorationImage(
-          //     fit: BoxFit.cover,
-          //     opacity: 0.67,
-          //     image: AssetImage("assets/cloud2.png"),
-          //   ),
-          // ),
+          color: Colors.white,
           child: Stack(
             children: [
               Column(
@@ -294,6 +293,58 @@ class _MainViewState extends State<MainView>
   //         .toList(),
   //   );
   // }
+
+  Future<dynamic> showTodayBibleVerse(BuildContext context) async {
+    Size size = MediaQuery.of(context).size;
+    var document = await  FirebaseFirestore.instance.collection('ChurchDetails').get();
+    var bible = await  FirebaseFirestore.instance.collection('BibleVerses').get();
+    var randnum = Random().nextInt(bible.docs.length);
+    print(document.docs.first['verseForToday']['date'] == DateFormat('dd-MM-yyyy').format(DateTime.now()) ? document.docs.first['verseForToday']['text'] : bible.docs[randnum]['text']);
+    await showDialog(
+      context: context,
+      builder: (ctx) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Dialog(
+              backgroundColor: Colors.transparent,
+              child: Container(
+                height: size.height * 0.4,
+                width: size.width,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Colors.black26,
+                      offset: Offset(1, 2),
+                      blurRadius: 3,
+                    ),
+                  ],
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Column(
+                  children: [
+                    Container(
+                      height: size.height * 0.07,
+                      width: size.width * 0.3,
+                      decoration: BoxDecoration(
+                        color: Constants().primaryAppColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "OK"
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            );
+          }
+        );
+      },
+    );
+  }
 
   showEditProfilePopUp(context, UserModel user) async {
     Size size = MediaQuery.of(context).size;

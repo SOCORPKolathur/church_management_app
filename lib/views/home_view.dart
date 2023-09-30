@@ -3,6 +3,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:church_management_client/models/event_model.dart';
 import 'package:church_management_client/services/events_firecrud.dart';
 import 'package:church_management_client/views/events_list_view.dart';
+import 'package:church_management_client/views/pastors_list_view.dart';
+import 'package:church_management_client/views/social_media_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:dots_indicator/dots_indicator.dart';
@@ -107,6 +109,7 @@ class _HomeViewState extends State<HomeView>
         title: Text(
           "IKIA",
           style: GoogleFonts.amaranth(
+            color: Colors.white,
             fontSize: Constants().getFontSize(context, "L"),
             fontWeight: FontWeight.w600,
           ),
@@ -130,6 +133,7 @@ class _HomeViewState extends State<HomeView>
                       child: const Icon(
                         CupertinoIcons.bell_solid,
                         size: 28,
+                        color: Colors.white,
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -160,9 +164,9 @@ class _HomeViewState extends State<HomeView>
                           onTap: () {},
                         ),
                         PopupMenuItem(
-                          value: 'Website',
+                          value: 'Social Media',
                           child: const KText(
-                            text: 'Website',
+                            text: 'Social Media',
                             style: TextStyle(),
                           ),
                           onTap: () {},
@@ -208,6 +212,12 @@ class _HomeViewState extends State<HomeView>
                                         userDocId:
                                         widget.userDocId)));
                             break;
+                          case "Church Pastors":
+                            Navigator.push(context, MaterialPageRoute(builder: (ctx)=> const PastorsListView()));
+                            break;
+                          case "Social Media":
+                            Navigator.push(context, MaterialPageRoute(builder: (ctx)=> const SocialMediaView()));
+                            break;
                           case "About Church":
                             Navigator.push(
                                 context,
@@ -250,7 +260,7 @@ class _HomeViewState extends State<HomeView>
                           Radius.circular(20.0),
                         ),
                       ),
-                      child: const Icon(Icons.settings, size: 28),
+                      child: const Icon(Icons.settings, size: 28,color: Colors.white),
                     ),
                     const SizedBox(width: 15),
                   ],
@@ -315,6 +325,8 @@ class _HomeViewState extends State<HomeView>
                               options: CarouselOptions(
                                 viewportFraction: 1,
                                 autoPlay: true,
+                                initialPage: 0,
+                                scrollPhysics: BouncingScrollPhysics(),
                                 onPageChanged: ((index,reason){
                                   setState(() {
                                     sliderImageIndex = index;
@@ -324,15 +336,22 @@ class _HomeViewState extends State<HomeView>
                               itemBuilder: ( context,int index, int) {
                                 return Container(
                                     height:size.height * 0.22,
+                                    width: double.infinity,
                                     decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(12)
+                                        borderRadius: BorderRadius.circular(12),
+                                        image: DecorationImage(
+                                          fit: BoxFit.fill,
+                                          image: CachedNetworkImageProvider(
+                                              snapshot.data!.docs[index]['imgUrl']
+                                          )
+                                        )
                                     ),
-                                    child: CachedNetworkImage(
-                                        height: size.height * 0.22,
-                                        width: double.infinity,
-                                        fit: BoxFit.fill,
-                                        imageUrl: snapshot.data!.docs[index]['imgUrl']
-                                    )
+                                    // child: CachedNetworkImage(
+                                    //     // height: size.height * 0.22,
+                                    //     width: double.infinity,
+                                    //     fit: BoxFit.fill,
+                                    //     imageUrl: snapshot.data!.docs[index]['imgUrl']
+                                    // )
                                 );
                               },
                           ),
@@ -558,16 +577,14 @@ class _HomeViewState extends State<HomeView>
                                               ),
                                             ),
                                           ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(top: 10),
+                                          Center(
                                             child: SizedBox(
                                               width: size.width * 0.43,
                                               child: Column(
                                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                                 children: [
                                                   SizedBox(
-                                                    height: 30,
                                                     child: Padding(
                                                       padding: const EdgeInsets.symmetric(
                                                           horizontal: 8),
@@ -583,8 +600,7 @@ class _HomeViewState extends State<HomeView>
                                                     ),
                                                   ),
                                                   Padding(
-                                                    padding: const EdgeInsets.symmetric(
-                                                        horizontal: 8),
+                                                    padding: const EdgeInsets.symmetric(horizontal: 8),
                                                     child: SizedBox(
                                                       width: size.width * 0.5,
                                                       child: Row(
@@ -771,16 +787,15 @@ class _HomeViewState extends State<HomeView>
                                           ),
                                         ),
                                       ),
-                                      Padding(
-                                        padding: const EdgeInsets.only(top: 15,bottom: 15),
+                                      Center(
                                         child: SizedBox(
+                                          height: size.height * 0.18,
                                           width: size.width * 0.43,
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
                                               SizedBox(
-                                                height: 30,
                                                 child: Padding(
                                                   padding: const EdgeInsets.symmetric(
                                                       horizontal: 8),
@@ -800,7 +815,7 @@ class _HomeViewState extends State<HomeView>
                                                 padding: const EdgeInsets.symmetric(
                                                     horizontal: 8),
                                                 child: SizedBox(
-                                                  height: size.height * 0.08,
+                                                  height: size.height * 0.07,
                                                   width: size.width * 0.5,
                                                   child: KText(
                                                     text: blogs[j].description!,
