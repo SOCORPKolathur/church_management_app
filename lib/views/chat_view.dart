@@ -320,8 +320,8 @@ class ChatViewState extends State<ChatView> {
         "submitdate":"${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}",
       };
       await sendNotification();
-      await FirebaseFirestore.instance.collection(widget.collection).add(messages);
       chatMessage.clear();
+      await FirebaseFirestore.instance.collection(widget.collection).add(messages);
 
     }
     else {

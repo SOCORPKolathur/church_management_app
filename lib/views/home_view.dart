@@ -141,57 +141,65 @@ class _HomeViewState extends State<HomeView>
                       itemBuilder: (context) => [
                         PopupMenuItem(
                           value: 'Languages',
-                          child: const KText(
+                          child: KText(
                             text: 'Languages',
-                            style: TextStyle(),
+                            style: TextStyle(
+                              fontSize: Constants().getFontSize(context, "S")
+                            ),
                           ),
                           onTap: () {},
                         ),
                         PopupMenuItem(
                           value: 'About Church',
-                          child: const KText(
+                          child:  KText(
                             text: 'About Church',
-                            style: TextStyle(),
+                            style: TextStyle(
+                                fontSize: Constants().getFontSize(context, "S")
+                            ),
                           ),
                           onTap: () {},
                         ),
                         PopupMenuItem(
                           value: 'Church Pastors',
-                          child: const KText(
+                          child:  KText(
                             text: 'Church Pastors',
-                            style: TextStyle(),
+                            style: TextStyle(
+                                fontSize: Constants().getFontSize(context, "S")
+                            ),
                           ),
                           onTap: () {},
                         ),
                         PopupMenuItem(
                           value: 'Social Media',
-                          child: const KText(
+                          child:  KText(
                             text: 'Social Media',
-                            style: TextStyle(),
+                            style: TextStyle(
+                                fontSize: Constants().getFontSize(context, "S")
+                            ),
                           ),
                           onTap: () {},
                         ),
                         PopupMenuItem(
                           value: 'Contact Admin',
-                          child: const KText(
+                          child:  KText(
                             text: 'Contact Admin',
-                            style: TextStyle(),
+                            style: TextStyle(fontSize: Constants().getFontSize(context, "S")),
                           ),
                           onTap: () {},
                         ),
                         PopupMenuItem(
                           value: 'Edit Profile',
-                          child: const KText(
+                          child:  KText(
                             text: 'Edit Profile',
-                            style: TextStyle(),
+                            style: TextStyle(fontSize: Constants().getFontSize(context, "S")),
                           ),
                           onTap: () {},
                         ),
                         PopupMenuItem(
                           value: 'Log out',
-                          child: const KText(
+                          child:  KText(
                             text: 'Log out',
-                            style: TextStyle(),
+                            style: TextStyle(fontSize: Constants().getFontSize(context, "S")),
                           ),
                           onTap: () {},
                         )

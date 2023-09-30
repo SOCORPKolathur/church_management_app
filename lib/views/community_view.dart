@@ -200,7 +200,8 @@ class _CommunityViewState extends State<CommunityView> {
                               ),
                             ),
                           ),
-                        )
+                        ),
+                      SizedBox(height: size.height * 0.1),
                     ],
                   );
                 }
