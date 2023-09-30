@@ -30,43 +30,15 @@ class _ProductsViewState extends State<ProductsView> {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xffF5F5F5),
+        backgroundColor: Constants().primaryAppColor,
         elevation: 0,
-        automaticallyImplyLeading: false,
-        toolbarHeight: size.height / 12.5,
-        flexibleSpace: Container(
-          height: size.height / 9.09,
-          width: size.width / 3.92,
-          decoration:  BoxDecoration(
-            borderRadius: const BorderRadius.only(
-              bottomLeft: Radius.circular(23),
-              bottomRight: Radius.circular(23),
-            ),
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Constants().primaryAppColor,
-                Constants().primaryAppColor,
-              ],
-            ),
-          ),
-          child: Row(
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 20),
-                child: Text("Products",
-                  style: GoogleFonts.amaranth(
-                    color: Colors.white,
-                  fontSize: Constants().getFontSize(context, "XL"),
-                  fontWeight: FontWeight.w600,
-                  ),
-                ),
+        title: Text("Products",
+              style: GoogleFonts.amaranth(
+                color: Colors.white,
+              fontSize: Constants().getFontSize(context, "XL"),
+              fontWeight: FontWeight.w600,
               ),
-            ],
-          ),
-        ),
-        foregroundColor: Colors.black,
+            ),
       ),
       body: Container(
         color: Colors.white,

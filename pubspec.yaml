@@ -63,7 +63,6 @@ dependencies:
   photo_view: ^0.14.0
   motion_tab_bar_v2: ^0.3.0
   visibility_detector: ^0.4.0+2
-  flutter_carousel_widget: ^2.1.0
   carousel_slider: ^4.1.1
 
 dev_dependencies:

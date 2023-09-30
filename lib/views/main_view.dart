@@ -88,8 +88,8 @@ class _MainViewState extends State<MainView>
         page: HomeView(uid: widget.uid, userDocId: widget.userDocId,phone: widget.phone),
       ),
       BottomNavItem(
-        name: "Events",
-        icon: Icons.calendar_today_rounded,
+        name: "Connect",
+        icon: Icons.message,
         header: const EventHeader(),
         page: EventsView(phone: widget.phone),
       ),
