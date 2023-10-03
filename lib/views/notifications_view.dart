@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import '../Widgets/kText.dart';
 import '../constants.dart';
@@ -17,6 +18,7 @@ class NotificationsView extends StatefulWidget {
 class _NotificationsViewState extends State<NotificationsView> {
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Constants().primaryAppColor,
@@ -24,9 +26,16 @@ class _NotificationsViewState extends State<NotificationsView> {
         title: KText(
           text: "Notifications",
           style: GoogleFonts.openSans(
-            fontSize: 18,
+            color: Colors.white,
+            fontSize: Constants().getFontSize(context, "L"),
             fontWeight: FontWeight.w700,
           ),
+        ),
+        leading: InkWell(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: const Icon(Icons.arrow_back,color: Colors.white),
         ),
       ),
       body: StreamBuilder(
@@ -37,7 +46,14 @@ class _NotificationsViewState extends State<NotificationsView> {
             .snapshots(),
         builder: (ctx, snap) {
           if (snap.hasData) {
-            return ListView.builder(
+            return snap.data!.docs.isEmpty ? Center(
+              child: Lottie.asset(
+                'assets/no_notifications.json',
+                fit: BoxFit.contain,
+                height: size.height * 0.4,
+                width: size.width * 0.7,
+              ),
+            ) : ListView.builder(
               itemCount: snap.data!.docs.length,
               itemBuilder: (ctx, i) {
                 return Padding(
@@ -46,7 +62,6 @@ class _NotificationsViewState extends State<NotificationsView> {
                     key: const Key('my-widget-key'),
                     onVisibilityChanged: (VisibilityInfo visibilityInfo){
                       var visiblePercentage = visibilityInfo.visibleFraction * 6;
-                      print(visiblePercentage);
                       //if(visiblePercentage >= 0.2){
                         if(!snap.data!.docs[i]['isViewed']) {
                           updateNottificationStatus(snap.data!.docs[i].id);
@@ -85,7 +100,7 @@ class _NotificationsViewState extends State<NotificationsView> {
                                 ],
                               ),
                             ),
-                            const SizedBox(height: 2),
+                            SizedBox(height: size.height/433),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -107,12 +122,12 @@ class _NotificationsViewState extends State<NotificationsView> {
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 10),
+                            SizedBox(height: size.height/86.6),
                             Text(
                               snap.data!.docs[i]['subject'],
                               style: GoogleFonts.openSans(
                                 color: const Color(0xff000850),
-                                fontSize: 18,
+                                fontSize: size.width/22.833333333,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -124,7 +139,7 @@ class _NotificationsViewState extends State<NotificationsView> {
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                            const SizedBox(height: 10)
+                            SizedBox(height: size.height/86.6),
                           ],
                         ),
                       ),
@@ -133,15 +148,39 @@ class _NotificationsViewState extends State<NotificationsView> {
                 );
               },
             );
+          }else if(snap.hasError){
+            return Center(
+              child: Lottie.asset(
+                'assets/no_notifications.json',
+                fit: BoxFit.contain,
+                height: size.height * 0.4,
+                width: size.width * 0.7,
+              ),
+            );
+          }else if(!snap.hasData){
+            return Center(
+              child: Lottie.asset(
+                'assets/no_notifications.json',
+                fit: BoxFit.contain,
+                height: size.height * 0.4,
+                width: size.width * 0.7,
+              ),
+            );
           }
-          return Container();
+          return Center(
+            child: Lottie.asset(
+              'assets/no_notifications.json',
+              fit: BoxFit.contain,
+              height: size.height * 0.4,
+              width: size.width * 0.7,
+            ),
+          );
         },
       ),
     );
   }
 
   updateNottificationStatus(String id)  {
-    print(id);
      FirebaseFirestore.instance
         .collection('Users')
         .doc(widget.userDocId)

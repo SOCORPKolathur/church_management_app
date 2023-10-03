@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:church_management_client/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -38,24 +39,52 @@ class ChatViewState extends State<ChatView> {
   Widget build(BuildContext context) {
     double height = MediaQuery.of(context).size.height;
     double width = MediaQuery.of(context).size.width;
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor:Constants().primaryAppColor,
-        title: Text(
-          widget.title,
-          style: GoogleFonts.amaranth(
-            color: Colors.white,
-            fontSize: Constants().getFontSize(context, "L"),
-            fontWeight: FontWeight.w600,
-          ),
+        centerTitle: false,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            CircleAvatar(
+              backgroundColor: Colors.white,
+              child: Icon(
+                  widget.title == "Church"
+                      ? Icons.church
+                      : widget.title == "Members"
+                      ? Icons.groups
+                      : widget.title == "Blood Requirement"
+                      ? Icons.bloodtype
+                      : widget.title == "Clans"
+                      ? Icons.bookmark_add
+                      : Icons.music_video_outlined,
+                  size: width/13, color: Constants().primaryAppColor,
+              ),
+            ),
+            SizedBox(width: width/41.1),
+            Text(
+              widget.title,
+              style: GoogleFonts.amaranth(
+                color: Colors.white,
+                fontSize: Constants().getFontSize(context, "L"),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
         ),
         elevation: 0,
-        leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: const Icon(Icons.arrow_back,color: Colors.white)
+        leadingWidth: width/13.7,
+        leading: SizedBox(
+          width: width/20.55,
+          child: InkWell(
+              onTap: (){
+                Navigator.pop(context);
+              },
+              child: Padding(
+                padding: EdgeInsets.only(left: width/41.1,right: width/41.1),
+                child: const Icon(Icons.arrow_back,color: Colors.white),
+              )
+          )
         ),
       ),
       body: StreamBuilder(
@@ -205,11 +234,9 @@ class ChatViewState extends State<ChatView> {
         },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: Container(
-
+      floatingActionButton: SizedBox(
         height: height / 15,
         width: double.infinity,
-
         child: SizedBox(
           height: height / 18,
           child: Row(
@@ -217,20 +244,19 @@ class ChatViewState extends State<ChatView> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30),
-                ),
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(30)),
                 height: height / 18,
                 width: width * 0.8,
                 child: TextField(
                   controller: chatMessage,
-                  //onEditingComplete: onSendMessag,
+                  onEditingComplete: onSendMessag,
                   decoration: InputDecoration(
                       contentPadding: const EdgeInsets.all(8),
                       hintText: "Type here",
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(30),
-                      )),
+                      )
+                  ),
                 ),
               ),
               IconButton(
@@ -310,6 +336,8 @@ class ChatViewState extends State<ChatView> {
   }
 
   void onSendMessag() async {
+    String messageText = '';
+    messageText = chatMessage.text;
     if (chatMessage.text.isNotEmpty) {
       Map<String, dynamic> messages = {
         "message": chatMessage.text,
@@ -319,17 +347,17 @@ class ChatViewState extends State<ChatView> {
         "sender": "${currentUser.firstName!} ${currentUser.lastName!}",
         "submitdate":"${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}",
       };
-      await sendNotification();
       chatMessage.clear();
       await FirebaseFirestore.instance.collection(widget.collection).add(messages);
-
+      await sendNotification(messageText);
+      messageText = '';
     }
     else {
       print("Enter Some Text");
     }
   }
 
-  sendNotification() async {
+  sendNotification(String message) async {
     var users = await FirebaseFirestore.instance.collection('Users').get();
     var members = await FirebaseFirestore.instance.collection('Members').get();
     var choruses = await FirebaseFirestore.instance.collection('Chorus').get();
@@ -385,6 +413,7 @@ class ChatViewState extends State<ChatView> {
         break;
     }
 
+    usersForNotify.removeWhere((element) => element.id == widget.uid);
     usersForNotify.forEach((element) {
       sendPushMessage(element.fcmToken!);
     });

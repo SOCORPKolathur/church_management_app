@@ -115,9 +115,7 @@ class _LanguagesViewState extends State<LanguagesView> {
             width: size.width,
             child: Column(
               children: [
-                SizedBox(
-                  height: size.height * 0.05,
-                ),
+                SizedBox(height: size.height * 0.05),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
@@ -130,16 +128,14 @@ class _LanguagesViewState extends State<LanguagesView> {
                     KText(
                       text: "Select Your Language",
                       style: GoogleFonts.openSans(
-                        fontSize: 18,
+                        fontSize: size.width/22.833333333,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const SizedBox(width: 20)
+                    SizedBox(width: size.width/20.55)
                   ],
                 ),
-                SizedBox(
-                  height: size.height * 0.05,
-                ),
+                SizedBox(height: size.height * 0.05),
                 Expanded(
                   child: SizedBox(
                       width: double.infinity,
@@ -161,13 +157,12 @@ class _LanguagesViewState extends State<LanguagesView> {
                                       builder: (ctx) => MainView(uid: widget.uid,phone: widget.phone,userDocId: widget.userDocId)));
                             },
                             child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 14, vertical: 16),
+                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
                               child: Container(
-                                height: 80,
-                                width: 80,
+                                height: size.height/10.825,
+                                width: size.height/10.825,
                                 decoration: BoxDecoration(
-                                  color: Color(0xffffffff).withOpacity(0.6),
+                                  color: const Color(0xffffffff).withOpacity(0.6),
                                   borderRadius: BorderRadius.circular(10),
                                   boxShadow: const [
                                     BoxShadow(
@@ -184,15 +179,15 @@ class _LanguagesViewState extends State<LanguagesView> {
                                     Text(
                                       languagesList[i].orgName!,
                                       style: GoogleFonts.openSans(
-                                        fontSize: 20,
+                                        fontSize: size.width/20.55,
                                         fontWeight: FontWeight.w700,
                                       ),
                                     ),
-                                    const SizedBox(height: 5),
+                                    SizedBox(height: size.height/173.2),
                                     Text(
                                       languagesList[i].name!.toUpperCase(),
                                       style: GoogleFonts.openSans(
-                                        fontSize: 13,
+                                        fontSize: size.width/31.615384615,
                                         fontWeight: FontWeight.w700,
                                       ),
                                     ),

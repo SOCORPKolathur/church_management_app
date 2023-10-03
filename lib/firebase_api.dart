@@ -12,7 +12,6 @@ class FirebaseApi {
   Future<void> initNotifications() async {
     await firebaseMessaging.requestPermission();
     final fcmToken = await firebaseMessaging.getToken();
-    print("Token : ${fcmToken.toString()}");
     FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
   }
 

@@ -40,9 +40,16 @@ class _CartViewState extends State<CartView> {
         title: KText(
           text: "Carts",
           style: GoogleFonts.openSans(
-            fontSize: 18,
+            color: Colors.white,
+            fontSize: Constants().getFontSize(context, "L"),
             fontWeight: FontWeight.w700,
           ),
+        ),
+        leading: InkWell(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: const Icon(Icons.arrow_back,color: Colors.white),
         ),
       ),
       body: SizedBox(
@@ -63,13 +70,13 @@ class _CartViewState extends State<CartView> {
                               height: size.height * 0.246,
                               width: size.width * 0.3,
                             ),
-                            const SizedBox(height: 20),
+                            SizedBox(height: size.height/43.3),
                             InkWell(
                               onTap: (){
                                 Navigator.pop(context);
                               },
                               child: Container(
-                                height: 45,
+                                height: size.height/19.244444444,
                                 width: size.width * 0.6,
                                 decoration: BoxDecoration(
                                   color: Constants().primaryAppColor,
@@ -138,7 +145,7 @@ class _CartViewState extends State<CartView> {
                                                   ),
                                                 ),
                                               ),
-                                              const SizedBox(height: 5),
+                                              SizedBox(height: size.height/173.2),
                                               Text(
                                                 r"$ " +
                                                     carts[i].price!.toString(),
@@ -240,7 +247,7 @@ class _CartViewState extends State<CartView> {
                     fontSize: Constants().getFontSize(context, "M"),
                   ),
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: size.width/51.375),
                 SizedBox(
                   width: size.width * 0.35,
                   child: KText(

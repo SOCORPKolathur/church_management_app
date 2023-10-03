@@ -120,8 +120,7 @@ class _CommunityViewState extends State<CommunityView> {
                       ),
                       for (int i = 0; i < users.length; i++)
                         Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 0, vertical: 6),
+                          padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 6),
                           child: Card(
                             color: Colors.white,
                             child: SizedBox(
@@ -135,9 +134,8 @@ class _CommunityViewState extends State<CommunityView> {
                                       onTap: () {},
                                       child: Row(
                                         children: [
-                                          Icon(Icons.person_outline,
-                                              color: Constants().primaryAppColor),
-                                          const SizedBox(width: 10),
+                                          Icon(Icons.person_outline, color: Constants().primaryAppColor),
+                                          SizedBox(width: size.width/41.1),
                                           Text(
                                             "${users[i].firstName!} ${users[i].lastName!}",
                                             style: GoogleFonts.amaranth(
@@ -149,14 +147,14 @@ class _CommunityViewState extends State<CommunityView> {
                                         ],
                                       ),
                                     ),
-                                    const SizedBox(height: 10),
+                                    SizedBox(height: size.height/86.6),
                                     InkWell(
                                       onTap: () {},
                                       child: Row(
                                         children: [
                                           Icon(Icons.person_pin_outlined,
                                               color: Constants().primaryAppColor),
-                                          const SizedBox(width: 10),
+                                          SizedBox(width: size.width/41.1),
                                           KText(
                                             text: users[i].profession!,
                                             style: GoogleFonts.amaranth(
@@ -167,7 +165,7 @@ class _CommunityViewState extends State<CommunityView> {
                                         ],
                                       ),
                                     ),
-                                    const SizedBox(height: 10),
+                                    SizedBox(height: size.height/86.6),
                                     InkWell(
                                       onTap: () async {
                                         final Uri launchUri = Uri(
@@ -181,9 +179,8 @@ class _CommunityViewState extends State<CommunityView> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.start,
                                           children: [
-                                            Icon(Icons.phone,
-                                                color: Constants().primaryAppColor),
-                                            const SizedBox(width: 10),
+                                            Icon(Icons.phone, color: Constants().primaryAppColor),
+                                            SizedBox(width: size.width/41.1),
                                             KText(
                                               text: users[i].phone!,
                                               style: TextStyle(

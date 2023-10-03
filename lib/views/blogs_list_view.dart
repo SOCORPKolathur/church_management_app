@@ -22,14 +22,21 @@ class _BlogsListViewState extends State<BlogsListView> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Constants().primaryAppColor,
         centerTitle: true,
         title: KText(
           text: "Blogs",
           style: GoogleFonts.openSans(
+            color: Colors.white,
             fontSize: Constants().getFontSize(context, 'L'),
             fontWeight: FontWeight.w700,
           ),
+        ),
+        leading: InkWell(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: const Icon(Icons.arrow_back,color: Colors.white),
         ),
       ),
       body: Container(
@@ -93,7 +100,7 @@ class _BlogsListViewState extends State<BlogsListView> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              const SizedBox(height: 5),
+                              SizedBox(height: size.height/173.2),
                               Padding(
                                 padding:
                                 const EdgeInsets.symmetric(horizontal: 8),
@@ -110,7 +117,7 @@ class _BlogsListViewState extends State<BlogsListView> {
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 5),
+                              SizedBox(height: size.height/173.2),
                               Center(
                                 child: InkWell(
                                   onTap: () {
@@ -121,7 +128,7 @@ class _BlogsListViewState extends State<BlogsListView> {
                                                 BlogDetailsView(id: blogs[i].id!)));
                                   },
                                   child: Container(
-                                    height: 40,
+                                    height: size.height/21.65,
                                     width: size.width * 0.38,
                                     decoration: BoxDecoration(
                                       color: Constants().primaryAppColor,

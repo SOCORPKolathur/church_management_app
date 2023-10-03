@@ -50,7 +50,7 @@ class _MyAppState extends State<MyApp> {
     var localizationDelegate = LocalizedApp.of(context).delegate;
     return LocalizationProvider(
       state: LocalizationProvider.of(context).state,
-      child: GetMaterialApp(
+      child: MaterialApp(
         title: 'Church Management',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(

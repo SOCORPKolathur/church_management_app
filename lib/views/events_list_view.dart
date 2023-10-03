@@ -25,14 +25,21 @@ class _EventsListViewState extends State<EventsListView> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Constants().primaryAppColor,
         centerTitle: true,
         title: KText(
           text: "Events",
           style: GoogleFonts.openSans(
+            color: Colors.white,
             fontSize: Constants().getFontSize(context, 'L'),
             fontWeight: FontWeight.w700,
           ),
+        ),
+        leading: InkWell(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: const Icon(Icons.arrow_back,color: Colors.white),
         ),
       ),
       body: Container(
@@ -58,7 +65,7 @@ class _EventsListViewState extends State<EventsListView> {
                     child: Container(
                       width: size.width * 0.88,
                       padding: const EdgeInsets.all(8.0),
-                      margin: const EdgeInsets.all(1.0),
+                      margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 1),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(10),
@@ -98,10 +105,9 @@ class _EventsListViewState extends State<EventsListView> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 SizedBox(
-                                  height:30,
+                                  height: size.height/28.866666667,
                                   child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8),
+                                    padding: const EdgeInsets.symmetric(horizontal: 8),
                                     child: KText(
                                       text: events[j].title!,
                                       style: GoogleFonts.openSans(
@@ -121,7 +127,7 @@ class _EventsListViewState extends State<EventsListView> {
                                       children: [
                                         Icon(Icons.date_range,
                                             color: Constants().primaryAppColor),
-                                        const SizedBox(width: 5),
+                                        SizedBox(width: size.width/82.2),
                                         KText(
                                           text: events[j].date!,
                                           style: GoogleFonts.openSans(
@@ -135,7 +141,7 @@ class _EventsListViewState extends State<EventsListView> {
                                     ),
                                   ),
                                 ),
-                                const SizedBox(height: 5),
+                                SizedBox(height: size.height/173.2),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 8),
                                   child: SizedBox(
@@ -144,7 +150,7 @@ class _EventsListViewState extends State<EventsListView> {
                                       children: [
                                         Icon(Icons.timelapse,
                                             color: Constants().primaryAppColor),
-                                        const SizedBox(width: 5),
+                                        SizedBox(width: size.width/82.2),
                                         KText(
                                           text: events[j].time!,
                                           style: GoogleFonts.openSans(
@@ -158,7 +164,7 @@ class _EventsListViewState extends State<EventsListView> {
                                     ),
                                   ),
                                 ),
-                                const SizedBox(height: 5),
+                                SizedBox(height: size.height/173.2),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 8),
                                   child: SizedBox(
@@ -167,7 +173,7 @@ class _EventsListViewState extends State<EventsListView> {
                                       children: [
                                         Icon(Icons.location_pin,
                                             color: Constants().primaryAppColor),
-                                        const SizedBox(width: 5),
+                                        SizedBox(width: size.width/82.2),
                                         KText(
                                           text: events[j].location!,
                                           style: GoogleFonts.openSans(
@@ -181,7 +187,7 @@ class _EventsListViewState extends State<EventsListView> {
                                     ),
                                   ),
                                 ),
-                                const SizedBox(height: 5),
+                                SizedBox(height: size.height/173.2),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 8),
                                   child: SizedBox(
@@ -190,7 +196,7 @@ class _EventsListViewState extends State<EventsListView> {
                                       children: [
                                         Icon(Icons.message_outlined,
                                             color: Constants().primaryAppColor),
-                                        const SizedBox(width: 5),
+                                        SizedBox(width: size.width/82.2),
                                         KText(
                                           text: events[j].description!,
                                           style: GoogleFonts.openSans(

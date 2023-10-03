@@ -28,9 +28,15 @@ class _OrdersViewState extends State<OrdersView> {
         title: KText(
           text: "Orders",
           style: GoogleFonts.openSans(
-            fontSize: 18,
+            fontSize: Constants().getFontSize(context, "L"),
             fontWeight: FontWeight.w700,
           ),
+        ),
+        leading: InkWell(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: const Icon(Icons.arrow_back,color: Colors.white),
         ),
       ),
       body: SizedBox(
@@ -50,13 +56,13 @@ class _OrdersViewState extends State<OrdersView> {
                       height: size.height * 0.246,
                       width: size.width * 0.3,
                     ),
-                    const SizedBox(height: 20),
+                    SizedBox(height: size.height/43.3),
                     InkWell(
                       onTap: (){
                         Navigator.pop(context);
                       },
                       child: Container(
-                        height: 45,
+                        height: size.height/19.244444444,
                         width: size.width * 0.6,
                         decoration: BoxDecoration(
                           color: Constants().primaryAppColor,

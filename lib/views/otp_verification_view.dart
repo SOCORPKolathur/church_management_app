@@ -75,8 +75,7 @@ class _OtpVerificationViewState extends State<OtpVerificationView> {
             height: size.height,
             width: size.width,
             child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
+              padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -87,16 +86,16 @@ class _OtpVerificationViewState extends State<OtpVerificationView> {
                         KText(
                           text: "Verify OTP",
                           style: GoogleFonts.playfairDisplay(
-                            fontSize: 36,
+                            fontSize: size.width/11.416666667,
                             color: const Color(0xff757879),
                             fontWeight: FontWeight.w900,
                           ),
                         ),
-                        const SizedBox(height: 5),
+                        SizedBox(height: size.height/173.2),
                         Text(
                           "Kindly enter your OTP below",
                           style: GoogleFonts.openSans(
-                            fontSize: 14,
+                            fontSize: size.width/29.357142857,
                             color: const Color(0xff757879),
                           ),
                         )
@@ -141,9 +140,7 @@ class _OtpVerificationViewState extends State<OtpVerificationView> {
                             )),
                           ),
                         ),
-                        const SizedBox(
-                          height: 20,
-                        ),
+                        SizedBox(height: size.height/43.3),
                         InkWell(
                           onTap: () {
                             setState(() {
@@ -234,7 +231,7 @@ class _OtpVerificationViewState extends State<OtpVerificationView> {
                               text: 'Edit Phone Number',
                               style: GoogleFonts.openSans(
                                 color: Constants().primaryAppColor,
-                                fontSize: 14,
+                                fontSize: size.width/29.357142857,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -242,7 +239,7 @@ class _OtpVerificationViewState extends State<OtpVerificationView> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 5)
+                    SizedBox(height: size.height/173.2)
                   ],
                 ),
               ),
@@ -256,11 +253,9 @@ class _OtpVerificationViewState extends State<OtpVerificationView> {
                 color: Colors.white70,
               ),
               child: Container(
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10.0)
-                ),
-                width: 300.0,
-                height: 200.0,
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(10.0)),
+                width: size.width/1.37,
+                height: size.height/4.33,
                 alignment: AlignmentDirectional.center,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -268,8 +263,8 @@ class _OtpVerificationViewState extends State<OtpVerificationView> {
                   children: <Widget>[
                     Center(
                       child: SizedBox(
-                        height: 50.0,
-                        width: 50.0,
+                        height: size.height/17.32,
+                        width: size.height/17.32,
                         child: CircularProgressIndicator(
                           color: Constants().primaryAppColor,
                           value: null,

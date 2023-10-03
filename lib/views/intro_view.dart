@@ -2,7 +2,6 @@ import 'package:church_management_client/views/register_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-
 import '../constants.dart';
 import 'login_view.dart';
 
@@ -48,36 +47,36 @@ class _IntroViewState extends State<IntroView> {
                   Column(
                    crossAxisAlignment: CrossAxisAlignment.start,
                    children: [
-                     const Icon(
+                     Icon(
                        Icons.church,
-                       size: 80,
+                       size: size.width/5.1375,
                      ),
-                     const SizedBox(height: 15),
+                     SizedBox(height: size.height/57.733333333),
                      Column(
                        crossAxisAlignment: CrossAxisAlignment.start,
                        children: [
                          Text(
                              "Welcome to",
                            style: GoogleFonts.openSans(
-                             fontSize: 20,
+                             fontSize: size.width/20.55,
                              fontWeight: FontWeight.w900,
                            ),
                          ),
                          Text(
                            "CHURCH",
                            style: GoogleFonts.openSans(
-                             fontSize: 40,
+                             fontSize: size.width/10.275,
                              fontWeight: FontWeight.w900,
                            ),
                          ),
                        ],
                      ),
-                     const SizedBox(height: 8),
+                     SizedBox(height: size.height/108.25),
                      Text(
                          "May the lord with us",
                          style: GoogleFonts.openSans(
                            color:const Color(0xff000000),
-                           fontSize: 14,
+                           fontSize: size.width/29.357142857,
                            fontWeight: FontWeight.w700,
                          )
                      ),
@@ -94,7 +93,7 @@ class _IntroViewState extends State<IntroView> {
                               Navigator.push(context, MaterialPageRoute(builder: (ctx)=> const LoginView()));
                             },
                             child: Container(
-                              height: 50,
+                              height: size.height/17.32,
                               width: size.width * 0.4,
                               decoration: BoxDecoration(
                                 color: Constants().primaryAppColor,
@@ -105,7 +104,7 @@ class _IntroViewState extends State<IntroView> {
                                   "Login",
                                   style: GoogleFonts.openSans(
                                   color: const Color(0xffFFFFFF),
-                                    fontSize: 18,
+                                    fontSize: size.width/22.833333333,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -117,7 +116,7 @@ class _IntroViewState extends State<IntroView> {
                               Navigator.push(context, MaterialPageRoute(builder: (ctx)=> const RegisterView()));
                             },
                             child: Container(
-                              height: 50,
+                              height: size.height/17.32,
                               width: size.width * 0.4,
                               decoration: BoxDecoration(
                                 color: const Color(0xffFFFFFF),
@@ -135,7 +134,7 @@ class _IntroViewState extends State<IntroView> {
                                   "Register",
                                   style: GoogleFonts.openSans(
                                     color: const Color(0xff000000),
-                                    fontSize: 18,
+                                    fontSize: size.width/22.833333333,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -144,22 +143,22 @@ class _IntroViewState extends State<IntroView> {
                           )
                         ],
                       ),
-                      const SizedBox(height: 20),
+                      SizedBox(height: size.height/43.3),
                       Text(
                         "Or login with",
                         style: GoogleFonts.openSans(
-                          fontSize: 16,
+                          fontSize: size.width/25.6875,
                           color: const Color(0xff000000)
                         ),
                       ),
-                      const SizedBox(height: 20),
+                      SizedBox(height: size.height/43.3),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           InkWell(
                             onTap:(){},
                             child: Container(
-                              height: 44,
+                              height: size.height/19.681818182,
                               width: size.width*0.25,
                               decoration: BoxDecoration(
                                 color: Colors.white,
@@ -174,7 +173,7 @@ class _IntroViewState extends State<IntroView> {
                           InkWell(
                             onTap:(){},
                             child: Container(
-                              height: 44,
+                              height: size.height/19.681818182,
                               width: size.width*0.25,
                               decoration: BoxDecoration(
                                 color: Colors.white,
@@ -189,7 +188,7 @@ class _IntroViewState extends State<IntroView> {
                           InkWell(
                             onTap:(){},
                             child: Container(
-                              height: 44,
+                              height: size.height/19.681818182,
                               width: size.width*0.25,
                               decoration: BoxDecoration(
                                 color: Colors.white,

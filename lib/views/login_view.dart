@@ -1,4 +1,3 @@
-import 'package:church_management_client/Widgets/snackbar.dart';
 import 'package:church_management_client/views/register_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -25,7 +24,6 @@ class _LoginViewState extends State<LoginView> {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-
     return Scaffold(
       body: Stack(
         children: [
@@ -47,8 +45,7 @@ class _LoginViewState extends State<LoginView> {
             height: size.height,
             width: size.width,
             child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
+              padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -59,16 +56,16 @@ class _LoginViewState extends State<LoginView> {
                         Text(
                           "Welcome Back",
                           style: GoogleFonts.playfairDisplay(
-                            fontSize: 36,
+                            fontSize: size.width/11.416666667,
                             color: const Color(0xff757879),
                             fontWeight: FontWeight.w900,
                           ),
                         ),
-                        const SizedBox(height: 5),
+                        SizedBox(height: size.height/173.2),
                         Text(
                           "Kindly enter your login details",
                           style: GoogleFonts.openSans(
-                            fontSize: 14,
+                            fontSize: size.width/29.357142857,
                             color: const Color(0xff757879),
                           ),
                         )
@@ -90,15 +87,13 @@ class _LoginViewState extends State<LoginView> {
                             return null;
                           },
                         ),
-                        const SizedBox(
-                          height: 20,
-                        ),
+                        SizedBox(height: size.height/43.3),
                         InkWell(
                           onTap: () async {
                             authenticate();
                           },
                           child: Container(
-                            height: 60,
+                            height: size.height/14.433333333,
                             width: double.infinity,
                             decoration: BoxDecoration(
                               color: Constants().primaryAppColor,
@@ -108,7 +103,7 @@ class _LoginViewState extends State<LoginView> {
                               child: Text(
                                 "Login",
                                 style: GoogleFonts.openSans(
-                                    fontSize: 17,
+                                    fontSize: size.width/24.176470588,
                                     color: const Color(0xffFFFFFF),
                                     fontWeight: FontWeight.bold),
                               ),
@@ -126,13 +121,15 @@ class _LoginViewState extends State<LoginView> {
                         text: TextSpan(
                           text: 'Don\'t have an account?',
                           style: GoogleFonts.openSans(
-                              fontSize: 14, color: const Color(0xff757879)),
+                              fontSize: size.width/29.357142857,
+                              color: const Color(0xff757879),
+                          ),
                           children: <TextSpan>[
                             TextSpan(
                               text: ' Sign Up',
                               style: GoogleFonts.openSans(
                                 color: Constants().primaryAppColor,
-                                fontSize: 14,
+                                fontSize: size.width/29.357142857,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -140,7 +137,7 @@ class _LoginViewState extends State<LoginView> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 5)
+                    SizedBox(height: size.height/173.2)
                   ],
                 ),
               ),

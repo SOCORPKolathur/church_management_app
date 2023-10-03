@@ -17,12 +17,10 @@ import 'package:visibility_detector/visibility_detector.dart';
 import '../Widgets/kText.dart';
 import '../constants.dart';
 import '../models/blog_model.dart';
-import '../models/gallery_image_model.dart';
 import '../models/notice_model.dart';
 import '../models/response.dart';
 import '../models/user_model.dart';
 import '../services/blog_firecrud.dart';
-import '../services/gallery_firecrud.dart';
 import '../services/messages_firecrud.dart';
 import '../services/notice_firecrud.dart';
 import '../services/user_firecrud.dart';
@@ -35,11 +33,7 @@ import 'notices_list_view.dart';
 import 'notifications_view.dart';
 
 class HomeView extends StatefulWidget {
-  const HomeView(
-      {super.key,
-      required this.userDocId,
-      required this.uid,
-      required this.phone});
+  const HomeView({super.key, required this.userDocId, required this.uid, required this.phone});
 
   final String uid;
   final String phone;
@@ -49,12 +43,10 @@ class HomeView extends StatefulWidget {
   State<HomeView> createState() => _HomeViewState();
 }
 
-class _HomeViewState extends State<HomeView>
-    with SingleTickerProviderStateMixin {
+class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin {
+  
   TextEditingController descriptionController = TextEditingController();
   User? currentUser = FirebaseAuth.instance.currentUser;
-  TextEditingController searchController = TextEditingController();
-  int currentIndex = 0;
   int sliderImageIndex = 0;
   ScrollController scrollController = ScrollController();
 
@@ -76,9 +68,9 @@ class _HomeViewState extends State<HomeView>
       backgroundColor: Colors.transparent,
       appBar: AppBar(
         backgroundColor: Constants().primaryAppColor,
-        leading: Container(
-          height: 20,
-          width: 20,
+        leading: SizedBox(
+          height: size.height/43.3,
+          width: size.width/20.55,
           child: StreamBuilder(
             stream: UserFireCrud.fetchUsersWithId(widget.uid),
             builder: (ctx, snaps) {
@@ -88,9 +80,10 @@ class _HomeViewState extends State<HomeView>
                   padding: const EdgeInsets.all(8.0),
                   child: Container(
                     decoration: BoxDecoration(
+                      color: Colors.white,
                       shape: BoxShape.circle,
                       image: DecorationImage(
-                        fit: BoxFit.contain,
+                        fit: BoxFit.fill,
                         image: (user.imgUrl != null)
                             ? CachedNetworkImageProvider(
                           user.imgUrl!,
@@ -136,7 +129,7 @@ class _HomeViewState extends State<HomeView>
                         color: Colors.white,
                       ),
                     ),
-                    const SizedBox(width: 10),
+                    SizedBox(width: size.width/41.1),
                     PopupMenuButton(
                       itemBuilder: (context) => [
                         PopupMenuItem(
@@ -270,7 +263,7 @@ class _HomeViewState extends State<HomeView>
                       ),
                       child: const Icon(Icons.settings, size: 28,color: Colors.white),
                     ),
-                    const SizedBox(width: 15),
+                    SizedBox(width: size.width/27.4),
                   ],
                 );
               }
@@ -280,10 +273,9 @@ class _HomeViewState extends State<HomeView>
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+        padding: EdgeInsets.symmetric(horizontal: size.width/34.25, vertical: size.height/173.2),
         child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(
-              decelerationRate: ScrollDecelerationRate.normal),
+          physics: const BouncingScrollPhysics(decelerationRate: ScrollDecelerationRate.normal),
           controller: scrollController,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -297,18 +289,43 @@ class _HomeViewState extends State<HomeView>
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        KText(
-                          text: greeting(),
-                          style: GoogleFonts.amaranth(
-                            fontSize: Constants().getFontSize(context, "L"),
-                            fontWeight: FontWeight.w600,
+                        Padding(
+                          padding: const EdgeInsets.only(left: 3),
+                          child: KText(
+                            text: greeting(),
+                            style: GoogleFonts.amaranth(
+                              color: Colors.white,
+                              fontSize: Constants().getFontSize(context, "L"),
+                              fontWeight: FontWeight.w600,
+                              textBaseline: TextBaseline.alphabetic,
+                              shadows: [
+                                Shadow(
+                                  color: Constants().primaryAppColor,
+                                  blurRadius: 2,
+                                  offset: const Offset(-2, -2),
+                                ),
+                                Shadow(
+                                  color: Colors.grey,
+                                  blurRadius: 2,
+                                  offset: const Offset(-2, 3),
+                                )
+                              ]
+                            ),
                           ),
                         ),
                         Text(
                           "${user.firstName!} ${user.lastName!}",
                           style: GoogleFonts.amaranth(
+                              color: Constants().primaryAppColor,
                             fontSize: Constants().getFontSize(context, "XL"),
                             fontWeight: FontWeight.w600,
+                              shadows: const [
+                                Shadow(
+                                  color: Colors.white,
+                                  blurRadius: 2,
+                                  offset: Offset(1, 1),
+                                ),
+                              ]
                           ),
                         ),
                       ],
@@ -322,7 +339,6 @@ class _HomeViewState extends State<HomeView>
                 stream: FirebaseFirestore.instance.collection('SliderImages').snapshots(),
                 builder: (ctx, snapshot) {
                   if (snapshot.hasData) {
-                    //List<GalleryImageModel> sliderImages = snapshot.data!;
                     return Column(
                       children: [
                         SizedBox(
@@ -333,33 +349,32 @@ class _HomeViewState extends State<HomeView>
                               options: CarouselOptions(
                                 viewportFraction: 1,
                                 autoPlay: true,
+                                autoPlayInterval: const Duration(seconds: 4),
+                                autoPlayAnimationDuration: const Duration(seconds: 3),
                                 initialPage: 0,
-                                scrollPhysics: BouncingScrollPhysics(),
+                                scrollPhysics: const NeverScrollableScrollPhysics(),
                                 onPageChanged: ((index,reason){
                                   setState(() {
                                     sliderImageIndex = index;
                                   });
                                 }),
                               ),
-                              itemBuilder: ( context,int index, int) {
-                                return Container(
-                                    height:size.height * 0.22,
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(12),
-                                        image: DecorationImage(
-                                          fit: BoxFit.fill,
-                                          image: CachedNetworkImageProvider(
-                                              snapshot.data!.docs[index]['imgUrl']
-                                          )
-                                        )
-                                    ),
-                                    // child: CachedNetworkImage(
-                                    //     // height: size.height * 0.22,
-                                    //     width: double.infinity,
-                                    //     fit: BoxFit.fill,
-                                    //     imageUrl: snapshot.data!.docs[index]['imgUrl']
-                                    // )
+                              itemBuilder: ( context,int index,options) {
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                                  child: SizedBox(
+                                      height:size.height * 0.22,
+                                      width: double.infinity,
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(10),
+                                        child: CachedNetworkImage(
+                                            width: double.infinity,
+                                            fit: BoxFit.fill,
+                                            fadeInDuration: const Duration(seconds: 1),
+                                            imageUrl: snapshot.data!.docs[index]['imgUrl']
+                                        ),
+                                      )
+                                  ),
                                 );
                               },
                           ),
@@ -383,7 +398,7 @@ class _HomeViewState extends State<HomeView>
                   return Container();
                 },
               ),
-              const SizedBox(height: 15),
+              SizedBox(height: size.height/57.733333333),
               Row(
                 children: [
                   KText(
@@ -401,14 +416,14 @@ class _HomeViewState extends State<HomeView>
                           MaterialPageRoute(
                               builder: (ctx) => const NoticesListView()));
                     },
-                    child: const Icon(
+                    child: Icon(
                       Icons.chevron_right_sharp,
-                      size: 30,
+                      size: size.width/13.7,
                     ),
                   )
                 ],
               ),
-              const SizedBox(height: 15),
+              SizedBox(height: size.height * 0.04),
               SizedBox(
                 height: size.height * 0.16,
                 width: size.width,
@@ -464,18 +479,17 @@ class _HomeViewState extends State<HomeView>
                                               ),
                                             ],
                                           ),
-                                          const SizedBox(height: 10),
+                                          SizedBox(height: size.height/86.6),
                                           KText(
                                             text: notices[i].title!,
                                             style: GoogleFonts.openSans(
                                               fontSize: Constants()
                                                   .getFontSize(context, 'M'),
                                               color: Constants().primaryAppColor,
-                                              //const Color(0xff000850),
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
-                                          const SizedBox(height: 10),
+                                          SizedBox(height: size.height/86.6),
                                           Expanded(
                                             child: SizedBox(
                                               width: double.infinity,
@@ -490,7 +504,7 @@ class _HomeViewState extends State<HomeView>
                                               ),
                                             ),
                                           ),
-                                          const SizedBox(height: 5)
+                                          SizedBox(height: size.height/173.2)
                                         ],
                                       ),
                                     ),
@@ -504,7 +518,7 @@ class _HomeViewState extends State<HomeView>
                   },
                 ),
               ),
-              const SizedBox(height: 15),
+              SizedBox(height: size.height/57.733333333),
               Row(
                 children: [
                   KText(
@@ -523,14 +537,14 @@ class _HomeViewState extends State<HomeView>
                               builder: (ctx) =>
                                   EventsListView(phone: widget.phone)));
                     },
-                    child: const Icon(
+                    child: Icon(
                       Icons.chevron_right_sharp,
-                      size: 30,
+                      size: size.width/13.7,
                     ),
                   )
                 ],
               ),
-              const SizedBox(height: 15),
+              SizedBox(height: size.height/57.733333333),
               SizedBox(
                 height: size.height * 0.22,
                 width: size.width,
@@ -594,8 +608,7 @@ class _HomeViewState extends State<HomeView>
                                                 children: [
                                                   SizedBox(
                                                     child: Padding(
-                                                      padding: const EdgeInsets.symmetric(
-                                                          horizontal: 8),
+                                                      padding: const EdgeInsets.symmetric(horizontal: 8),
                                                       child: KText(
                                                         text: events[j].title!,
                                                         style: GoogleFonts.openSans(
@@ -616,7 +629,7 @@ class _HomeViewState extends State<HomeView>
                                                           Icon(Icons.date_range,
                                                               color: Constants()
                                                                   .primaryAppColor),
-                                                          const SizedBox(width: 5),
+                                                          SizedBox(width: size.width/82.2),
                                                           KText(
                                                             text: events[j].date!,
                                                             style: GoogleFonts.openSans(
@@ -632,10 +645,9 @@ class _HomeViewState extends State<HomeView>
                                                       ),
                                                     ),
                                                   ),
-                                                  const SizedBox(height: 5),
+                                                  SizedBox(height: size.height/173.2),
                                                   Padding(
-                                                    padding: const EdgeInsets.symmetric(
-                                                        horizontal: 8),
+                                                    padding: const EdgeInsets.symmetric(horizontal: 8),
                                                     child: SizedBox(
                                                       width: size.width * 0.5,
                                                       child: Row(
@@ -643,7 +655,7 @@ class _HomeViewState extends State<HomeView>
                                                           Icon(Icons.timelapse,
                                                               color: Constants()
                                                                   .primaryAppColor),
-                                                          const SizedBox(width: 5),
+                                                          SizedBox(width: size.width/82.2),
                                                           KText(
                                                             text: events[j].time!,
                                                             style: GoogleFonts.openSans(
@@ -659,10 +671,9 @@ class _HomeViewState extends State<HomeView>
                                                       ),
                                                     ),
                                                   ),
-                                                  const SizedBox(height: 5),
+                                                  SizedBox(height: size.height/173.2),
                                                   Padding(
-                                                    padding: const EdgeInsets.symmetric(
-                                                        horizontal: 8),
+                                                    padding: const EdgeInsets.symmetric(horizontal: 8),
                                                     child: SizedBox(
                                                       width: size.width * 0.5,
                                                       child: Row(
@@ -670,7 +681,7 @@ class _HomeViewState extends State<HomeView>
                                                           Icon(Icons.location_pin,
                                                               color: Constants()
                                                                   .primaryAppColor),
-                                                          const SizedBox(width: 5),
+                                                          SizedBox(width: size.width/82.2),
                                                           KText(
                                                             text: events[j].location!,
                                                             style: GoogleFonts.openSans(
@@ -686,10 +697,9 @@ class _HomeViewState extends State<HomeView>
                                                       ),
                                                     ),
                                                   ),
-                                                  const SizedBox(height: 5),
+                                                  SizedBox(height: size.height/173.2),
                                                   Padding(
-                                                    padding: const EdgeInsets.symmetric(
-                                                        horizontal: 8),
+                                                    padding: const EdgeInsets.symmetric(horizontal: 8),
                                                     child: SizedBox(
                                                       width: size.width * 0.5,
                                                       child: Row(
@@ -697,7 +707,7 @@ class _HomeViewState extends State<HomeView>
                                                           Icon(Icons.message_outlined,
                                                               color: Constants()
                                                                   .primaryAppColor),
-                                                          const SizedBox(width: 5),
+                                                          SizedBox(width: size.width/82.2),
                                                           KText(
                                                             text: events[j].description!,
                                                             style: GoogleFonts.openSans(
@@ -730,7 +740,7 @@ class _HomeViewState extends State<HomeView>
                   },
                 ),
               ),
-              const SizedBox(height: 15),
+              SizedBox(height: size.height/57.733333333),
               Row(
                 children: [
                   KText(
@@ -755,7 +765,7 @@ class _HomeViewState extends State<HomeView>
                   )
                 ],
               ),
-              const SizedBox(height: 15),
+              SizedBox(height: size.height/57.733333333),
               SizedBox(
                 height: size.height * 0.22,
                 width: size.width,
@@ -805,8 +815,7 @@ class _HomeViewState extends State<HomeView>
                                             children: [
                                               SizedBox(
                                                 child: Padding(
-                                                  padding: const EdgeInsets.symmetric(
-                                                      horizontal: 8),
+                                                  padding: const EdgeInsets.symmetric(horizontal: 8),
                                                   child: KText(
                                                     text: blogs[j].title!,
                                                     style: GoogleFonts.openSans(
@@ -818,10 +827,9 @@ class _HomeViewState extends State<HomeView>
                                                   ),
                                                 ),
                                               ),
-                                              const SizedBox(height: 5),
+                                              SizedBox(height: size.height/173.2),
                                               Padding(
-                                                padding: const EdgeInsets.symmetric(
-                                                    horizontal: 8),
+                                                padding: const EdgeInsets.symmetric(horizontal: 8),
                                                 child: SizedBox(
                                                   height: size.height * 0.07,
                                                   width: size.width * 0.5,
@@ -836,7 +844,7 @@ class _HomeViewState extends State<HomeView>
                                                   ),
                                                 ),
                                               ),
-                                              const SizedBox(height: 5),
+                                              SizedBox(height: size.height/173.2),
                                               Center(
                                                 child: InkWell(
                                                   onTap: () {
@@ -886,7 +894,7 @@ class _HomeViewState extends State<HomeView>
                   },
                 ),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: size.height/43.3),
             ],
           ),
         ),
@@ -986,14 +994,13 @@ class _HomeViewState extends State<HomeView>
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 10),
-                            const SizedBox(height: 4),
+                            SizedBox(height: size.height/86.6),
+                            SizedBox(height: size.height/216.5),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10),
+                                  padding: const EdgeInsets.symmetric(horizontal: 10),
                                   child: Container(
                                     height: size.height * 0.14,
                                     decoration: BoxDecoration(

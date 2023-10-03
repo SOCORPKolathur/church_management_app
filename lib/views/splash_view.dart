@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../constants.dart';
@@ -27,7 +28,7 @@ class _SplashViewState extends State<SplashView> {
 
   Future<void> _navigateToNextScreen() async {
     var document = await FirebaseFirestore.instance.collection("Users").get();
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 1));
     if(user != null){
       for(int i=0;i<document.docs.length;i++){
         if(document.docs[i]['id']==user!.uid){
@@ -43,29 +44,30 @@ class _SplashViewState extends State<SplashView> {
   
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return  Scaffold(
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SvgPicture.asset("assets/path0.svg"),
-            const SizedBox(height: 15),
+            SizedBox(height: size.height/57.733333333),
             Text(
               "CHURCH",
               style: TextStyle(
                 color: Constants().primaryAppColor,
-                fontSize: 40,
+                fontSize: size.width/10.275,
                 letterSpacing: 8,
                 fontWeight: FontWeight.bold,
                 fontFamily: "ArgentumSans",
               ),
             ),
-            const SizedBox(height: 15),
+            SizedBox(height: size.height/57.733333333),
             Text(
                 "May the lord with us",
                 style: GoogleFonts.amaranth(
                   color: Constants().primaryAppColor,
-                  fontSize: 14,
+                  fontSize: size.width/29.357142857,
                   fontWeight: FontWeight.bold,
                 )
             ),

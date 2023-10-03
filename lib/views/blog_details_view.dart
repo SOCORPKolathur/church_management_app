@@ -86,15 +86,14 @@ class _BlogDetailsViewState extends State<BlogDetailsView> {
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                            const SizedBox(height: 10),
+                            SizedBox(height: size.height/86.6),
                             Container(
                               width: size.width,
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(10),
                               ),
-                              padding: const EdgeInsets.only(
-                                  top: 20, left: 20, right: 20),
+                              padding: EdgeInsets.only(top: size.height/43.3, left: size.width/20.55, right: size.width/20.55),
                               child: Padding(
                                 padding: const EdgeInsets.all(8),
                                 child: Column(

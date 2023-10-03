@@ -22,12 +22,19 @@ class _PastorsListViewState extends State<PastorsListView> {
       appBar: AppBar(
         backgroundColor: Constants().primaryAppColor,
         elevation: 0,
+        centerTitle: true,
         title: Text("Pastors",
           style: GoogleFonts.amaranth(
             color: Colors.white,
             fontSize: Constants().getFontSize(context, "XL"),
             fontWeight: FontWeight.w600,
           ),
+        ),
+        leading: InkWell(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: const Icon(Icons.arrow_back,color: Colors.white),
         ),
       ),
       body: StreamBuilder(
@@ -77,11 +84,10 @@ class _PastorsListViewState extends State<PastorsListView> {
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: [
                                   SizedBox(
-                                    height: 30,
+                                    height: size.height/28.866666667,
                                     width: size.width * 0.43,
                                     child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8),
+                                      padding: const EdgeInsets.symmetric(horizontal: 8),
                                       child: SizedBox(
                                         width: size.width * 0.5,
                                         child: Text(
@@ -105,7 +111,7 @@ class _PastorsListViewState extends State<PastorsListView> {
                                           Icon(Icons.phone,
                                               color: Constants()
                                                   .primaryAppColor),
-                                          const SizedBox(width: 5),
+                                          SizedBox(width: size.width/82.2),
                                           SizedBox(
                                             width: size.width * 0.3,
                                             child: KText(
@@ -124,10 +130,9 @@ class _PastorsListViewState extends State<PastorsListView> {
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(height: 5),
+                                  SizedBox(height: size.height/173.2),
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8),
+                                    padding: const EdgeInsets.symmetric(horizontal: 8),
                                     child: SizedBox(
                                       width: size.width * 0.5,
                                       child: Row(
@@ -135,7 +140,7 @@ class _PastorsListViewState extends State<PastorsListView> {
                                           Icon(Icons.alternate_email,
                                               color: Constants()
                                                   .primaryAppColor),
-                                          const SizedBox(width: 5),
+                                          SizedBox(width: size.width/82.2),
                                           SizedBox(
                                             width: size.width * 0.3,
                                             child: Text(

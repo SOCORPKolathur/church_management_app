@@ -42,30 +42,17 @@ class _ProductsViewState extends State<ProductsView> {
       ),
       body: Container(
         color: Colors.white,
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 8),
+        height: size.height,
+        width: size.width,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 8),
+          child: SingleChildScrollView(
             child: Column(
               children: [
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SizedBox(height: 10),
-                    // Padding(
-                    //   padding: const EdgeInsets.all(8.0),
-                    //   child: Column(
-                    //     crossAxisAlignment: CrossAxisAlignment.start,
-                    //     children: [
-                    //       KText(
-                    //         text: "Products",
-                    //         style: GoogleFonts.amaranth(
-                    //           fontSize: Constants().getFontSize(context, "XL"),
-                    //           fontWeight: FontWeight.w600,
-                    //         ),
-                    //       ),
-                    //     ],
-                    //   ),
-                    // ),
+                    SizedBox(height: size.height/86.6),
                     StreamBuilder(
                       stream: UserFireCrud.fetchUsersWithId(widget.uid),
                       builder: (ctx, snapshot){
@@ -90,7 +77,7 @@ class _ProductsViewState extends State<ProductsView> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Icon(Icons.shopping_bag_outlined, color: Constants().primaryAppColor),
-                                      const SizedBox(width: 10),
+                                      SizedBox(width: size.width/41.1),
                                       KText(
                                         text: "Your Orders",
                                         style: GoogleFonts.openSans(
@@ -118,7 +105,7 @@ class _ProductsViewState extends State<ProductsView> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       const Icon(Icons.shopping_cart_outlined,color: Colors.white),
-                                      const SizedBox(width: 10),
+                                      SizedBox(width: size.width/41.1),
                                       KText(
                                         text: "Cart",
                                         style: GoogleFonts.openSans(
@@ -138,7 +125,7 @@ class _ProductsViewState extends State<ProductsView> {
                     )
                   ],
                 ),
-                SizedBox(height: size.height* 0.02,),
+                SizedBox(height: size.height* 0.02),
                 StreamBuilder(
                   stream: FirebaseFirestore.instance.collection('Products').snapshots(),
                   builder: (ctx, snapshot) {
@@ -182,7 +169,7 @@ class _ProductsViewState extends State<ProductsView> {
                                             fontSize: Constants().getFontSize(context, "ML"),
                                           ),
                                         ),
-                                        const SizedBox(height: 5),
+                                        SizedBox(height: size.height/173.2),
                                         Text(
                                           r"$ " + products[i].price!.toString(),
                                           style: GoogleFonts.urbanist(
@@ -195,11 +182,6 @@ class _ProductsViewState extends State<ProductsView> {
                                         InkWell(
                                           onTap: () async {
                                            Response response = await UserFireCrud.addToCart(userDocId: widget.userDocId, price: products[i].price!, imgUrl: products[i].imgUrl!, quantity: 1, productId: products[i].productId!, productName: products[i].title!);
-                                           if(response.code == 200){
-
-                                           }else{
-
-                                           }
                                            },
                                           child: Container(
                                             height: size.height * 0.05,
@@ -217,7 +199,7 @@ class _ProductsViewState extends State<ProductsView> {
                                                     color: Colors.white,
                                                     size: size.height * 0.035,
                                                   ),
-                                                  const SizedBox(width: 10),
+                                                  SizedBox(width: size.width/41.1),
                                                   KText(
                                                     text: "Add",
                                                     style: GoogleFonts.openSans(
@@ -261,7 +243,7 @@ class _ProductsViewState extends State<ProductsView> {
                     return Container();
                   },
                 ),
-                const SizedBox(height: 10),
+                SizedBox(height: size.height/86.6),
               ],
             ),
           ),

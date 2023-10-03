@@ -13,20 +13,27 @@ class NoticesListView extends StatefulWidget {
 }
 
 class _NoticesListViewState extends State<NoticesListView> {
-
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Constants().primaryAppColor,
         centerTitle: true,
         title: KText(
           text: "Notices",
           style: GoogleFonts.openSans(
-            fontSize: 18,
+            color: Colors.white,
+            fontSize: Constants().getFontSize(context, 'L'),
             fontWeight: FontWeight.w700,
           ),
+        ),
+        leading: InkWell(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: const Icon(Icons.arrow_back,color: Colors.white),
         ),
       ),
       body: Container(
@@ -35,15 +42,15 @@ class _NoticesListViewState extends State<NoticesListView> {
         padding: const EdgeInsets.all(10),
         child: StreamBuilder(
           stream: NoticeFireCrud.fetchNotice(),
-          builder: (ctx,snapshot){
-            if(snapshot.hasData){
+          builder: (ctx, snapshot) {
+            if (snapshot.hasData) {
               List<NoticeModel> notices = snapshot.data!;
               return ListView.builder(
                 itemCount: notices.length,
-                itemBuilder: (ctx,i){
+                itemBuilder: (ctx, i) {
                   return InkWell(
-                    onTap: (){
-                      showNoticesPopUp(context,notices[i]);
+                    onTap: () {
+                      showNoticesPopUp(context, notices[i]);
                     },
                     child: Container(
                       width: double.infinity,
@@ -51,13 +58,13 @@ class _NoticesListViewState extends State<NoticesListView> {
                       margin: const EdgeInsets.all(8.0),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Colors.black26,
-                              blurRadius: 4,
-                              offset: Offset(2, 3),
-                            )
-                          ],
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 4,
+                            offset: Offset(2, 3),
+                          )
+                        ],
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Column(
@@ -71,7 +78,8 @@ class _NoticesListViewState extends State<NoticesListView> {
                                 notices[i].date!,
                                 style: GoogleFonts.openSans(
                                   color: Colors.grey,
-                                  fontSize: Constants().getFontSize(context, "S"),
+                                  fontSize:
+                                      Constants().getFontSize(context, "S"),
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -79,43 +87,45 @@ class _NoticesListViewState extends State<NoticesListView> {
                                 notices[i].time!,
                                 style: GoogleFonts.openSans(
                                   color: Colors.grey,
-                                  fontSize: Constants().getFontSize(context, "S"),
+                                  fontSize:
+                                      Constants().getFontSize(context, "S"),
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
                             ],
                           ),
-                          const SizedBox(height: 10),
+                          SizedBox(height: size.height/86.6),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               KText(
                                 text: notices[i].title!,
                                 style: GoogleFonts.openSans(
-                                  fontSize: 20,
+                                  fontSize: size.width/20.55,
                                   color: const Color(0xff000850),
                                   fontWeight: FontWeight.bold,
                                 ),
                               )
                             ],
                           ),
-                          const SizedBox(height: 5),
+                          SizedBox(height: size.height/173.2),
                           KText(
                             text: notices[i].description!,
                             style: GoogleFonts.openSans(
-                              fontSize: 16,
+                              fontSize: size.width/25.6875,
                               color: const Color(0xff454545),
                               fontWeight: FontWeight.w600,
                             ),
                           ),
-                          const SizedBox(height: 5),
+                          SizedBox(height: size.height/173.2),
                         ],
                       ),
                     ),
                   );
                 },
               );
-            }return Container();
+            }
+            return Container();
           },
         ),
       ),
@@ -150,7 +160,7 @@ class _NoticesListViewState extends State<NoticesListView> {
                   height: size.height * 0.07,
                   child: Padding(
                     padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -163,9 +173,7 @@ class _NoticesListViewState extends State<NoticesListView> {
                         ),
                         InkWell(
                           onTap: () {
-                            setState(() {
-
-                            });
+                            setState(() {});
                             Navigator.pop(context);
                           },
                           child: const Icon(
@@ -200,7 +208,8 @@ class _NoticesListViewState extends State<NoticesListView> {
                                   notice.date!,
                                   style: GoogleFonts.openSans(
                                     color: Colors.grey,
-                                    fontSize: Constants().getFontSize(context, "S"),
+                                    fontSize:
+                                        Constants().getFontSize(context, "S"),
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -208,7 +217,8 @@ class _NoticesListViewState extends State<NoticesListView> {
                                   notice.time!,
                                   style: GoogleFonts.openSans(
                                     color: Colors.grey,
-                                    fontSize: Constants().getFontSize(context, "S"),
+                                    fontSize:
+                                        Constants().getFontSize(context, "S"),
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
@@ -230,8 +240,8 @@ class _NoticesListViewState extends State<NoticesListView> {
                                     child: KText(
                                       text: notice.description!,
                                       style: GoogleFonts.openSans(
-                                        fontSize:
-                                        Constants().getFontSize(context, 'S'),
+                                        fontSize: Constants()
+                                            .getFontSize(context, 'S'),
                                         fontWeight: FontWeight.normal,
                                       ),
                                     ),

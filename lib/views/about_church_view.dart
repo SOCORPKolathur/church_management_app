@@ -21,9 +21,16 @@ class _AboutChurchViewState extends State<AboutChurchView> {
         title: KText(
           text: "About Church",
           style: GoogleFonts.openSans(
-            fontSize: 18,
+            color: Colors.white,
+            fontSize: Constants().getFontSize(context, "L"),
             fontWeight: FontWeight.w700,
           ),
+        ),
+        leading: InkWell(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: const Icon(Icons.arrow_back,color: Colors.white),
         ),
       ),
       body: const SafeArea(
