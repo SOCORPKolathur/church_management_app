@@ -7,7 +7,7 @@ final CollectionReference NoticeCollection = firestore.collection('Notices');
 
 class NoticeFireCrud {
 
-  static Stream<List<NoticeModel>> fetchNotice() => NoticeCollection.orderBy("timestamp",descending: false)
+  static Stream<List<NoticeModel>> fetchNotice() => NoticeCollection.orderBy("timestamp",descending: true)
       .snapshots()
       .map((snapshot) =>
       snapshot.docs.map((doc) =>

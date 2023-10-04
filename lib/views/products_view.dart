@@ -59,7 +59,7 @@ class _ProductsViewState extends State<ProductsView> {
                         if(snapshot.hasData){
                           UserModel user = snapshot.data!;
                           return Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               InkWell(
                                 onTap: () {
@@ -67,10 +67,10 @@ class _ProductsViewState extends State<ProductsView> {
                                 },
                                 child: Container(
                                   height: size.height * 0.06,
-                                  width: size.width * 0.45,
+                                  width: size.width * 0.43,
                                   decoration: BoxDecoration(
                                       color: const Color(0xffFFFCF2),
-                                      borderRadius: BorderRadius.circular(10),
+                                      borderRadius: BorderRadius.circular(7),
                                       border: Border.all(
                                           color: Constants().primaryAppColor, width: 2)),
                                   child: Row(
@@ -96,10 +96,10 @@ class _ProductsViewState extends State<ProductsView> {
                                 },
                                 child: Container(
                                   height: size.height * 0.06,
-                                  width: size.width * 0.45,
+                                  width: size.width * 0.43,
                                   decoration: BoxDecoration(
                                     color: Constants().primaryAppColor,
-                                    borderRadius: BorderRadius.circular(10),
+                                    borderRadius: BorderRadius.circular(7),
                                   ),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,

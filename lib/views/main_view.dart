@@ -152,11 +152,11 @@ class _MainViewState extends State<MainView> with SingleTickerProviderStateMixin
           ),
         ),
       ),
-      bottomNavigationBar: bottomBar(bottomNavList),
+      bottomNavigationBar: bottomBar(bottomNavList,size),
     );
   }
 
-  bottomBar(List<BottomNavItem> list) {
+  bottomBar(List<BottomNavItem> list,Size size) {
     return MotionTabBar(
       controller: _motionTabBarController,
       initialSelectedTab: "Home",
@@ -179,7 +179,7 @@ class _MainViewState extends State<MainView> with SingleTickerProviderStateMixin
       tabSize: 50,
       tabBarHeight: 55,
       textStyle: TextStyle(
-        fontSize: 12,
+        fontSize: size.width/35,
         color: Constants().primaryAppColor,//Colors.white,
         fontWeight: FontWeight.w500,
       ),

@@ -10,7 +10,7 @@ final FirebaseStorage fs = FirebaseStorage.instance;
 class EventsFireCrud {
   static Stream<List<EventsModel>> fetchEvents() =>
       EventCollection
-          .orderBy("timestamp", descending: false)
+          .orderBy("timestamp", descending: true)
           .snapshots().map((snapshot) => snapshot.docs
           .map((doc) => EventsModel.fromJson(doc.data() as Map<String,dynamic>))
           .toList());
@@ -19,7 +19,7 @@ class EventsFireCrud {
       EventCollection
           .where("timestamp", isLessThanOrEqualTo: end.millisecondsSinceEpoch)
           .where("timestamp", isGreaterThanOrEqualTo: start.millisecondsSinceEpoch)
-          .orderBy("timestamp", descending: false)
+          .orderBy("timestamp", descending: true)
           .snapshots()
           .map((snapshot) => snapshot.docs
               .map((doc) => EventsModel.fromJson(doc.data() as Map<String,dynamic>))

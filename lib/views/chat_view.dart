@@ -289,11 +289,11 @@ class ChatViewState extends State<ChatView> {
                           title: Text('Are you sure delete this message'),
                           actions: [
                             TextButton(onPressed: () {
-                              // _firestore2db.collection('${Studentclass}${Studentsec}chat')
-                              //     .doc(id)
-                              //     .delete();
+                              if(chatMap['sender']== "${user.firstName!} ${user.lastName!}"){
+                                FirebaseFirestore.instance.collection(widget.collection).doc(id).delete();
+                              }
                               Navigator.pop(context);
-                            }, child: Text('Delete'))
+                            }, child: const Text('Delete'))
                           ],
                         ));
                     print('ir');

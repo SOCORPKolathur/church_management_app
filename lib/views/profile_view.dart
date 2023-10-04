@@ -458,316 +458,378 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
                                     ),
                                   )
                                     : SingleChildScrollView(
-                                  child: Column(
-                                    children: [
-                                      SizedBox(height: size.height/86.6),
-                                      SizedBox(height: size.height/86.6),
-                                      Card(
-                                        color: Colors.white,
-                                        child: SizedBox(
-                                          width: double.infinity,
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(20.0),
-                                            child: Column(
-                                              mainAxisAlignment:
-                                              MainAxisAlignment.spaceAround,
-                                              children: [
-                                                InkWell(
-                                                  onTap: () {},
-                                                  child: Row(
-                                                    children: [
-                                                      Icon(Icons.text_fields,color: Constants().primaryAppColor,),
-                                                      SizedBox(width: size.width/41.1),
-                                                      KText(
-                                                        text: "Family ID :",
-                                                        style: TextStyle(
-                                                            fontWeight: FontWeight.w700,
-                                                            fontSize: Constants()
-                                                                .getFontSize(context, 'S')),
-                                                      ),
-                                                      SizedBox(width: size.width/82.2),
-                                                      KText(
-                                                        text: data['familyId'],
-                                                        style: TextStyle(
-                                                            color: Colors.grey,
-                                                            fontWeight: FontWeight.w500,
-                                                            fontSize: Constants()
-                                                                .getFontSize(context, 'S')),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                                SizedBox(height: size.height/86.6),
-                                                InkWell(
-                                                  onTap: () {},
-                                                  child: Row(
-                                                    children: [
-                                                      Icon(Icons.family_restroom,color: Constants().primaryAppColor,),
-                                                      SizedBox(width: size.width/41.1),
-                                                      KText(
-                                                        text: "Family Name :",
-                                                        style: TextStyle(
-                                                            fontWeight: FontWeight.w700,
-                                                            fontSize: Constants()
-                                                                .getFontSize(context, 'S')),
-                                                      ),
-                                                      SizedBox(width: size.width/82.2),
-                                                      KText(
-                                                        text: data['name'],
-                                                        style: TextStyle(
-                                                            color: Colors.grey,
-                                                            fontWeight: FontWeight.w500,
-                                                            fontSize: Constants()
-                                                                .getFontSize(context, 'S')),
-                                                      )
-                                                    ],
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(height: size.height/86.6),
-                                      Card(
-                                        color: Colors.white,
-                                        child: SizedBox(
-                                          width: double.infinity,
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(13.0),
-                                            child: Column(
-                                              mainAxisAlignment:
-                                              MainAxisAlignment.spaceAround,
-                                              children: [
-                                                InkWell(
-                                                  onTap: () {},
-                                                  child: Row(
-                                                    children: [
-                                                      Icon(Icons.person,color: Constants().primaryAppColor,),
-                                                      SizedBox(width: size.width/41.1),
-                                                      KText(
-                                                        text: "Leader Name : ",
-                                                        style: TextStyle(
-                                                            fontWeight: FontWeight.w700,
-                                                            fontSize: Constants()
-                                                                .getFontSize(context, 'S')),
-                                                      ),
-                                                      SizedBox(width: size.width/82.2),
-                                                      KText(
-                                                        text: data['leaderName'],
-                                                        style: TextStyle(
-                                                            color: Colors.grey,
-                                                            fontWeight: FontWeight.w500,
-                                                            fontSize: Constants()
-                                                                .getFontSize(context, 'S')),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                                SizedBox(height: size.height/86.6),
-                                                InkWell(
-                                                  onTap: () {},
-                                                  child: Row(
-                                                    children: [
-                                                      Icon(Icons.phone,color: Constants().primaryAppColor,),
-                                                      SizedBox(width: size.width/41.1),
-                                                      KText(
-                                                        text: "Contact Number : ",
-                                                        style: TextStyle(
-                                                            fontWeight: FontWeight.w600,
-                                                            fontSize: Constants()
-                                                                .getFontSize(
-                                                                context, 'S')),
-                                                      ),
-                                                      SizedBox(width: size.width/82.2),
-                                                      KText(
-                                                        text: data['contactNumber'],
-                                                        style: TextStyle(
-                                                          color: Colors.grey,
-                                                            fontWeight: FontWeight.w500,
-                                                            fontSize: Constants()
-                                                                .getFontSize(
-                                                                context, 'S')),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                                SizedBox(height: size.height/86.6),
-                                                InkWell(
-                                                  onTap: () {},
-                                                  child: Row(
-                                                    children: [
-                                                      Icon(Icons.alternate_email,color: Constants().primaryAppColor,),
-                                                      SizedBox(width: size.width/41.1),
-                                                      KText(
-                                                        text: "Email :",
-                                                        style: TextStyle(
-
-                                                            fontWeight: FontWeight.w700,
-                                                            fontSize: Constants()
-                                                                .getFontSize(context, 'S')),
-                                                      ),
-                                                      SizedBox(width: size.width/82.2),
-                                                      KText(
-                                                        text: data['email'],
-                                                        style: TextStyle(
-                                                            color: Colors.grey,
-                                                            fontWeight: FontWeight.w500,
-                                                            fontSize: Constants()
-                                                                .getFontSize(context, 'S')),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(height: size.height/86.6),
-                                      Card(
-                                        color: Colors.white,
-                                        child: SizedBox(
-                                          width: double.infinity,
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(13.0),
-                                            child: Column(
-                                              mainAxisAlignment:
-                                              MainAxisAlignment.spaceAround,
-                                              children: [
-                                                InkWell(
-                                                  onTap: () {},
-                                                  child: Row(
-                                                    children: [
-                                                      Icon(Icons.supervisor_account,color: Constants().primaryAppColor,),
-                                                      SizedBox(width: size.width/41.1),
-                                                      KText(
-                                                        text: "Family Member Count : ",
-                                                        style: TextStyle(
-                                                            fontWeight: FontWeight.w700,
-                                                            fontSize: Constants()
-                                                                .getFontSize(context, 'S')),
-                                                      ),
-                                                      SizedBox(width: size.width/82.2),
-                                                      KText(
-                                                        text: data['quantity'].toString(),
-                                                        style: TextStyle(
-                                                            color: Colors.grey,
-                                                            fontWeight: FontWeight.w500,
-                                                            fontSize: Constants()
-                                                                .getFontSize(context, 'S')),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(height: size.height/86.6),
-                                      Card(
-                                        color: Colors.white,
-                                        child: SizedBox(
-                                          width: double.infinity,
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(13.0),
-                                            child: Column(
-                                              mainAxisAlignment:
-                                              MainAxisAlignment.spaceAround,
-                                              children: [
-                                                InkWell(
-                                                  onTap: () {},
-                                                  child: Row(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      Icon(Icons.home,color: Constants().primaryAppColor,),
-                                                      SizedBox(width: size.width/41.1),
-                                                      KText(
-                                                        text: "Address : ",
-                                                        style: TextStyle(
-                                                            fontWeight: FontWeight.w700,
-                                                            fontSize: Constants()
-                                                                .getFontSize(context, 'S')),
-                                                      ),
-                                                      SizedBox(width: size.width/82.2),
-                                                      SizedBox(
-                                                        width: size.width * 0.6,
-                                                        child: KText(
-                                                          text: data['address'].toString(),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(height: size.height/86.6),
+                                        SizedBox(height: size.height/86.6),
+                                        Card(
+                                          color: Colors.white,
+                                          child: SizedBox(
+                                            width: double.infinity,
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(20.0),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment.spaceAround,
+                                                children: [
+                                                  InkWell(
+                                                    onTap: () {},
+                                                    child: Row(
+                                                      children: [
+                                                        Icon(Icons.text_fields,color: Constants().primaryAppColor,),
+                                                        SizedBox(width: size.width/41.1),
+                                                        KText(
+                                                          text: "Family ID :",
+                                                          style: TextStyle(
+                                                              fontWeight: FontWeight.w700,
+                                                              fontSize: Constants()
+                                                                  .getFontSize(context, 'S')),
+                                                        ),
+                                                        SizedBox(width: size.width/82.2),
+                                                        KText(
+                                                          text: data['familyId'],
                                                           style: TextStyle(
                                                               color: Colors.grey,
                                                               fontWeight: FontWeight.w500,
                                                               fontSize: Constants()
                                                                   .getFontSize(context, 'S')),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: size.height/86.6),
+                                                  InkWell(
+                                                    onTap: () {},
+                                                    child: Row(
+                                                      children: [
+                                                        Icon(Icons.family_restroom,color: Constants().primaryAppColor,),
+                                                        SizedBox(width: size.width/41.1),
+                                                        KText(
+                                                          text: "Family Name :",
+                                                          style: TextStyle(
+                                                              fontWeight: FontWeight.w700,
+                                                              fontSize: Constants()
+                                                                  .getFontSize(context, 'S')),
                                                         ),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                                SizedBox(height: size.height/48.111111111),
-                                                InkWell(
-                                                  onTap: () {},
-                                                  child: Row(
-                                                    children: [
-                                                      Icon(Icons.location_city,color: Constants().primaryAppColor,),
-                                                      SizedBox(width: size.width/41.1),
-                                                      KText(
-                                                        text: "City : ",
-                                                        style: TextStyle(
-                                                            fontWeight: FontWeight.w600,
-                                                            fontSize: Constants()
-                                                                .getFontSize(
-                                                                context, 'S')),
-                                                      ),
-                                                      SizedBox(width: size.width/82.2),
-                                                      KText(
-                                                        text: data['city'],
-                                                        style: TextStyle(
-                                                            color: Colors.grey,
-                                                            fontWeight: FontWeight.w500,
-                                                            fontSize: Constants()
-                                                                .getFontSize(
-                                                                context, 'S')),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                                SizedBox(height: size.height/48.111111111),
-                                                InkWell(
-                                                  onTap: () {},
-                                                  child: Row(
-                                                    children: [
-                                                      Icon(Icons.local_post_office_outlined,color: Constants().primaryAppColor,),
-                                                      SizedBox(width: size.width/41.1),
-                                                      KText(
-                                                        text: "Pincode : ",
-                                                        style: TextStyle(
-                                                            fontWeight: FontWeight.w600,
-                                                            fontSize: Constants()
-                                                                .getFontSize(
-                                                                context, 'S')),
-                                                      ),
-                                                      SizedBox(width: size.width/82.2),
-                                                      KText(
-                                                        text: data['zone'],
-                                                        style: TextStyle(
-                                                            color: Colors.grey,
-                                                            fontWeight: FontWeight.w500,
-                                                            fontSize: Constants()
-                                                                .getFontSize(
-                                                                context, 'S')),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
+                                                        SizedBox(width: size.width/82.2),
+                                                        KText(
+                                                          text: data['name'],
+                                                          style: TextStyle(
+                                                              color: Colors.grey,
+                                                              fontWeight: FontWeight.w500,
+                                                              fontSize: Constants()
+                                                                  .getFontSize(context, 'S')),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                      SizedBox(height: size.height/86.6),
-                                    ],
+                                        SizedBox(height: size.height/86.6),
+                                        Card(
+                                          color: Colors.white,
+                                          child: SizedBox(
+                                            width: double.infinity,
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(13.0),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment.spaceAround,
+                                                children: [
+                                                  InkWell(
+                                                    onTap: () {},
+                                                    child: Row(
+                                                      children: [
+                                                        Icon(Icons.person,color: Constants().primaryAppColor,),
+                                                        SizedBox(width: size.width/41.1),
+                                                        KText(
+                                                          text: "Leader Name : ",
+                                                          style: TextStyle(
+                                                              fontWeight: FontWeight.w700,
+                                                              fontSize: Constants()
+                                                                  .getFontSize(context, 'S')),
+                                                        ),
+                                                        SizedBox(width: size.width/82.2),
+                                                        KText(
+                                                          text: data['leaderName'],
+                                                          style: TextStyle(
+                                                              color: Colors.grey,
+                                                              fontWeight: FontWeight.w500,
+                                                              fontSize: Constants()
+                                                                  .getFontSize(context, 'S')),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: size.height/86.6),
+                                                  InkWell(
+                                                    onTap: () {},
+                                                    child: Row(
+                                                      children: [
+                                                        Icon(Icons.phone,color: Constants().primaryAppColor,),
+                                                        SizedBox(width: size.width/41.1),
+                                                        KText(
+                                                          text: "Contact Number : ",
+                                                          style: TextStyle(
+                                                              fontWeight: FontWeight.w600,
+                                                              fontSize: Constants()
+                                                                  .getFontSize(
+                                                                  context, 'S')),
+                                                        ),
+                                                        SizedBox(width: size.width/82.2),
+                                                        KText(
+                                                          text: data['contactNumber'],
+                                                          style: TextStyle(
+                                                            color: Colors.grey,
+                                                              fontWeight: FontWeight.w500,
+                                                              fontSize: Constants()
+                                                                  .getFontSize(
+                                                                  context, 'S')),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: size.height/86.6),
+                                                  InkWell(
+                                                    onTap: () {},
+                                                    child: Row(
+                                                      children: [
+                                                        Icon(Icons.alternate_email,color: Constants().primaryAppColor,),
+                                                        SizedBox(width: size.width/41.1),
+                                                        KText(
+                                                          text: "Email :",
+                                                          style: TextStyle(
+
+                                                              fontWeight: FontWeight.w700,
+                                                              fontSize: Constants()
+                                                                  .getFontSize(context, 'S')),
+                                                        ),
+                                                        SizedBox(width: size.width/82.2),
+                                                        KText(
+                                                          text: data['email'],
+                                                          style: TextStyle(
+                                                              color: Colors.grey,
+                                                              fontWeight: FontWeight.w500,
+                                                              fontSize: Constants()
+                                                                  .getFontSize(context, 'S')),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(height: size.height/86.6),
+                                        Card(
+                                          color: Colors.white,
+                                          child: SizedBox(
+                                            width: double.infinity,
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(13.0),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment.spaceAround,
+                                                children: [
+                                                  InkWell(
+                                                    onTap: () {},
+                                                    child: Row(
+                                                      children: [
+                                                        Icon(Icons.supervisor_account,color: Constants().primaryAppColor,),
+                                                        SizedBox(width: size.width/41.1),
+                                                        KText(
+                                                          text: "Family Member Count : ",
+                                                          style: TextStyle(
+                                                              fontWeight: FontWeight.w700,
+                                                              fontSize: Constants()
+                                                                  .getFontSize(context, 'S')),
+                                                        ),
+                                                        SizedBox(width: size.width/82.2),
+                                                        KText(
+                                                          text: data['quantity'].toString(),
+                                                          style: TextStyle(
+                                                              color: Colors.grey,
+                                                              fontWeight: FontWeight.w500,
+                                                              fontSize: Constants()
+                                                                  .getFontSize(context, 'S')),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(height: size.height/86.6),
+                                        Card(
+                                          color: Colors.white,
+                                          child: SizedBox(
+                                            width: double.infinity,
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(13.0),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                MainAxisAlignment.spaceAround,
+                                                children: [
+                                                  InkWell(
+                                                    onTap: () {},
+                                                    child: Row(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        Icon(Icons.home,color: Constants().primaryAppColor,),
+                                                        SizedBox(width: size.width/41.1),
+                                                        KText(
+                                                          text: "Address : ",
+                                                          style: TextStyle(
+                                                              fontWeight: FontWeight.w700,
+                                                              fontSize: Constants()
+                                                                  .getFontSize(context, 'S')),
+                                                        ),
+                                                        SizedBox(width: size.width/82.2),
+                                                        SizedBox(
+                                                          width: size.width * 0.55,
+                                                          child: Text(
+                                                            data['address'].toString(),
+                                                            style: TextStyle(
+                                                                color: Colors.grey,
+                                                                fontWeight: FontWeight.w500,
+                                                                fontSize: Constants()
+                                                                    .getFontSize(context, 'S')),
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: size.height/48.111111111),
+                                                  InkWell(
+                                                    onTap: () {},
+                                                    child: Row(
+                                                      children: [
+                                                        Icon(Icons.location_city,color: Constants().primaryAppColor,),
+                                                        SizedBox(width: size.width/41.1),
+                                                        KText(
+                                                          text: "City : ",
+                                                          style: TextStyle(
+                                                              fontWeight: FontWeight.w600,
+                                                              fontSize: Constants()
+                                                                  .getFontSize(
+                                                                  context, 'S')),
+                                                        ),
+                                                        SizedBox(width: size.width/82.2),
+                                                        KText(
+                                                          text: data['city'],
+                                                          style: TextStyle(
+                                                              color: Colors.grey,
+                                                              fontWeight: FontWeight.w500,
+                                                              fontSize: Constants()
+                                                                  .getFontSize(
+                                                                  context, 'S')),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: size.height/48.111111111),
+                                                  InkWell(
+                                                    onTap: () {},
+                                                    child: Row(
+                                                      children: [
+                                                        Icon(Icons.local_post_office_outlined,color: Constants().primaryAppColor,),
+                                                        SizedBox(width: size.width/41.1),
+                                                        KText(
+                                                          text: "Pincode : ",
+                                                          style: TextStyle(
+                                                              fontWeight: FontWeight.w600,
+                                                              fontSize: Constants()
+                                                                  .getFontSize(
+                                                                  context, 'S')),
+                                                        ),
+                                                        SizedBox(width: size.width/82.2),
+                                                        KText(
+                                                          text: data['zone'],
+                                                          style: TextStyle(
+                                                              color: Colors.grey,
+                                                              fontWeight: FontWeight.w500,
+                                                              fontSize: Constants()
+                                                                  .getFontSize(
+                                                                  context, 'S')),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(height: size.height/86.6),
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                                          child: Text(
+                                              "Family Members :",
+                                            style: GoogleFonts.poppins(
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                        StreamBuilder(
+                                          stream: FirebaseFirestore.instance.collection('Members').snapshots(),
+                                          builder: (ctx, snapss){
+                                            if(snapss.hasData){
+                                              List memberData = [];
+                                              snapss.data!.docs.forEach((element) {
+                                                if(element.get("family") == data['name']){
+                                                  memberData.add(element);
+                                                }
+                                              });
+                                              return Card(
+                                                color: Colors.white,
+                                                child: SizedBox(
+                                                  width: double.infinity,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.all(13.0),
+                                                    child: SizedBox(
+                                                      height: (size.height * 0.035) * memberData.length,
+                                                      child: ListView.builder(
+                                                        itemCount: memberData.length,
+                                                        itemBuilder: (ctx, indexx){
+                                                          return Padding(
+                                                            padding: const EdgeInsets.symmetric(horizontal: 5,vertical: 4),
+                                                            child: Row(
+                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                              children: [
+                                                                Icon(memberData[indexx]['gender'] == "Male" ? Icons.male : memberData[indexx]['gender'] == "Female" ? Icons.female : Icons.person,color: Constants().primaryAppColor,),
+                                                                SizedBox(width: size.width/41.1),
+                                                                KText(
+                                                                  text: memberData[indexx]['firstName'] + " " + memberData[indexx]['lastName'],
+                                                                  style: TextStyle(
+                                                                      color: Colors.black45,
+                                                                      fontWeight: FontWeight.w500,
+                                                                      fontSize: Constants()
+                                                                          .getFontSize(context, 'S')),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          );
+                                                        },
+                                                      ),
+                                                    )
+                                                  ),
+                                                ),
+                                              );
+                                            }return Container();
+                                          },
+                                        ),
+                                        SizedBox(height: size.height/86.6),
+                                      ],
+                                    ),
                                   ),
                                 );
                               }
@@ -781,7 +843,7 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
                               if (snapshot.hasData) {
                                 var data;
                                 snapshot.data!.docs.forEach((element) {
-                                  if(element.get("phone") == user.phone){
+                                  if(element.get("lastName") == user.phone){
                                     data = element;
                                     noData = false;
                                   }
@@ -823,7 +885,7 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
                                                       ),
                                                       SizedBox(width: size.width/82.2),
                                                       KText(
-                                                        text: data['date'],
+                                                        text: data['Date'],
                                                         style: TextStyle(
                                                             color: Colors.grey,
                                                             fontWeight: FontWeight.w500,
@@ -849,7 +911,7 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
                                                       ),
                                                       SizedBox(width: size.width/82.2),
                                                       KText(
-                                                        text: data['time'],
+                                                        text: data['Time'],
                                                         style: TextStyle(
                                                             color: Colors.grey,
                                                             fontWeight: FontWeight.w500,

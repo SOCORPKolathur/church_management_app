@@ -3,12 +3,13 @@ import 'package:flutter_translate/flutter_translate.dart';
 import 'package:translator/translator.dart';
 
 class KText extends StatefulWidget {
-  const KText({super.key, required this.text,required this.style, this.maxLines, this.textAlign});
+  const KText({super.key, required this.text,required this.style, this.maxLines, this.textAlign, this.textOverflow});
 
   final String text;
   final TextStyle style;
   final int? maxLines;
   final TextAlign? textAlign;
+  final TextOverflow? textOverflow;
 
   @override
   State<KText> createState() => _KTextState();
@@ -39,8 +40,10 @@ class _KTextState extends State<KText> {
           }else if(snapshot.hasData){
             return Text(
                 snapshot.data,
+              maxLines: null,
+              overflow: widget.textOverflow,
               textAlign: TextAlign.left,
-                style: widget.style,
+              style: widget.style,
             );
           }
           return Text(

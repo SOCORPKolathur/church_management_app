@@ -109,6 +109,7 @@ class _BlogsListViewState extends State<BlogsListView> {
                                   width: size.width * 0.5,
                                   child: KText(
                                     text: blogs[i].description!,
+                                    textOverflow: TextOverflow.ellipsis,
                                     style: GoogleFonts.openSans(
                                       fontSize: Constants().getFontSize(context, 'S'),
                                       color: const Color(0xff454545),

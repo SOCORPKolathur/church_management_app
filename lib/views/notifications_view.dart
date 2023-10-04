@@ -43,6 +43,7 @@ class _NotificationsViewState extends State<NotificationsView> {
             .collection('Users')
             .doc(widget.userDocId)
             .collection("Notifications")
+            .orderBy("time",descending: true)
             .snapshots(),
         builder: (ctx, snap) {
           if (snap.hasData) {
@@ -54,13 +55,15 @@ class _NotificationsViewState extends State<NotificationsView> {
                 width: size.width * 0.7,
               ),
             ) : ListView.builder(
+              reverse: false,
               itemCount: snap.data!.docs.length,
               itemBuilder: (ctx, i) {
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: VisibilityDetector(
-                    key: const Key('my-widget-key'),
+                    key: Key('my-widget-key $i'),
                     onVisibilityChanged: (VisibilityInfo visibilityInfo){
+                      print("object $i");
                       var visiblePercentage = visibilityInfo.visibleFraction * 6;
                       //if(visiblePercentage >= 0.2){
                         if(!snap.data!.docs[i]['isViewed']) {

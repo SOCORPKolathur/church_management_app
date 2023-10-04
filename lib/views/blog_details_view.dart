@@ -86,6 +86,28 @@ class _BlogDetailsViewState extends State<BlogDetailsView> {
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                KText(
+                                  text: "Author : ",
+                                  style: GoogleFonts.openSans(
+                                    fontSize: Constants().getFontSize(context, 'S'),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                SizedBox(width: size.width * 0.01),
+                                KText(
+                                  text: blog.author!,
+                                  style: GoogleFonts.openSans(
+                                    color: Constants().primaryAppColor,
+                                    fontSize: Constants().getFontSize(context, 'M'),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
                             SizedBox(height: size.height/86.6),
                             Container(
                               width: size.width,

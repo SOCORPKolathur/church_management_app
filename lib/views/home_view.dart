@@ -115,19 +115,50 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
                 UserModel user = snaps.data!;
                 return Row(
                   children: [
-                    InkWell(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (ctx) => NotificationsView(
-                                    userDocId: widget.userDocId)));
+                    StreamBuilder(
+                      stream: FirebaseFirestore.instance
+                          .collection('Users')
+                          .doc(widget.userDocId)
+                          .collection("Notifications")
+                          .snapshots(),
+                      builder: (ctx, snapshots){
+                        if(snapshots.hasData){
+                          int count = 0;
+                          snapshots.data!.docs.forEach((element) {
+                            if(element.get("isViewed") == false){
+                              count++;
+                            }
+                          });
+                          return InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (ctx) => NotificationsView(userDocId: widget.userDocId)));
+                            },
+                            child: Badge(
+                              label: Text(count.toString()),
+                              child: const Icon(
+                                CupertinoIcons.bell_solid,
+                                size: 28,
+                                color: Colors.white,
+                              ),
+                            ),
+                          );
+                        }return InkWell(
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (ctx) => NotificationsView(userDocId: widget.userDocId)));
+                          },
+                          child: const Icon(
+                            CupertinoIcons.bell_solid,
+                            size: 28,
+                            color: Colors.white,
+                          ),
+                        );
                       },
-                      child: const Icon(
-                        CupertinoIcons.bell_solid,
-                        size: 28,
-                        color: Colors.white,
-                      ),
                     ),
                     SizedBox(width: size.width/41.1),
                     PopupMenuButton(
@@ -294,22 +325,10 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
                           child: KText(
                             text: greeting(),
                             style: GoogleFonts.amaranth(
-                              color: Colors.white,
+                              color: Colors.black,
                               fontSize: Constants().getFontSize(context, "L"),
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w500,
                               textBaseline: TextBaseline.alphabetic,
-                              shadows: [
-                                Shadow(
-                                  color: Constants().primaryAppColor,
-                                  blurRadius: 2,
-                                  offset: const Offset(-2, -2),
-                                ),
-                                Shadow(
-                                  color: Colors.grey,
-                                  blurRadius: 2,
-                                  offset: const Offset(-2, 3),
-                                )
-                              ]
                             ),
                           ),
                         ),
@@ -405,7 +424,7 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
                     text: "Notices by Church",
                     style: GoogleFonts.openSans(
                       fontSize: Constants().getFontSize(context, 'M'),
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                   Expanded(child: Container()),
@@ -450,10 +469,8 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
+                                        crossAxisAlignment:CrossAxisAlignment.start,
+                                        mainAxisAlignment:MainAxisAlignment.spaceEvenly,
                                         children: [
                                           Row(
                                             mainAxisAlignment:
@@ -484,7 +501,7 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
                                             text: notices[i].title!,
                                             style: GoogleFonts.openSans(
                                               fontSize: Constants()
-                                                  .getFontSize(context, 'M'),
+                                                  .getFontSize(context, 'SM'),
                                               color: Constants().primaryAppColor,
                                               fontWeight: FontWeight.bold,
                                             ),
@@ -496,15 +513,13 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
                                               child: KText(
                                                 text: notices[i].description!,
                                                 style: GoogleFonts.openSans(
-                                                  fontSize: Constants()
-                                                      .getFontSize(context, 'SM'),
+                                                  fontSize: Constants().getFontSize(context, 'S'),
                                                   color: const Color(0xff454545),
                                                   fontWeight: FontWeight.w600,
                                                 ),
                                               ),
                                             ),
                                           ),
-                                          SizedBox(height: size.height/173.2)
                                         ],
                                       ),
                                     ),
@@ -525,7 +540,7 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
                     text: "Events",
                     style: GoogleFonts.openSans(
                       fontSize: Constants().getFontSize(context, 'M'),
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                   Expanded(child: Container()),
@@ -560,14 +575,12 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
                             return Padding(
                               padding: const EdgeInsets.only(right: 10),
                               child: VisibilityDetector(
-                                key: const Key('my-widget-key'),
+                                key: Key('my-widget-key $j'),
                                 onVisibilityChanged:
                                     (VisibilityInfo visibilityInfo) {
                                   var visiblePercentage =
                                       visibilityInfo.visibleFraction;
-                                  if (visiblePercentage == 1.0) {
                                     updateEventViewCount(events[j], widget.phone);
-                                  }
                                 },
                                 child: SizedBox(
                                   width: size.width * 0.9,
@@ -708,15 +721,17 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
                                                               color: Constants()
                                                                   .primaryAppColor),
                                                           SizedBox(width: size.width/82.2),
-                                                          KText(
-                                                            text: events[j].description!,
-                                                            style: GoogleFonts.openSans(
-                                                              fontSize: Constants()
-                                                                  .getFontSize(
-                                                                      context, 'S'),
-                                                              color:
-                                                                  const Color(0xff454545),
-                                                              fontWeight: FontWeight.w600,
+                                                          SizedBox(
+                                                            width: size.width * 0.3,
+                                                            child: KText(
+                                                              text: events[j].description!,
+                                                              textOverflow: TextOverflow.ellipsis,
+                                                              style: GoogleFonts.openSans(
+                                                                fontSize: Constants().getFontSize(context, 'S'),
+                                                                color:
+                                                                    const Color(0xff454545),
+                                                                fontWeight: FontWeight.w600,
+                                                              ),
                                                             ),
                                                           ),
                                                         ],
@@ -747,7 +762,7 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
                     text: "Blogs",
                     style: GoogleFonts.openSans(
                       fontSize: Constants().getFontSize(context, 'M'),
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                   Expanded(child: Container()),

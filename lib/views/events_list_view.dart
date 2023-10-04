@@ -197,13 +197,17 @@ class _EventsListViewState extends State<EventsListView> {
                                         Icon(Icons.message_outlined,
                                             color: Constants().primaryAppColor),
                                         SizedBox(width: size.width/82.2),
-                                        KText(
-                                          text: events[j].description!,
-                                          style: GoogleFonts.openSans(
-                                            fontSize: Constants()
-                                                .getFontSize(context, 'S'),
-                                            color: const Color(0xff454545),
-                                            fontWeight: FontWeight.w600,
+                                        SizedBox(
+                                          width: size.width * 0.3,
+                                          child: KText(
+                                            text: events[j].description!,
+                                            textOverflow: TextOverflow.ellipsis,
+                                            style: GoogleFonts.openSans(
+                                              fontSize: Constants()
+                                                  .getFontSize(context, 'S'),
+                                              color: const Color(0xff454545),
+                                              fontWeight: FontWeight.w600,
+                                            ),
                                           ),
                                         ),
                                       ],
