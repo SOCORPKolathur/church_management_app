@@ -22,9 +22,11 @@ class ConnectView extends StatefulWidget {
 }
 
 class _ConnectViewState extends State<ConnectView> {
+  
+  List<CheckMemberModel> clansWithMembersList = [];
 
-  navigateToChatPage(String collection,String title){
-      Navigator.push(context, MaterialPageRoute(builder: (ctx)=> ChatView(title: title,userDocId: widget.userDocId,uid: widget.uid,collection:collection)));
+  navigateToChatPage(String collection,String title,bool isClan,String clanId){
+      Navigator.push(context, MaterialPageRoute(builder: (ctx)=> ChatView(title: title,userDocId: widget.userDocId,uid: widget.uid,collection:collection,isClan: isClan,clanId: clanId)));
   }
 
   UserModel currentUser = UserModel();
@@ -32,6 +34,46 @@ class _ConnectViewState extends State<ConnectView> {
   setCurrentUser(UserModel user){
     currentUser = user;
   }
+  
+  addClansWithMembers() async {
+    clansWithMembersList.clear();
+    var clanDocument = await FirebaseFirestore.instance.collection('Clans').get();
+    clanDocument.docs.forEach((element) async {
+      var clanMemberDocument = await FirebaseFirestore.instance.collection('Clans').doc(element.id).collection('ClansMembers').get();
+      for (var member in clanMemberDocument.docs) {
+        clansWithMembersList.add(
+          CheckMemberModel(
+              name: element.get("clanName"),
+              members: member
+          )
+        );
+      }
+    });
+    await Future.delayed(const Duration(milliseconds: 800));
+    return clansWithMembersList;
+  }
+
+  bool checkMemberAccess(String clanName){
+    bool isHaveAccess = false;
+    for (var element in clansWithMembersList) {
+      if(element.name.toLowerCase() == clanName.toLowerCase() && element.members.get("phone") == currentUser.phone){
+        isHaveAccess = true;
+      }
+    }
+    return isHaveAccess;
+  }
+
+  Future<bool> checkAllowed(snap,int i) async {
+    bool isTrue = false;
+    var clanDocument = await FirebaseFirestore.instance.collection('Clans').doc(snap.data!.docs[i].id).collection('ClansMembers').get();
+    for (var element in clanDocument.docs) {
+      if(element['phone'] == currentUser.phone){
+        isTrue = true;
+      }
+    }
+    return isTrue;
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -49,301 +91,386 @@ class _ConnectViewState extends State<ConnectView> {
           ),
         ),
       ),
-      body: StreamBuilder(
-        stream: UserFireCrud.fetchUsersWithId(widget.uid),
-        builder: (ctx, snaps){
-          if(snaps.hasData){
-            UserModel user = snaps.data!;
-            setCurrentUser(user);
-            return SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(1.0),
-                child: Column(
-                  children: [
-                    StreamBuilder(
-                      stream: FirebaseFirestore.instance
-                          .collection("ChurchChat")
-                          .orderBy("time")
-                          .snapshots(),
-                      builder: (ctx,snap1){
-                        if(snap1.hasData){
-                          return InkWell(
-                            onTap: (){
-                              navigateToChatPage('ChurchChat','Church');
-                            },
-                            child: ListTile(
-                              style: ListTileStyle.list,
-                              leading: CircleAvatar(
-                                radius: 25, child: Icon(Icons.church,size: size.width/11, color: Colors.white),
-                                backgroundColor: Constants().primaryAppColor,
-                              ),
-                              title: const Text(
-                                "Church",
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              subtitle: Text(
-                                snap1.data!.docs.isEmpty ? "" : snap1.data!.docs.last['message'],
-                                style: const TextStyle(
-                                  color: Colors.grey,
-                                ),
-                              ),
-                              trailing: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  SizedBox(height: size.height * 0.01),
-                                  Text(
-                                    snap1.data!.docs.isEmpty ? "" : snap1.data!.docs.last['submittime'],
-                                    style: const TextStyle(
-                                      color: Colors.grey,
+      body: FutureBuilder(
+        future: addClansWithMembers(),
+        builder: (ctx,out){
+          if(out.hasData){
+            return StreamBuilder(
+              stream: UserFireCrud.fetchUsersWithId(widget.uid),
+              builder: (ctx, snaps){
+                if(snaps.hasData){
+                  UserModel user = snaps.data!;
+                  setCurrentUser(user);
+                  return SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(1.0),
+                      child: Column(
+                        children: [
+                          StreamBuilder(
+                            stream: FirebaseFirestore.instance
+                                .collection("ChurchChat")
+                                .orderBy("time")
+                                .snapshots(),
+                            builder: (ctx,snap1){
+                              if(snap1.hasData){
+                                return InkWell(
+                                  onTap: (){
+                                    navigateToChatPage('ChurchChat','Church',false,"");
+                                  },
+                                  child: ListTile(
+                                    style: ListTileStyle.list,
+                                    leading: CircleAvatar(
+                                      radius: 25, child: Icon(Icons.church,size: size.width/11, color: Colors.white),
+                                      backgroundColor: Constants().primaryAppColor,
                                     ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          );
-                        }return Container();
-                      },
+                                    title: const Text(
+                                      "Church",
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    subtitle: Text(
+                                      snap1.data!.docs.isEmpty ? "" : snap1.data!.docs.last['message'],
+                                      style: const TextStyle(
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                    trailing: Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        SizedBox(height: size.height * 0.01),
+                                        Text(
+                                          snap1.data!.docs.isEmpty ? "" : snap1.data!.docs.last['submittime'],
+                                          style: const TextStyle(
+                                            color: Colors.grey,
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              }return Container();
+                            },
+                          ),
+                          StreamBuilder(
+                            stream: FirebaseFirestore.instance
+                                .collection("MembersChat")
+                                .orderBy("time")
+                                .snapshots(),
+                            builder: (ctx,snap1){
+                              if(snap1.hasData){
+                                return InkWell(
+                                  onTap: () async {
+                                    bool isTrue = false;
+                                    var memberDocument = await FirebaseFirestore.instance.collection('Members').get();
+                                    for (var element in memberDocument.docs) {
+                                      if(element['phone'] == currentUser.phone){
+                                        isTrue = true;
+                                      }
+                                    }
+                                    if(isTrue){
+                                      navigateToChatPage('MembersChat','Members',false,"");
+                                    }else{
+                                      showInvalidAccessPopUp(context,"You are not a member");
+                                    }
+                                  },
+                                  child: ListTile(
+                                    style: ListTileStyle.list,
+                                    leading: CircleAvatar(
+                                      radius: 25, child: Icon(Icons.groups,size: size.width/11, color: Colors.white),
+                                      backgroundColor: Constants().primaryAppColor,
+                                    ),
+                                    title: const Text(
+                                      "Members",
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    subtitle: Text(
+                                      snap1.data!.docs.isEmpty ? "" :snap1.data!.docs.last['message'],
+                                      style: const TextStyle(
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                    trailing: Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        SizedBox(height: size.height * 0.01),
+                                        Text(
+                                          snap1.data!.docs.isEmpty ? "" :snap1.data!.docs.last['submittime'],
+                                          style: const TextStyle(
+                                            color: Colors.grey,
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              }return Container();
+                            },
+                          ),
+                          StreamBuilder(
+                            stream: FirebaseFirestore.instance
+                                .collection("BloodRequirementChat")
+                                .orderBy("time")
+                                .snapshots(),
+                            builder: (ctx,snap1){
+                              if(snap1.hasData){
+                                return InkWell(
+                                  onTap: (){
+                                    navigateToChatPage('BloodRequirementChat','Blood Requirement',false,"");
+                                  },
+                                  child: ListTile(
+                                    style: ListTileStyle.list,
+                                    leading: CircleAvatar(
+                                      radius: 25, child: Icon(Icons.bloodtype,size: size.width/11, color: Colors.white),
+                                      backgroundColor: Constants().primaryAppColor,
+                                    ),
+                                    title: const Text(
+                                      "Blood Requirement",
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    subtitle: Text(
+                                      snap1.data!.docs.last['message'],
+                                      style: const TextStyle(
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                    trailing: Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        SizedBox(height: size.height * 0.01),
+                                        Text(
+                                          snap1.data!.docs.last['submittime'],
+                                          style: const TextStyle(
+                                            color: Colors.grey,
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              }return Container();
+                            },
+                          ),
+                          StreamBuilder(
+                            stream: FirebaseFirestore.instance
+                                .collection("ChorusChat")
+                                .orderBy("time")
+                                .snapshots(),
+                            builder: (ctx,snap1){
+                              if(snap1.hasData){
+                                return InkWell(
+                                  onTap: () async {
+                                    bool isTrue = false;
+                                    var clanDocument = await FirebaseFirestore.instance.collection('Chorus').get();
+                                    for (var element in clanDocument.docs) {
+                                      if(element['phone'] == currentUser.phone){
+                                        isTrue = true;
+                                      }
+                                    }
+                                    if(isTrue){
+                                      navigateToChatPage('ChorusChat','Choir',false,"");
+                                    }else{
+                                      showInvalidAccessPopUp(context,"You are not a Quire member");
+                                    }
+                                  },
+                                  child: ListTile(
+                                    style: ListTileStyle.list,
+                                    leading: CircleAvatar(
+                                      radius: 25,
+                                      backgroundColor: Constants().primaryAppColor, child: Icon(Icons.music_video_outlined,size: size.width/11, color: Colors.white),
+                                    ),
+                                    title: const Text(
+                                      "Choir",
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    subtitle: Text(
+                                      snap1.data!.docs.isEmpty ? "" : snap1.data!.docs.last['message'],
+                                      style: const TextStyle(
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                    trailing: Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        SizedBox(height: size.height * 0.01),
+                                        Text(
+                                          snap1.data!.docs.isEmpty ? "" : snap1.data!.docs.last['submittime'],
+                                          style: const TextStyle(
+                                            color: Colors.grey,
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              }return Container();
+                            },
+                          ),
+                          StreamBuilder(
+                            stream: FirebaseFirestore.instance
+                                .collection("CommitteeMembersChat")
+                                .orderBy("time")
+                                .snapshots(),
+                            builder: (ctx,snap1){
+                              if(snap1.hasData){
+                                return InkWell(
+                                  onTap: () async {
+                                    bool isTrue = false;
+                                    var clanDocument = await FirebaseFirestore.instance.collection('Committee').get();
+                                    for (var element in clanDocument.docs) {
+                                      if(element['phone'] == currentUser.phone){
+                                        isTrue = true;
+                                      }
+                                    }
+                                    if(isTrue){
+                                      navigateToChatPage('CommitteeMembersChat','Committee Members',false,"");
+                                    }else{
+                                      showInvalidAccessPopUp(context,"You are not a Committee member");
+                                    }
+                                  },
+                                  child: ListTile(
+                                    style: ListTileStyle.list,
+                                    leading: CircleAvatar(
+                                      radius: 25,
+                                      backgroundColor: Constants().primaryAppColor, child: Icon(Icons.groups,size: size.width/11, color: Colors.white),
+                                    ),
+                                    title: const Text(
+                                      "Committee Members",
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    subtitle: Text(
+                                      snap1.data!.docs.isEmpty ? "" : snap1.data!.docs.last['message'],
+                                      style: const TextStyle(
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                    trailing: Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        SizedBox(height: size.height * 0.01),
+                                        Text(
+                                          snap1.data!.docs.isEmpty ? "" : snap1.data!.docs.last['submittime'],
+                                          style: const TextStyle(
+                                            color: Colors.grey,
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              }return Container();
+                            },
+                          ),
+                          StreamBuilder(
+                            stream: FirebaseFirestore.instance
+                                .collection("ClansChat")
+                                .snapshots(),
+                            builder: (ctx,snap){
+                              if(snap.hasData){
+                                return SizedBox(
+                                  height: snap.data!.docs.length * 70,
+                                  width: size.width,
+                                  child: ListView.builder(
+                                    itemCount: snap.data!.docs.length,
+                                    itemBuilder: (ctx, i) {
+                                      return Visibility(
+                                        visible: checkMemberAccess(snap.data!.docs[i]['name']),
+                                        child: InkWell(
+                                          onTap: () async {
+                                            bool isTrue = await checkAllowed(snap,i);
+                                            if(isTrue){
+                                              navigateToChatPage(snap.data!.docs[i]['name'],snap.data!.docs[i]['name'],true,snap.data!.docs[i].id);
+                                            }else{
+                                              showInvalidAccessPopUp(context,"You are not a Clan member");
+                                            }
+                                          },
+                                          child: StreamBuilder(
+                                            stream: FirebaseFirestore.instance
+                                                .collection("ClansChat").doc(snap.data!.docs[i].id).collection("Chat")
+                                                .orderBy("time")
+                                                .snapshots(),
+                                            builder: (ctx,snap1){
+                                              if(snap1.hasData){
+                                                return ListTile(
+                                                  style: ListTileStyle.list,
+                                                  leading: CircleAvatar(
+                                                    radius: 25,
+                                                    backgroundColor: Constants().primaryAppColor, child: Icon(Icons.groups,size: size.width/11, color: Colors.white),
+                                                  ),
+                                                  title: Text(
+                                                    snap.data!.docs[i]['name'],
+                                                    overflow: TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Colors.black,
+                                                    ),
+                                                  ),
+                                                  subtitle: Text(
+                                                    snap1.data!.docs.isEmpty ? "" : snap1.data!.docs.last['message'],
+                                                    style: const TextStyle(
+                                                      color: Colors.grey,
+                                                    ),
+                                                  ),
+                                                  trailing: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                    children: [
+                                                      SizedBox(height: size.height * 0.01),
+                                                      Text(
+                                                        snap1.data!.docs.isEmpty ? "" : snap1.data!.docs.last['submittime'],
+                                                        style: const TextStyle(
+                                                          color: Colors.grey,
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                );
+                                              }return Container();
+                                            },
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                );
+                              }return Container();
+                            },
+                          ),
+                        ],
+                      ),
                     ),
-                    StreamBuilder(
-                      stream: FirebaseFirestore.instance
-                          .collection("MembersChat")
-                          .orderBy("time")
-                          .snapshots(),
-                      builder: (ctx,snap1){
-                        if(snap1.hasData){
-                          return InkWell(
-                            onTap: () async {
-                              bool isTrue = false;
-                              var memberDocument = await FirebaseFirestore.instance.collection('Members').get();
-                              memberDocument.docs.forEach((element) {
-                                if(element['phone'] == currentUser.phone){
-                                  isTrue = true;
-                                }
-                              });
-                              if(isTrue){
-                                navigateToChatPage('MembersChat','Members');
-                              }else{
-                                showInvalidAccessPopUp(context,"You are not a member");
-                              }
-                            },
-                            child: ListTile(
-                              style: ListTileStyle.list,
-                              leading: CircleAvatar(
-                                radius: 25, child: Icon(Icons.groups,size: size.width/11, color: Colors.white),
-                                backgroundColor: Constants().primaryAppColor,
-                              ),
-                              title: const Text(
-                                "Members",
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              subtitle: Text(
-                                snap1.data!.docs.isEmpty ? "" :snap1.data!.docs.last['message'],
-                                style: const TextStyle(
-                                  color: Colors.grey,
-                                ),
-                              ),
-                              trailing: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  SizedBox(height: size.height * 0.01),
-                                  Text(
-                                    snap1.data!.docs.isEmpty ? "" :snap1.data!.docs.last['submittime'],
-                                    style: const TextStyle(
-                                      color: Colors.grey,
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          );
-                        }return Container();
-                      },
-                    ),
-                    StreamBuilder(
-                      stream: FirebaseFirestore.instance
-                          .collection("BloodRequirementChat")
-                          .orderBy("time")
-                          .snapshots(),
-                      builder: (ctx,snap1){
-                        if(snap1.hasData){
-                          return InkWell(
-                            onTap: (){
-                              navigateToChatPage('BloodRequirementChat','Blood Requirement');
-                            },
-                            child: ListTile(
-                              style: ListTileStyle.list,
-                              leading: CircleAvatar(
-                                radius: 25, child: Icon(Icons.bloodtype,size: size.width/11, color: Colors.white),
-                                backgroundColor: Constants().primaryAppColor,
-                              ),
-                              title: const Text(
-                                "Blood Requirement",
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              subtitle: Text(
-                                snap1.data!.docs.last['message'],
-                                style: const TextStyle(
-                                  color: Colors.grey,
-                                ),
-                              ),
-                              trailing: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  SizedBox(height: size.height * 0.01),
-                                  Text(
-                                    snap1.data!.docs.last['submittime'],
-                                    style: const TextStyle(
-                                      color: Colors.grey,
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          );
-                        }return Container();
-                      },
-                    ),
-                    StreamBuilder(
-                      stream: FirebaseFirestore.instance
-                          .collection("ClansChat")
-                          .orderBy("time")
-                          .snapshots(),
-                      builder: (ctx,snap1){
-                        if(snap1.hasData){
-                          return InkWell(
-                            onTap: () async {
-                              bool isTrue = false;
-                              var clanDocument = await FirebaseFirestore.instance.collection('Clans').get();
-                              clanDocument.docs.forEach((element) {
-                                if(element['phone'] == currentUser.phone){
-                                  isTrue = true;
-                                }
-                              });
-                              if(isTrue){
-                                navigateToChatPage('ClansChat','Clans');
-                              }else{
-                                showInvalidAccessPopUp(context,"You are not a clan member");
-                              }
-                            },
-                            child: ListTile(
-                              style: ListTileStyle.list,
-                              leading: CircleAvatar(
-                                radius: 25,
-                                backgroundColor: Constants().primaryAppColor, child: Icon(Icons.bookmark_add,size: size.width/11, color: Colors.white),
-                              ),
-                              title: const Text(
-                                "Clans",
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              subtitle: Text(
-                                snap1.data!.docs.isEmpty ? "" : snap1.data!.docs.last['message'],
-                                style: const TextStyle(
-                                  color: Colors.grey,
-                                ),
-                              ),
-                              trailing: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  SizedBox(height: size.height * 0.01),
-                                  Text(
-                                    snap1.data!.docs.isEmpty ? "" : snap1.data!.docs.last['submittime'],
-                                    style: const TextStyle(
-                                      color: Colors.grey,
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          );
-                        }return Container();
-                      },
-                    ),
-                    StreamBuilder(
-                      stream: FirebaseFirestore.instance
-                          .collection("ChorusChat")
-                          .orderBy("time")
-                          .snapshots(),
-                      builder: (ctx,snap1){
-                        if(snap1.hasData){
-                          return InkWell(
-                            onTap: () async {
-                              bool isTrue = false;
-                              var clanDocument = await FirebaseFirestore.instance.collection('Chorus').get();
-                              clanDocument.docs.forEach((element) {
-                                if(element['phone'] == currentUser.phone){
-                                  isTrue = true;
-                                }
-                              });
-                              if(isTrue){
-                                navigateToChatPage('ChorusChat','Quire');
-                              }else{
-                                showInvalidAccessPopUp(context,"You are not a Quire member");
-                              }
-                            },
-                            child: ListTile(
-                              style: ListTileStyle.list,
-                              leading: CircleAvatar(
-                                radius: 25,
-                                backgroundColor: Constants().primaryAppColor, child: Icon(Icons.music_video_outlined,size: size.width/11, color: Colors.white),
-                              ),
-                              title: const Text(
-                                "Quire",
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              subtitle: Text(
-                                snap1.data!.docs.isEmpty ? "" : snap1.data!.docs.last['message'],
-                                style: const TextStyle(
-                                  color: Colors.grey,
-                                ),
-                              ),
-                              trailing: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  SizedBox(height: size.height * 0.01),
-                                  Text(
-                                    snap1.data!.docs.isEmpty ? "" : snap1.data!.docs.last['submittime'],
-                                    style: const TextStyle(
-                                      color: Colors.grey,
-                                    ),
-                                  )
-                                ],
-                              ),
-                            ),
-                          );
-                        }return Container();
-                      },
-                    )
-                  ],
-                ),
-              ),
+                  );
+                }return Container();
+              },
             );
-          }return Container();
+          }return Container(
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
         },
       )
     );
   }
 
-  showInvalidAccessPopUp(context, String message) async {;
+  showInvalidAccessPopUp(context, String message) async {
     Size size = MediaQuery.of(context).size;
     await showDialog(
       context: context,
@@ -426,4 +553,11 @@ class _ConnectViewState extends State<ConnectView> {
   }
 
 
+}
+
+class CheckMemberModel{
+  CheckMemberModel({required this.name,required this.members});
+
+  String name;
+  QueryDocumentSnapshot<Map<String, dynamic>> members;
 }

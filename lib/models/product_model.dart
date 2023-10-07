@@ -32,7 +32,7 @@ class ProductModel {
     categories = json['categories'];
     tags = json['tags'];
     sale = json['sale'];
-    price = json['price'];
+    price = double.parse(json['price'].toString());
   }
 
   Map<String, dynamic> toJson() {

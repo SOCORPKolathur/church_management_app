@@ -11,6 +11,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:motion_tab_bar_v2/motion-tab-bar.dart';
 import 'package:motion_tab_bar_v2/motion-tab-controller.dart';
 import '../Widgets/kText.dart';
@@ -24,7 +25,6 @@ import 'community_view.dart';
 import 'connect_view.dart';
 import 'headers/community_header.dart';
 import 'headers/event_header.dart';
-import 'headers/home_header.dart';
 import 'headers/product_header.dart';
 import 'home_view.dart';
 
@@ -52,6 +52,8 @@ class _MainViewState extends State<MainView> with SingleTickerProviderStateMixin
     );
     super.initState();
   }
+
+  bool isTodaybibleVerseShowed = false;
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +90,10 @@ class _MainViewState extends State<MainView> with SingleTickerProviderStateMixin
         page: ProfileView(uid: widget.uid, userDocId: widget.userDocId),
       )
     ];
-    //showTodayBibleVerse(context);
+    if(!isTodaybibleVerseShowed){
+      showTodayBibleVerse(context);
+      isTodaybibleVerseShowed = true;
+    }
     return Scaffold(
       backgroundColor: Constants().primaryAppColor,
       body: SafeArea(
@@ -202,48 +207,91 @@ class _MainViewState extends State<MainView> with SingleTickerProviderStateMixin
     var document = await  FirebaseFirestore.instance.collection('ChurchDetails').get();
     var bible = await  FirebaseFirestore.instance.collection('BibleVerses').get();
     var randnum = Random().nextInt(bible.docs.length);
-    print(document.docs.first['verseForToday']['date'] == DateFormat('dd-MM-yyyy').format(DateTime.now()) ? document.docs.first['verseForToday']['text'] : bible.docs[randnum]['text']);
     await showDialog(
       context: context,
       builder: (ctx) {
         return StatefulBuilder(
-          builder: (context, setState) {
-            return Dialog(
-              backgroundColor: Colors.transparent,
-              child: Container(
-                height: size.height * 0.4,
-                width: size.width,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Colors.black26,
-                      offset: Offset(1, 2),
-                      blurRadius: 3,
-                    ),
-                  ],
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Column(
-                  children: [
-                    Container(
-                      height: size.height * 0.07,
-                      width: size.width * 0.3,
-                      decoration: BoxDecoration(
-                        color: Constants().primaryAppColor,
-                        borderRadius: BorderRadius.circular(10),
+            builder: (context, setState) {
+              return Dialog(
+                backgroundColor: Colors.transparent,
+                child: Container(
+                  height: size.height * 0.43,
+                  width: size.width,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: const [
+                      BoxShadow(
+                        color: Colors.black26,
+                        offset: Offset(1, 2),
+                        blurRadius: 3,
                       ),
-                      child: Center(
-                        child: Text(
-                          "OK"
+                    ],
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: size.width/36),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: size.width / 36),
+                      Text(
+                        'Bible Verse for Today',
+                        style: TextStyle(
+                          color: Constants().primaryAppColor,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
-                    )
-                  ],
+                      SizedBox(height: size.width / 36),
+                      SizedBox(
+                        height: size.height / 7.5625,
+                        width: double.infinity,
+                        child: Lottie.asset("assets/bible.json"),
+                        // child: Image.asset(
+                        //     "assets/jesus.png"
+                        // ),
+                      ),
+                      SizedBox(height: size.width / 36),
+                      SizedBox(
+                        height: size.height / 6.3,
+                        width: double.infinity,
+                        child: Text(
+                          document.docs.first['verseForToday']['date'] == DateFormat('dd-MM-yyyy').format(DateTime.now()) ? document.docs.first['verseForToday']['text'] : bible.docs[randnum]['text'],
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                      Expanded(child: Container()),
+                      Center(
+                        child: InkWell(
+                          onTap: (){
+                            Navigator.pop(context);
+                          },
+                          child: Container(
+                            height: size.height * 0.05,
+                            width: size.width * 0.3,
+                            decoration: BoxDecoration(
+                              color: Constants().primaryAppColor,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Center(
+                              child: Text(
+                                "OK",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: size.width / 36),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          }
+              );
+            }
         );
       },
     );

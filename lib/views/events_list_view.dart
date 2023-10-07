@@ -23,25 +23,25 @@ class _EventsListViewState extends State<EventsListView> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Constants().primaryAppColor,
-        centerTitle: true,
-        title: KText(
-          text: "Events",
-          style: GoogleFonts.openSans(
-            color: Colors.white,
-            fontSize: Constants().getFontSize(context, 'L'),
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        leading: InkWell(
-          onTap: () {
-            Navigator.pop(context);
-          },
-          child: const Icon(Icons.arrow_back,color: Colors.white),
-        ),
-      ),
+      backgroundColor: Colors.transparent,
+      // appBar: AppBar(
+      //   backgroundColor: Constants().primaryAppColor,
+      //   centerTitle: true,
+      //   title: KText(
+      //     text: "Events",
+      //     style: GoogleFonts.openSans(
+      //       color: Colors.white,
+      //       fontSize: Constants().getFontSize(context, 'L'),
+      //       fontWeight: FontWeight.w700,
+      //     ),
+      //   ),
+      //   leading: InkWell(
+      //     onTap: () {
+      //       Navigator.pop(context);
+      //     },
+      //     child: const Icon(Icons.arrow_back,color: Colors.white),
+      //   ),
+      // ),
       body: Container(
         height: size.height,
         width: size.width,
@@ -55,7 +55,7 @@ class _EventsListViewState extends State<EventsListView> {
                 itemCount: events.length,
                 itemBuilder: (ctx, j) {
                   return VisibilityDetector(
-                    key: const Key('my-widget-key'),
+                    key: Key('my-widget-key $j'),
                     onVisibilityChanged: (VisibilityInfo visibilityInfo){
                       var visiblePercentage = visibilityInfo.visibleFraction;
                       if(visiblePercentage == 1.0){

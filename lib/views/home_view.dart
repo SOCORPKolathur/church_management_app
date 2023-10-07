@@ -1,3 +1,7 @@
+import 'dart:math';
+import 'package:animated_widgets/widgets/rotation_animated.dart';
+import 'package:animated_widgets/widgets/shake_animated_widget.dart';
+import 'package:intl/intl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:church_management_client/models/event_model.dart';
@@ -13,19 +17,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:photo_view/photo_view.dart';
-import 'package:visibility_detector/visibility_detector.dart';
 import '../Widgets/kText.dart';
+import '../Widgets/slider_widget.dart';
 import '../constants.dart';
-import '../models/blog_model.dart';
 import '../models/notice_model.dart';
 import '../models/response.dart';
 import '../models/user_model.dart';
-import '../services/blog_firecrud.dart';
 import '../services/messages_firecrud.dart';
-import '../services/notice_firecrud.dart';
 import '../services/user_firecrud.dart';
 import 'about_church_view.dart';
-import 'blog_details_view.dart';
 import 'blogs_list_view.dart';
 import 'intro_view.dart';
 import 'languages_view.dart';
@@ -33,7 +33,11 @@ import 'notices_list_view.dart';
 import 'notifications_view.dart';
 
 class HomeView extends StatefulWidget {
-  const HomeView({super.key, required this.userDocId, required this.uid, required this.phone});
+  const HomeView(
+      {super.key,
+      required this.userDocId,
+      required this.uid,
+      required this.phone});
 
   final String uid;
   final String phone;
@@ -43,12 +47,17 @@ class HomeView extends StatefulWidget {
   State<HomeView> createState() => _HomeViewState();
 }
 
-class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin {
-  
+class _HomeViewState extends State<HomeView>
+    with SingleTickerProviderStateMixin {
   TextEditingController descriptionController = TextEditingController();
   User? currentUser = FirebaseAuth.instance.currentUser;
   int sliderImageIndex = 0;
   ScrollController scrollController = ScrollController();
+  ScrollController tabScrollController = ScrollController();
+  TabController? tabController;
+  bool tabIsScrollable = true;
+
+  bool isNotificationEnable = true;
 
   String greeting() {
     var hour = DateTime.now().hour;
@@ -62,6 +71,63 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
   }
 
   @override
+  void initState() {
+    tabController = TabController(length: 3, vsync: this);
+    setNotificationStop();
+    super.initState();
+  }
+
+  setNotificationStop() async {
+    await Future.delayed(const Duration(seconds: 7));
+    setState(() {
+      isNotificationEnable = false;
+    });
+  }
+
+  Future<CountsModel> setCounts() async {
+    int noticesCount = 0;
+    int eventsCount = 0;
+    int blogsCount = 0;
+
+    var noticesDocument =
+        await FirebaseFirestore.instance.collection('Notices').get();
+    var eventsDocument =
+        await FirebaseFirestore.instance.collection('Events').get();
+    var blogsDocument =
+        await FirebaseFirestore.instance.collection('Blogs').get();
+
+    noticesCount = noticesDocument.docs.length;
+    noticesDocument.docs.forEach((element) {
+      if (element.get("views").contains(widget.phone)) {
+        setState(() {
+          noticesCount--;
+        });
+      }
+    });
+    eventsCount = eventsDocument.docs.length;
+    eventsDocument.docs.forEach((element) {
+      if (element.get("views").contains(widget.phone)) {
+        setState(() {
+          eventsCount--;
+        });
+      }
+    });
+    blogsCount = blogsDocument.docs.length;
+    blogsDocument.docs.forEach((element) {
+      if (element.get("views").contains(widget.phone)) {
+        setState(() {
+          blogsCount--;
+        });
+      }
+    });
+    CountsModel counts = CountsModel(
+        blogCount: blogsCount,
+        eventCount: eventsCount,
+        noticeCount: noticesCount);
+    return counts;
+  }
+
+  @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
@@ -69,8 +135,8 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
       appBar: AppBar(
         backgroundColor: Constants().primaryAppColor,
         leading: SizedBox(
-          height: size.height/43.3,
-          width: size.width/20.55,
+          height: size.height / 43.3,
+          width: size.width / 20.55,
           child: StreamBuilder(
             stream: UserFireCrud.fetchUsersWithId(widget.uid),
             builder: (ctx, snaps) {
@@ -86,10 +152,10 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
                         fit: BoxFit.fill,
                         image: (user.imgUrl != null)
                             ? CachedNetworkImageProvider(
-                          user.imgUrl!,
-                        )
+                                user.imgUrl!,
+                              )
                             : const CachedNetworkImageProvider(
-                            "https://firebasestorage.googleapis.com/v0/b/church-management-cbf7d.appspot.com/o/dailyupdates%2Fblank-profile-picture-973460_1280.png?alt=media&token=a9cde0ad-6cac-49d3-ae62-851a174e44b4"),
+                                "https://firebasestorage.googleapis.com/v0/b/church-management-cbf7d.appspot.com/o/dailyupdates%2Fblank-profile-picture-973460_1280.png?alt=media&token=a9cde0ad-6cac-49d3-ae62-851a174e44b4"),
                       ),
                     ),
                   ),
@@ -121,11 +187,11 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
                           .doc(widget.userDocId)
                           .collection("Notifications")
                           .snapshots(),
-                      builder: (ctx, snapshots){
-                        if(snapshots.hasData){
+                      builder: (ctx, snapshots) {
+                        if (snapshots.hasData) {
                           int count = 0;
                           snapshots.data!.docs.forEach((element) {
-                            if(element.get("isViewed") == false){
+                            if (element.get("isViewed") == false) {
                               count++;
                             }
                           });
@@ -134,33 +200,56 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (ctx) => NotificationsView(userDocId: widget.userDocId)));
+                                      builder: (ctx) => NotificationsView(
+                                          userDocId: widget.userDocId)));
                             },
-                            child: Badge(
-                              label: Text(count.toString()),
-                              child: const Icon(
-                                CupertinoIcons.bell_solid,
-                                size: 28,
-                                color: Colors.white,
-                              ),
-                            ),
+                            child: count == 0
+                                ? ShakeAnimatedWidget(
+                                    enabled: isNotificationEnable,
+                                    duration: const Duration(milliseconds: 900),
+                                    shakeAngle: Rotation.deg(z: 40),
+                                    curve: Curves.linear,
+                                    child: const Icon(
+                                      CupertinoIcons.bell_solid,
+                                      size: 28,
+                                      color: Colors.white,
+                                    ))
+                                : Badge(
+                                    label: Text(count.toString()),
+                                    child: ShakeAnimatedWidget(
+                                        enabled: isNotificationEnable,
+                                        duration:
+                                            const Duration(milliseconds: 900),
+                                        shakeAngle: Rotation.deg(z: 40),
+                                        curve: Curves.linear,
+                                        child: const Icon(
+                                          CupertinoIcons.bell_solid,
+                                          size: 28,
+                                          color: Colors.white,
+                                        ))),
                           );
-                        }return InkWell(
-                          onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (ctx) => NotificationsView(userDocId: widget.userDocId)));
-                          },
-                          child: const Icon(
-                            CupertinoIcons.bell_solid,
-                            size: 28,
-                            color: Colors.white,
-                          ),
-                        );
+                        }
+                        return InkWell(
+                            onTap: () {
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (ctx) => NotificationsView(
+                                          userDocId: widget.userDocId)));
+                            },
+                            child: ShakeAnimatedWidget(
+                                enabled: isNotificationEnable,
+                                duration: const Duration(milliseconds: 900),
+                                shakeAngle: Rotation.deg(z: 40),
+                                curve: Curves.linear,
+                                child: const Icon(
+                                  CupertinoIcons.bell_solid,
+                                  size: 28,
+                                  color: Colors.white,
+                                )));
                       },
                     ),
-                    SizedBox(width: size.width/41.1),
+                    SizedBox(width: size.width / 41.1),
                     PopupMenuButton(
                       itemBuilder: (context) => [
                         PopupMenuItem(
@@ -168,62 +257,68 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
                           child: KText(
                             text: 'Languages',
                             style: TextStyle(
-                              fontSize: Constants().getFontSize(context, "S")
-                            ),
+                                fontSize:
+                                    Constants().getFontSize(context, "S")),
                           ),
                           onTap: () {},
                         ),
                         PopupMenuItem(
                           value: 'About Church',
-                          child:  KText(
+                          child: KText(
                             text: 'About Church',
                             style: TextStyle(
-                                fontSize: Constants().getFontSize(context, "S")
-                            ),
+                                fontSize:
+                                    Constants().getFontSize(context, "S")),
                           ),
                           onTap: () {},
                         ),
                         PopupMenuItem(
                           value: 'Church Pastors',
-                          child:  KText(
+                          child: KText(
                             text: 'Church Pastors',
                             style: TextStyle(
-                                fontSize: Constants().getFontSize(context, "S")
-                            ),
+                                fontSize:
+                                    Constants().getFontSize(context, "S")),
                           ),
                           onTap: () {},
                         ),
                         PopupMenuItem(
                           value: 'Social Media',
-                          child:  KText(
+                          child: KText(
                             text: 'Social Media',
                             style: TextStyle(
-                                fontSize: Constants().getFontSize(context, "S")
-                            ),
+                                fontSize:
+                                    Constants().getFontSize(context, "S")),
                           ),
                           onTap: () {},
                         ),
                         PopupMenuItem(
                           value: 'Contact Admin',
-                          child:  KText(
+                          child: KText(
                             text: 'Contact Admin',
-                            style: TextStyle(fontSize: Constants().getFontSize(context, "S")),
+                            style: TextStyle(
+                                fontSize:
+                                    Constants().getFontSize(context, "S")),
                           ),
                           onTap: () {},
                         ),
                         PopupMenuItem(
                           value: 'Edit Profile',
-                          child:  KText(
+                          child: KText(
                             text: 'Edit Profile',
-                            style: TextStyle(fontSize: Constants().getFontSize(context, "S")),
+                            style: TextStyle(
+                                fontSize:
+                                    Constants().getFontSize(context, "S")),
                           ),
                           onTap: () {},
                         ),
                         PopupMenuItem(
                           value: 'Log out',
-                          child:  KText(
+                          child: KText(
                             text: 'Log out',
-                            style: TextStyle(fontSize: Constants().getFontSize(context, "S")),
+                            style: TextStyle(
+                                fontSize:
+                                    Constants().getFontSize(context, "S")),
                           ),
                           onTap: () {},
                         )
@@ -241,21 +336,25 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
                                     builder: (ctx) => LanguagesView(
                                         phone: user.phone!,
                                         uid: user.id!,
-                                        userDocId:
-                                        widget.userDocId)));
+                                        userDocId: widget.userDocId)));
                             break;
                           case "Church Pastors":
-                            Navigator.push(context, MaterialPageRoute(builder: (ctx)=> const PastorsListView()));
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (ctx) => const PastorsListView()));
                             break;
                           case "Social Media":
-                            Navigator.push(context, MaterialPageRoute(builder: (ctx)=> const SocialMediaView()));
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (ctx) => const SocialMediaView()));
                             break;
                           case "About Church":
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (ctx) =>
-                                    const AboutChurchView()));
+                                    builder: (ctx) => const AboutChurchView()));
                             break;
                           case "Contact Admin":
                             _showContactAdminPopUp(context, user);
@@ -269,13 +368,11 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
                                 type: CoolAlertType.warning,
                                 text: "Are you sure want to Logout",
                                 onConfirmBtnTap: () async {
-                                  await FirebaseAuth.instance
-                                      .signOut();
+                                  await FirebaseAuth.instance.signOut();
                                   Navigator.pushReplacement(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (ctx) =>
-                                          const IntroView()));
+                                          builder: (ctx) => const IntroView()));
                                 },
                                 confirmBtnText: 'Log Out',
                                 cancelBtnText: 'Cancel',
@@ -292,9 +389,10 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
                           Radius.circular(20.0),
                         ),
                       ),
-                      child: const Icon(Icons.settings, size: 28,color: Colors.white),
+                      child: const Icon(Icons.settings,
+                          size: 28, color: Colors.white)
                     ),
-                    SizedBox(width: size.width/27.4),
+                    SizedBox(width: size.width / 27.4),
                   ],
                 );
               }
@@ -304,613 +402,789 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.symmetric(horizontal: size.width/34.25, vertical: size.height/173.2),
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(decelerationRate: ScrollDecelerationRate.normal),
-          controller: scrollController,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: size.height * 0.01),
-              StreamBuilder(
-                stream: UserFireCrud.fetchUsersWithId(widget.uid),
-                builder: (ctx, snaps) {
-                  if (snaps.hasData) {
-                    UserModel user = snaps.data!;
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 3),
-                          child: KText(
-                            text: greeting(),
+        padding: EdgeInsets.symmetric(
+            horizontal: size.width / 34.25, vertical: size.height / 173.2),
+        child: NotificationListener(
+          onNotification: (t) {
+            // if (t is ScrollEndNotification) {
+            //   if(tabScrollController.position.pixels == 0.0){
+            //     setState(() {
+            //       tabIsScrollable = false;
+            //     });
+            //     print(tabScrollController.position.pixels.toString() + "++");
+            //   }else{
+            //     setState(() {
+            //       tabIsScrollable = true;
+            //     });
+            //     print(tabScrollController.position.pixels.toString() + "**");
+            //   }
+            //   if(scrollController.position.pixels == 0.0){
+            //     setState(() {
+            //       tabIsScrollable = false;
+            //     });
+            //   }else{
+            //     setState(() {
+            //       tabIsScrollable = true;
+            //     });
+            //   }
+            //   print(tabScrollController.position.pixels.toString() + "**");
+            //   print(scrollController.position.pixels.toString() + "--");
+            // }
+            return true;
+          },
+          child: SingleChildScrollView(
+            physics: RangeMaintainingScrollPhysics(),
+            controller: scrollController,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: size.height * 0.01),
+                StreamBuilder(
+                  stream: UserFireCrud.fetchUsersWithId(widget.uid),
+                  builder: (ctx, snaps) {
+                    if (snaps.hasData) {
+                      UserModel user = snaps.data!;
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 3),
+                            child: KText(
+                              text: greeting(),
+                              style: GoogleFonts.amaranth(
+                                color: Colors.black,
+                                fontSize: Constants().getFontSize(context, "L"),
+                                fontWeight: FontWeight.w500,
+                                textBaseline: TextBaseline.alphabetic,
+                              ),
+                            ),
+                          ),
+                          Text(
+                            "${user.firstName!} ${user.lastName!}",
                             style: GoogleFonts.amaranth(
-                              color: Colors.black,
-                              fontSize: Constants().getFontSize(context, "L"),
-                              fontWeight: FontWeight.w500,
-                              textBaseline: TextBaseline.alphabetic,
-                            ),
-                          ),
-                        ),
-                        Text(
-                          "${user.firstName!} ${user.lastName!}",
-                          style: GoogleFonts.amaranth(
-                              color: Constants().primaryAppColor,
-                            fontSize: Constants().getFontSize(context, "XL"),
-                            fontWeight: FontWeight.w600,
-                              shadows: const [
-                                Shadow(
-                                  color: Colors.white,
-                                  blurRadius: 2,
-                                  offset: Offset(1, 1),
-                                ),
-                              ]
-                          ),
-                        ),
-                      ],
-                    );
-                  }
-                  return Container();
-                },
-              ),
-              SizedBox(height: size.height * 0.04),
-              StreamBuilder(
-                stream: FirebaseFirestore.instance.collection('SliderImages').snapshots(),
-                builder: (ctx, snapshot) {
-                  if (snapshot.hasData) {
-                    return Column(
-                      children: [
-                        SizedBox(
-                          height: size.height * 0.22,
-                          width: double.infinity,
-                          child: CarouselSlider.builder(
-                              itemCount: snapshot.data!.docs.length,
-                              options: CarouselOptions(
-                                viewportFraction: 1,
-                                autoPlay: true,
-                                autoPlayInterval: const Duration(seconds: 4),
-                                autoPlayAnimationDuration: const Duration(seconds: 3),
-                                initialPage: 0,
-                                scrollPhysics: const NeverScrollableScrollPhysics(),
-                                onPageChanged: ((index,reason){
-                                  setState(() {
-                                    sliderImageIndex = index;
-                                  });
-                                }),
-                              ),
-                              itemBuilder: ( context,int index,options) {
-                                return Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                                  child: SizedBox(
-                                      height:size.height * 0.22,
-                                      width: double.infinity,
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(10),
-                                        child: CachedNetworkImage(
-                                            width: double.infinity,
-                                            fit: BoxFit.fill,
-                                            fadeInDuration: const Duration(seconds: 1),
-                                            imageUrl: snapshot.data!.docs[index]['imgUrl']
-                                        ),
-                                      )
-                                  ),
-                                );
-                              },
-                          ),
-                        ),
-                        Center(
-                          child: DotsIndicator(
-                            dotsCount: snapshot.data!.docs.length,
-                            position: sliderImageIndex,
-                            decorator: DotsDecorator(
-                              size: const Size.square(8.0),
-                              activeSize: const Size(19.0, 8.0),
-                              activeShape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5.0),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    );
-                  }
-                  return Container();
-                },
-              ),
-              SizedBox(height: size.height/57.733333333),
-              Row(
-                children: [
-                  KText(
-                    text: "Notices by Church",
-                    style: GoogleFonts.openSans(
-                      fontSize: Constants().getFontSize(context, 'M'),
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  Expanded(child: Container()),
-                  InkWell(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (ctx) => const NoticesListView()));
-                    },
-                    child: Icon(
-                      Icons.chevron_right_sharp,
-                      size: size.width/13.7,
-                    ),
-                  )
-                ],
-              ),
-              SizedBox(height: size.height * 0.04),
-              SizedBox(
-                height: size.height * 0.16,
-                width: size.width,
-                child: StreamBuilder(
-                  stream: NoticeFireCrud.fetchNotice(),
-                  builder: (ctx, snapshot) {
-                    if (snapshot.hasData) {
-                      List<NoticeModel> notices = snapshot.data!;
-                      return ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: notices.length >= 3 ? 3 : notices.length,
-                          itemBuilder: (context, i) {
-                            return Padding(
-                              padding: const EdgeInsets.only(right: 10),
-                              child: InkWell(
-                                onTap: () {
-                                  showNoticesPopUp(context, notices[i]);
-                                },
-                                child: SizedBox(
-                                  height: size.height * 0.07,
-                                  width: size.width * 0.9,
-                                  child: Card(
+                                color: Constants().primaryAppColor,
+                                fontSize:
+                                    Constants().getFontSize(context, "XL"),
+                                fontWeight: FontWeight.w600,
+                                shadows: const [
+                                  Shadow(
                                     color: Colors.white,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Column(
-                                        crossAxisAlignment:CrossAxisAlignment.start,
-                                        mainAxisAlignment:MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                notices[i].date!,
-                                                style: GoogleFonts.openSans(
-                                                  color: Colors.grey,
-                                                  fontSize: Constants()
-                                                      .getFontSize(context, "S"),
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                              ),
-                                              Text(
-                                                notices[i].time!,
-                                                style: GoogleFonts.openSans(
-                                                  color: Colors.grey,
-                                                  fontSize: Constants()
-                                                      .getFontSize(context, "S"),
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          SizedBox(height: size.height/86.6),
-                                          KText(
-                                            text: notices[i].title!,
-                                            style: GoogleFonts.openSans(
-                                              fontSize: Constants()
-                                                  .getFontSize(context, 'SM'),
-                                              color: Constants().primaryAppColor,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          SizedBox(height: size.height/86.6),
-                                          Expanded(
+                                    blurRadius: 2,
+                                    offset: Offset(1, 1),
+                                  ),
+                                ]),
+                          ),
+                        ],
+                      );
+                    }
+                    return Container();
+                  },
+                ),
+                SizedBox(height: size.height * 0.04),
+                SizedBox(
+                  child: BannerSlider(),
+                ),
+                // StreamBuilder(
+                //   stream: FirebaseFirestore.instance.collection('SliderImages').snapshots(),
+                //   builder: (ctx, snapshot) {
+                //     if (snapshot.hasData) {
+                //       return Column(
+                //         children: [
+                //           SizedBox(
+                //             height: size.height * 0.22,
+                //             width: double.infinity,
+                //             child: CarouselSlider.builder(
+                //                 itemCount: snapshot.data!.docs.length,
+                //                 options: CarouselOptions(
+                //                   viewportFraction: 1,
+                //                   autoPlay: true,
+                //                   autoPlayInterval: const Duration(seconds: 4),
+                //                   autoPlayAnimationDuration: const Duration(seconds: 3),
+                //                   initialPage: 0,
+                //                   scrollPhysics: const NeverScrollableScrollPhysics(),
+                //                   onPageChanged: ((index,reason){
+                //                     setState(() {
+                //                       sliderImageIndex = index;
+                //                     });
+                //                   }),
+                //                 ),
+                //                 itemBuilder: ( context,int index,options) {
+                //                   return Padding(
+                //                     padding: const EdgeInsets.symmetric(horizontal: 8),
+                //                     child: SizedBox(
+                //                         height:size.height * 0.22,
+                //                         width: double.infinity,
+                //                         child: ClipRRect(
+                //                           borderRadius: BorderRadius.circular(10),
+                //                           child: CachedNetworkImage(
+                //                               width: double.infinity,
+                //                               fit: BoxFit.fill,
+                //                               fadeInDuration: const Duration(seconds: 1),
+                //                               imageUrl: snapshot.data!.docs[index]['imgUrl']
+                //                           ),
+                //                         )
+                //                     ),
+                //                   );
+                //                 },
+                //             ),
+                //           ),
+                //           Center(
+                //             child: DotsIndicator(
+                //               dotsCount: snapshot.data!.docs.length,
+                //               position: sliderImageIndex,
+                //               decorator: DotsDecorator(
+                //                 size: const Size.square(8.0),
+                //                 activeSize: const Size(19.0, 8.0),
+                //                 activeShape: RoundedRectangleBorder(
+                //                   borderRadius: BorderRadius.circular(5.0),
+                //                 ),
+                //               ),
+                //             ),
+                //           ),
+                //         ],
+                //       );
+                //     }
+                //     return Container();
+                //   },
+                // ),
+                SizedBox(height: size.height / 57.733333333),
+                FutureBuilder(
+                  future: setCounts(),
+                  builder: (ctx, snap) {
+                    if (snap.hasData) {
+                      return SizedBox(
+                        height: size.height * 0.8,
+                        width: size.width,
+                        child: Column(
+                          children: [
+                            Container(
+                              height: size.height * 0.08,
+                              color: Colors.transparent,
+                              child: TabBar(
+                                indicatorPadding: const EdgeInsets.symmetric(
+                                    horizontal: 0, vertical: 0),
+                                labelPadding: const EdgeInsets.all(0),
+                                splashBorderRadius: BorderRadius.zero,
+                                splashFactory: NoSplash.splashFactory,
+                                labelStyle: GoogleFonts.openSans(
+                                  fontSize: size.width / 20,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                                unselectedLabelStyle: GoogleFonts.openSans(
+                                  fontSize: size.width / 24,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                controller: tabController,
+                                tabs: [
+                                  Tab(
+                                    height: size.width / 17,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        const Text('Notices'),
+                                        Visibility(
+                                            visible:
+                                                snap.data!.noticeCount != 0,
                                             child: SizedBox(
-                                              width: double.infinity,
-                                              child: KText(
-                                                text: notices[i].description!,
-                                                style: GoogleFonts.openSans(
-                                                  fontSize: Constants().getFontSize(context, 'S'),
-                                                  color: const Color(0xff454545),
-                                                  fontWeight: FontWeight.w600,
-                                                ),
+                                                width: size.width * 0.01)),
+                                        Visibility(
+                                          visible: snap.data!.noticeCount != 0,
+                                          child: Badge(
+                                            backgroundColor:
+                                                Constants().primaryAppColor,
+                                            label: Text(
+                                              snap.data!.noticeCount.toString(),
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
                                               ),
                                             ),
                                           ),
-                                        ],
-                                      ),
+                                        )
+                                      ],
                                     ),
                                   ),
-                                ),
-                              ),
-                            );
-                          });
-                    }
-                    return Container();
-                  },
-                ),
-              ),
-              SizedBox(height: size.height/57.733333333),
-              Row(
-                children: [
-                  KText(
-                    text: "Events",
-                    style: GoogleFonts.openSans(
-                      fontSize: Constants().getFontSize(context, 'M'),
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  Expanded(child: Container()),
-                  InkWell(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (ctx) =>
-                                  EventsListView(phone: widget.phone)));
-                    },
-                    child: Icon(
-                      Icons.chevron_right_sharp,
-                      size: size.width/13.7,
-                    ),
-                  )
-                ],
-              ),
-              SizedBox(height: size.height/57.733333333),
-              SizedBox(
-                height: size.height * 0.22,
-                width: size.width,
-                child: StreamBuilder(
-                  stream: EventsFireCrud.fetchEvents(),
-                  builder: (ctx, snapshot) {
-                    if (snapshot.hasData) {
-                      List<EventsModel> events = snapshot.data!;
-                      return ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: events.length >= 3 ? 3 : events.length,
-                          itemBuilder: (context, j) {
-                            return Padding(
-                              padding: const EdgeInsets.only(right: 10),
-                              child: VisibilityDetector(
-                                key: Key('my-widget-key $j'),
-                                onVisibilityChanged:
-                                    (VisibilityInfo visibilityInfo) {
-                                  var visiblePercentage =
-                                      visibilityInfo.visibleFraction;
-                                    updateEventViewCount(events[j], widget.phone);
-                                },
-                                child: SizedBox(
-                                  width: size.width * 0.9,
-                                  child: Card(
-                                    color: Colors.white,
-                                    child: Container(
-                                      padding: const EdgeInsets.all(8.0),
-                                      margin: const EdgeInsets.all(1.0),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceEvenly,
-                                        children: [
-                                          InkWell(
-                                            onTap: () {
-                                              showImageModel(
-                                                  context, events[j].imgUrl!);
-                                            },
-                                            child: Container(
-                                              height: size.height * 0.16,
-                                              width: size.width * 0.37,
-                                              decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.circular(10),
-                                                image: DecorationImage(
-                                                  fit: BoxFit.fill,
-                                                  image: CachedNetworkImageProvider(
-                                                    events[j].imgUrl!,
-                                                  ),
-                                                ),
+                                  Tab(
+                                    height: size.width / 17,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        const Text('Events'),
+                                        Visibility(
+                                            visible: snap.data!.eventCount != 0,
+                                            child: SizedBox(
+                                                width: size.width * 0.01)),
+                                        Visibility(
+                                          visible: snap.data!.eventCount != 0,
+                                          child: Badge(
+                                            backgroundColor:
+                                                Constants().primaryAppColor,
+                                            label: Text(
+                                              snap.data!.eventCount.toString(),
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
                                               ),
                                             ),
                                           ),
-                                          Center(
-                                            child: SizedBox(
-                                              width: size.width * 0.43,
-                                              child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                children: [
-                                                  SizedBox(
-                                                    child: Padding(
-                                                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                                                      child: KText(
-                                                        text: events[j].title!,
-                                                        style: GoogleFonts.openSans(
-                                                          fontSize: Constants()
-                                                              .getFontSize(context, 'M'),
-                                                          color: const Color(0xff000850),
-                                                          fontWeight: FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Padding(
-                                                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                                                    child: SizedBox(
-                                                      width: size.width * 0.5,
-                                                      child: Row(
-                                                        children: [
-                                                          Icon(Icons.date_range,
-                                                              color: Constants()
-                                                                  .primaryAppColor),
-                                                          SizedBox(width: size.width/82.2),
-                                                          KText(
-                                                            text: events[j].date!,
-                                                            style: GoogleFonts.openSans(
-                                                              fontSize: Constants()
-                                                                  .getFontSize(
-                                                                      context, 'S'),
-                                                              color:
-                                                                  const Color(0xff454545),
-                                                              fontWeight: FontWeight.w600,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(height: size.height/173.2),
-                                                  Padding(
-                                                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                                                    child: SizedBox(
-                                                      width: size.width * 0.5,
-                                                      child: Row(
-                                                        children: [
-                                                          Icon(Icons.timelapse,
-                                                              color: Constants()
-                                                                  .primaryAppColor),
-                                                          SizedBox(width: size.width/82.2),
-                                                          KText(
-                                                            text: events[j].time!,
-                                                            style: GoogleFonts.openSans(
-                                                              fontSize: Constants()
-                                                                  .getFontSize(
-                                                                      context, 'S'),
-                                                              color:
-                                                                  const Color(0xff454545),
-                                                              fontWeight: FontWeight.w600,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(height: size.height/173.2),
-                                                  Padding(
-                                                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                                                    child: SizedBox(
-                                                      width: size.width * 0.5,
-                                                      child: Row(
-                                                        children: [
-                                                          Icon(Icons.location_pin,
-                                                              color: Constants()
-                                                                  .primaryAppColor),
-                                                          SizedBox(width: size.width/82.2),
-                                                          KText(
-                                                            text: events[j].location!,
-                                                            style: GoogleFonts.openSans(
-                                                              fontSize: Constants()
-                                                                  .getFontSize(
-                                                                      context, 'S'),
-                                                              color:
-                                                                  const Color(0xff454545),
-                                                              fontWeight: FontWeight.w600,
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(height: size.height/173.2),
-                                                  Padding(
-                                                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                                                    child: SizedBox(
-                                                      width: size.width * 0.5,
-                                                      child: Row(
-                                                        children: [
-                                                          Icon(Icons.message_outlined,
-                                                              color: Constants()
-                                                                  .primaryAppColor),
-                                                          SizedBox(width: size.width/82.2),
-                                                          SizedBox(
-                                                            width: size.width * 0.3,
-                                                            child: KText(
-                                                              text: events[j].description!,
-                                                              textOverflow: TextOverflow.ellipsis,
-                                                              style: GoogleFonts.openSans(
-                                                                fontSize: Constants().getFontSize(context, 'S'),
-                                                                color:
-                                                                    const Color(0xff454545),
-                                                                fontWeight: FontWeight.w600,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          )
-                                        ],
-                                      ),
+                                        )
+                                      ],
                                     ),
                                   ),
-                                ),
-                              ),
-                            );
-                          });
-                    }
-                    return Container();
-                  },
-                ),
-              ),
-              SizedBox(height: size.height/57.733333333),
-              Row(
-                children: [
-                  KText(
-                    text: "Blogs",
-                    style: GoogleFonts.openSans(
-                      fontSize: Constants().getFontSize(context, 'M'),
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  Expanded(child: Container()),
-                  InkWell(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (ctx) => const BlogsListView()));
-                    },
-                    child: const Icon(
-                      Icons.chevron_right_sharp,
-                      size: 30,
-                    ),
-                  )
-                ],
-              ),
-              SizedBox(height: size.height/57.733333333),
-              SizedBox(
-                height: size.height * 0.22,
-                width: size.width,
-                child: StreamBuilder(
-                  stream: BlogFireCrud.fetchBlogs(),
-                  builder: (ctx, snapshot) {
-                    if (snapshot.hasData) {
-                      List<BlogModel> blogs = snapshot.data!;
-                      return ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: blogs.length >= 3 ? 3 : blogs.length,
-                          itemBuilder: (context, j) {
-                            return Padding(
-                              padding: const EdgeInsets.only(right: 10),
-                              child: Card(
-                                color: Colors.white,
-                                child: SizedBox(
-                                  width: size.width * 0.88,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      InkWell(
-                                        onTap: () {
-                                          showImageModel(context, blogs[j].imgUrl!);
-                                        },
-                                        child: Container(
-                                          height: size.height * 0.16,
-                                          width: size.width * 0.37,
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(10),
-                                            image: DecorationImage(
-                                              fit: BoxFit.fill,
-                                              image: CachedNetworkImageProvider(
-                                                blogs[j].imgUrl!,
+                                  Tab(
+                                    height: size.width / 17,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        const Text('Blogs'),
+                                        Visibility(
+                                            visible: snap.data!.blogCount != 0,
+                                            child: SizedBox(
+                                                width: size.width * 0.01)),
+                                        Visibility(
+                                          visible: snap.data!.blogCount != 0,
+                                          child: Badge(
+                                            backgroundColor:
+                                                Constants().primaryAppColor,
+                                            label: Text(
+                                              snap.data!.blogCount.toString(),
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                color: Colors.white,
                                               ),
                                             ),
                                           ),
-                                        ),
-                                      ),
-                                      Center(
-                                        child: SizedBox(
-                                          height: size.height * 0.18,
-                                          width: size.width * 0.43,
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              SizedBox(
-                                                child: Padding(
-                                                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                                                  child: KText(
-                                                    text: blogs[j].title!,
-                                                    style: GoogleFonts.openSans(
-                                                      fontSize: Constants()
-                                                          .getFontSize(context, 'M'),
-                                                      color: const Color(0xff000850),
-                                                      fontWeight: FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              SizedBox(height: size.height/173.2),
-                                              Padding(
-                                                padding: const EdgeInsets.symmetric(horizontal: 8),
-                                                child: SizedBox(
-                                                  height: size.height * 0.07,
-                                                  width: size.width * 0.5,
-                                                  child: KText(
-                                                    text: blogs[j].description!,
-                                                    style: GoogleFonts.openSans(
-                                                      fontSize: Constants()
-                                                          .getFontSize(context, 'S'),
-                                                      color: const Color(0xff454545),
-                                                      fontWeight: FontWeight.w600,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              SizedBox(height: size.height/173.2),
-                                              Center(
-                                                child: InkWell(
-                                                  onTap: () {
-                                                    Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                            builder: (ctx) =>
-                                                                BlogDetailsView(
-                                                                    id: blogs[j].id!)));
-                                                  },
-                                                  child: Container(
-                                                    height: 40,
-                                                    width: size.width * 0.38,
-                                                    decoration: BoxDecoration(
-                                                      color:
-                                                          Constants().primaryAppColor,
-                                                      borderRadius:
-                                                          BorderRadius.circular(10),
-                                                    ),
-                                                    child: Center(
-                                                      child: KText(
-                                                        text: "View Blog",
-                                                        style: TextStyle(
-                                                          fontSize: Constants()
-                                                              .getFontSize(
-                                                                  context, 'S'),
-                                                          color: Colors.white,
-                                                          fontWeight: FontWeight.w600,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      )
-                                    ],
+                                        )
+                                      ],
+                                    ),
                                   ),
+                                ],
+                                labelColor: Constants().primaryAppColor,
+                                dividerColor: Colors.transparent,
+                                indicatorSize: TabBarIndicatorSize.label,
+                                indicatorColor: Colors.yellow,
+                              ),
+                            ),
+                            Expanded(
+                              child: SizedBox(
+                                width: size.width,
+                                child: TabBarView(
+                                  controller: tabController,
+                                  children: [
+                                    NoticesListView(
+                                        phone: widget.phone,
+                                        scrollController: tabScrollController,
+                                        hasScroll: tabIsScrollable),
+                                    EventsListView(phone: widget.phone),
+                                    BlogsListView(phone: widget.phone)
+                                  ],
                                 ),
                               ),
-                            );
-                          });
+                            )
+                          ],
+                        ),
+                      );
                     }
                     return Container();
                   },
-                ),
-              ),
-              SizedBox(height: size.height/43.3),
-            ],
+                )
+                // Row(
+                //   children: [
+                //     KText(
+                //       text: "Notices by Church",
+                //       style: GoogleFonts.openSans(
+                //         fontSize: Constants().getFontSize(context, 'M'),
+                //         fontWeight: FontWeight.w700,
+                //       ),
+                //     ),
+                //     Expanded(child: Container()),
+                //     InkWell(
+                //       onTap: () {
+                //         Navigator.push(
+                //             context,
+                //             MaterialPageRoute(
+                //                 builder: (ctx) => const NoticesListView()));
+                //       },
+                //       child: Icon(
+                //         Icons.chevron_right_sharp,
+                //         size: size.width/13.7,
+                //       ),
+                //     )
+                //   ],
+                // ),
+                // SizedBox(height: size.height * 0.04),
+                // SizedBox(
+                //   height: size.height * 0.16,
+                //   width: size.width,
+                //   child: StreamBuilder(
+                //     stream: NoticeFireCrud.fetchNotice(),
+                //     builder: (ctx, snapshot) {
+                //       if (snapshot.hasData) {
+                //         List<NoticeModel> notices = snapshot.data!;
+                //         return ListView.builder(
+                //             scrollDirection: Axis.horizontal,
+                //             itemCount: notices.length >= 3 ? 3 : notices.length,
+                //             itemBuilder: (context, i) {
+                //               return Padding(
+                //                 padding: const EdgeInsets.only(right: 10),
+                //                 child: InkWell(
+                //                   onTap: () {
+                //                     showNoticesPopUp(context, notices[i]);
+                //                   },
+                //                   child: SizedBox(
+                //                     height: size.height * 0.07,
+                //                     width: size.width * 0.9,
+                //                     child: Card(
+                //                       color: Colors.white,
+                //                       child: Padding(
+                //                         padding: const EdgeInsets.all(8.0),
+                //                         child: Column(
+                //                           crossAxisAlignment:CrossAxisAlignment.start,
+                //                           mainAxisAlignment:MainAxisAlignment.spaceEvenly,
+                //                           children: [
+                //                             Row(
+                //                               mainAxisAlignment:
+                //                                   MainAxisAlignment.spaceBetween,
+                //                               children: [
+                //                                 Text(
+                //                                   notices[i].date!,
+                //                                   style: GoogleFonts.openSans(
+                //                                     color: Colors.grey,
+                //                                     fontSize: Constants()
+                //                                         .getFontSize(context, "S"),
+                //                                     fontWeight: FontWeight.w600,
+                //                                   ),
+                //                                 ),
+                //                                 Text(
+                //                                   notices[i].time!,
+                //                                   style: GoogleFonts.openSans(
+                //                                     color: Colors.grey,
+                //                                     fontSize: Constants()
+                //                                         .getFontSize(context, "S"),
+                //                                     fontWeight: FontWeight.w600,
+                //                                   ),
+                //                                 ),
+                //                               ],
+                //                             ),
+                //                             SizedBox(height: size.height/86.6),
+                //                             KText(
+                //                               text: notices[i].title!,
+                //                               style: GoogleFonts.openSans(
+                //                                 fontSize: Constants()
+                //                                     .getFontSize(context, 'SM'),
+                //                                 color: Constants().primaryAppColor,
+                //                                 fontWeight: FontWeight.bold,
+                //                               ),
+                //                             ),
+                //                             SizedBox(height: size.height/86.6),
+                //                             Expanded(
+                //                               child: SizedBox(
+                //                                 width: double.infinity,
+                //                                 child: KText(
+                //                                   text: notices[i].description!,
+                //                                   style: GoogleFonts.openSans(
+                //                                     fontSize: Constants().getFontSize(context, 'S'),
+                //                                     color: const Color(0xff454545),
+                //                                     fontWeight: FontWeight.w600,
+                //                                   ),
+                //                                 ),
+                //                               ),
+                //                             ),
+                //                           ],
+                //                         ),
+                //                       ),
+                //                     ),
+                //                   ),
+                //                 ),
+                //               );
+                //             });
+                //       }
+                //       return Container();
+                //     },
+                //   ),
+                // ),
+                // SizedBox(height: size.height/57.733333333),
+                // Row(
+                //   children: [
+                //     KText(
+                //       text: "Events",
+                //       style: GoogleFonts.openSans(
+                //         fontSize: Constants().getFontSize(context, 'M'),
+                //         fontWeight: FontWeight.w700,
+                //       ),
+                //     ),
+                //     Expanded(child: Container()),
+                //     InkWell(
+                //       onTap: () {
+                //         Navigator.push(
+                //             context,
+                //             MaterialPageRoute(
+                //                 builder: (ctx) =>
+                //                     EventsListView(phone: widget.phone)));
+                //       },
+                //       child: Icon(
+                //         Icons.chevron_right_sharp,
+                //         size: size.width/13.7,
+                //       ),
+                //     )
+                //   ],
+                // ),
+                // SizedBox(height: size.height/57.733333333),
+                // SizedBox(
+                //   height: size.height * 0.22,
+                //   width: size.width,
+                //   child: StreamBuilder(
+                //     stream: EventsFireCrud.fetchEvents(),
+                //     builder: (ctx, snapshot) {
+                //       if (snapshot.hasData) {
+                //         List<EventsModel> events = snapshot.data!;
+                //         return ListView.builder(
+                //             scrollDirection: Axis.horizontal,
+                //             itemCount: events.length >= 3 ? 3 : events.length,
+                //             itemBuilder: (context, j) {
+                //               return Padding(
+                //                 padding: const EdgeInsets.only(right: 10),
+                //                 child: VisibilityDetector(
+                //                   key: Key('my-widget-key $j'),
+                //                   onVisibilityChanged:
+                //                       (VisibilityInfo visibilityInfo) {
+                //                     var visiblePercentage =
+                //                         visibilityInfo.visibleFraction;
+                //                       updateEventViewCount(events[j], widget.phone);
+                //                   },
+                //                   child: SizedBox(
+                //                     width: size.width * 0.9,
+                //                     child: Card(
+                //                       color: Colors.white,
+                //                       child: Container(
+                //                         padding: const EdgeInsets.all(8.0),
+                //                         margin: const EdgeInsets.all(1.0),
+                //                         child: Row(
+                //                           mainAxisAlignment:
+                //                               MainAxisAlignment.spaceEvenly,
+                //                           children: [
+                //                             InkWell(
+                //                               onTap: () {
+                //                                 showImageModel(
+                //                                     context, events[j].imgUrl!);
+                //                               },
+                //                               child: Container(
+                //                                 height: size.height * 0.16,
+                //                                 width: size.width * 0.37,
+                //                                 decoration: BoxDecoration(
+                //                                   borderRadius: BorderRadius.circular(10),
+                //                                   image: DecorationImage(
+                //                                     fit: BoxFit.fill,
+                //                                     image: CachedNetworkImageProvider(
+                //                                       events[j].imgUrl!,
+                //                                     ),
+                //                                   ),
+                //                                 ),
+                //                               ),
+                //                             ),
+                //                             Center(
+                //                               child: SizedBox(
+                //                                 width: size.width * 0.43,
+                //                                 child: Column(
+                //                                   crossAxisAlignment: CrossAxisAlignment.start,
+                //                                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                //                                   children: [
+                //                                     SizedBox(
+                //                                       child: Padding(
+                //                                         padding: const EdgeInsets.symmetric(horizontal: 8),
+                //                                         child: KText(
+                //                                           text: events[j].title!,
+                //                                           style: GoogleFonts.openSans(
+                //                                             fontSize: Constants()
+                //                                                 .getFontSize(context, 'M'),
+                //                                             color: const Color(0xff000850),
+                //                                             fontWeight: FontWeight.bold,
+                //                                           ),
+                //                                         ),
+                //                                       ),
+                //                                     ),
+                //                                     Padding(
+                //                                       padding: const EdgeInsets.symmetric(horizontal: 8),
+                //                                       child: SizedBox(
+                //                                         width: size.width * 0.5,
+                //                                         child: Row(
+                //                                           children: [
+                //                                             Icon(Icons.date_range,
+                //                                                 color: Constants()
+                //                                                     .primaryAppColor),
+                //                                             SizedBox(width: size.width/82.2),
+                //                                             KText(
+                //                                               text: events[j].date!,
+                //                                               style: GoogleFonts.openSans(
+                //                                                 fontSize: Constants()
+                //                                                     .getFontSize(
+                //                                                         context, 'S'),
+                //                                                 color:
+                //                                                     const Color(0xff454545),
+                //                                                 fontWeight: FontWeight.w600,
+                //                                               ),
+                //                                             ),
+                //                                           ],
+                //                                         ),
+                //                                       ),
+                //                                     ),
+                //                                     SizedBox(height: size.height/173.2),
+                //                                     Padding(
+                //                                       padding: const EdgeInsets.symmetric(horizontal: 8),
+                //                                       child: SizedBox(
+                //                                         width: size.width * 0.5,
+                //                                         child: Row(
+                //                                           children: [
+                //                                             Icon(Icons.timelapse,
+                //                                                 color: Constants()
+                //                                                     .primaryAppColor),
+                //                                             SizedBox(width: size.width/82.2),
+                //                                             KText(
+                //                                               text: events[j].time!,
+                //                                               style: GoogleFonts.openSans(
+                //                                                 fontSize: Constants()
+                //                                                     .getFontSize(
+                //                                                         context, 'S'),
+                //                                                 color:
+                //                                                     const Color(0xff454545),
+                //                                                 fontWeight: FontWeight.w600,
+                //                                               ),
+                //                                             ),
+                //                                           ],
+                //                                         ),
+                //                                       ),
+                //                                     ),
+                //                                     SizedBox(height: size.height/173.2),
+                //                                     Padding(
+                //                                       padding: const EdgeInsets.symmetric(horizontal: 8),
+                //                                       child: SizedBox(
+                //                                         width: size.width * 0.5,
+                //                                         child: Row(
+                //                                           children: [
+                //                                             Icon(Icons.location_pin,
+                //                                                 color: Constants()
+                //                                                     .primaryAppColor),
+                //                                             SizedBox(width: size.width/82.2),
+                //                                             KText(
+                //                                               text: events[j].location!,
+                //                                               style: GoogleFonts.openSans(
+                //                                                 fontSize: Constants()
+                //                                                     .getFontSize(
+                //                                                         context, 'S'),
+                //                                                 color:
+                //                                                     const Color(0xff454545),
+                //                                                 fontWeight: FontWeight.w600,
+                //                                               ),
+                //                                             ),
+                //                                           ],
+                //                                         ),
+                //                                       ),
+                //                                     ),
+                //                                     SizedBox(height: size.height/173.2),
+                //                                     Padding(
+                //                                       padding: const EdgeInsets.symmetric(horizontal: 8),
+                //                                       child: SizedBox(
+                //                                         width: size.width * 0.5,
+                //                                         child: Row(
+                //                                           children: [
+                //                                             Icon(Icons.message_outlined,
+                //                                                 color: Constants()
+                //                                                     .primaryAppColor),
+                //                                             SizedBox(width: size.width/82.2),
+                //                                             SizedBox(
+                //                                               width: size.width * 0.3,
+                //                                               child: KText(
+                //                                                 text: events[j].description!,
+                //                                                 textOverflow: TextOverflow.ellipsis,
+                //                                                 style: GoogleFonts.openSans(
+                //                                                   fontSize: Constants().getFontSize(context, 'S'),
+                //                                                   color:
+                //                                                       const Color(0xff454545),
+                //                                                   fontWeight: FontWeight.w600,
+                //                                                 ),
+                //                                               ),
+                //                                             ),
+                //                                           ],
+                //                                         ),
+                //                                       ),
+                //                                     ),
+                //                                   ],
+                //                                 ),
+                //                               ),
+                //                             )
+                //                           ],
+                //                         ),
+                //                       ),
+                //                     ),
+                //                   ),
+                //                 ),
+                //               );
+                //             });
+                //       }
+                //       return Container();
+                //     },
+                //   ),
+                // ),
+                // SizedBox(height: size.height/57.733333333),
+                // Row(
+                //   children: [
+                //     KText(
+                //       text: "Blogs",
+                //       style: GoogleFonts.openSans(
+                //         fontSize: Constants().getFontSize(context, 'M'),
+                //         fontWeight: FontWeight.w700,
+                //       ),
+                //     ),
+                //     Expanded(child: Container()),
+                //     InkWell(
+                //       onTap: () {
+                //         Navigator.push(
+                //             context,
+                //             MaterialPageRoute(
+                //                 builder: (ctx) => const BlogsListView()));
+                //       },
+                //       child: const Icon(
+                //         Icons.chevron_right_sharp,
+                //         size: 30,
+                //       ),
+                //     )
+                //   ],
+                // ),
+                // SizedBox(height: size.height/57.733333333),
+                // SizedBox(
+                //   height: size.height * 0.22,
+                //   width: size.width,
+                //   child: StreamBuilder(
+                //     stream: BlogFireCrud.fetchBlogs(),
+                //     builder: (ctx, snapshot) {
+                //       if (snapshot.hasData) {
+                //         List<BlogModel> blogs = snapshot.data!;
+                //         return ListView.builder(
+                //             scrollDirection: Axis.horizontal,
+                //             itemCount: blogs.length >= 3 ? 3 : blogs.length,
+                //             itemBuilder: (context, j) {
+                //               return Padding(
+                //                 padding: const EdgeInsets.only(right: 10),
+                //                 child: Card(
+                //                   color: Colors.white,
+                //                   child: SizedBox(
+                //                     width: size.width * 0.88,
+                //                     child: Row(
+                //                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                //                       children: [
+                //                         InkWell(
+                //                           onTap: () {
+                //                             showImageModel(context, blogs[j].imgUrl!);
+                //                           },
+                //                           child: Container(
+                //                             height: size.height * 0.16,
+                //                             width: size.width * 0.37,
+                //                             decoration: BoxDecoration(
+                //                               borderRadius: BorderRadius.circular(10),
+                //                               image: DecorationImage(
+                //                                 fit: BoxFit.fill,
+                //                                 image: CachedNetworkImageProvider(
+                //                                   blogs[j].imgUrl!,
+                //                                 ),
+                //                               ),
+                //                             ),
+                //                           ),
+                //                         ),
+                //                         Center(
+                //                           child: SizedBox(
+                //                             height: size.height * 0.18,
+                //                             width: size.width * 0.43,
+                //                             child: Column(
+                //                               crossAxisAlignment:
+                //                                   CrossAxisAlignment.start,
+                //                               children: [
+                //                                 SizedBox(
+                //                                   child: Padding(
+                //                                     padding: const EdgeInsets.symmetric(horizontal: 8),
+                //                                     child: KText(
+                //                                       text: blogs[j].title!,
+                //                                       style: GoogleFonts.openSans(
+                //                                         fontSize: Constants()
+                //                                             .getFontSize(context, 'M'),
+                //                                         color: const Color(0xff000850),
+                //                                         fontWeight: FontWeight.bold,
+                //                                       ),
+                //                                     ),
+                //                                   ),
+                //                                 ),
+                //                                 SizedBox(height: size.height/173.2),
+                //                                 Padding(
+                //                                   padding: const EdgeInsets.symmetric(horizontal: 8),
+                //                                   child: SizedBox(
+                //                                     height: size.height * 0.07,
+                //                                     width: size.width * 0.5,
+                //                                     child: KText(
+                //                                       text: blogs[j].description!,
+                //                                       style: GoogleFonts.openSans(
+                //                                         fontSize: Constants()
+                //                                             .getFontSize(context, 'S'),
+                //                                         color: const Color(0xff454545),
+                //                                         fontWeight: FontWeight.w600,
+                //                                       ),
+                //                                     ),
+                //                                   ),
+                //                                 ),
+                //                                 SizedBox(height: size.height/173.2),
+                //                                 Center(
+                //                                   child: InkWell(
+                //                                     onTap: () {
+                //                                       Navigator.push(
+                //                                           context,
+                //                                           MaterialPageRoute(
+                //                                               builder: (ctx) =>
+                //                                                   BlogDetailsView(
+                //                                                       id: blogs[j].id!)));
+                //                                     },
+                //                                     child: Container(
+                //                                       height: 40,
+                //                                       width: size.width * 0.38,
+                //                                       decoration: BoxDecoration(
+                //                                         color:
+                //                                             Constants().primaryAppColor,
+                //                                         borderRadius:
+                //                                             BorderRadius.circular(10),
+                //                                       ),
+                //                                       child: Center(
+                //                                         child: KText(
+                //                                           text: "View Blog",
+                //                                           style: TextStyle(
+                //                                             fontSize: Constants()
+                //                                                 .getFontSize(
+                //                                                     context, 'S'),
+                //                                             color: Colors.white,
+                //                                             fontWeight: FontWeight.w600,
+                //                                           ),
+                //                                         ),
+                //                                       ),
+                //                                     ),
+                //                                   ),
+                //                                 )
+                //                               ],
+                //                             ),
+                //                           ),
+                //                         )
+                //                       ],
+                //                     ),
+                //                   ),
+                //                 ),
+                //               );
+                //             });
+                //       }
+                //       return Container();
+                //     },
+                //   ),
+                // ),
+                // SizedBox(height: size.height/43.3),
+              ],
+            ),
           ),
         ),
       ),
@@ -1009,13 +1283,14 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
                                 ),
                               ],
                             ),
-                            SizedBox(height: size.height/86.6),
-                            SizedBox(height: size.height/216.5),
+                            SizedBox(height: size.height / 86.6),
+                            SizedBox(height: size.height / 216.5),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10),
                                   child: Container(
                                     height: size.height * 0.14,
                                     decoration: BoxDecoration(
@@ -1529,4 +1804,15 @@ class _HomeViewState extends State<HomeView> with SingleTickerProviderStateMixin
         .doc(event.id)
         .update({"views": views});
   }
+}
+
+class CountsModel {
+  CountsModel(
+      {required this.noticeCount,
+      required this.eventCount,
+      required this.blogCount});
+
+  int noticeCount;
+  int eventCount;
+  int blogCount;
 }

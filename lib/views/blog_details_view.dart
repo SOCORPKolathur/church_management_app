@@ -98,8 +98,8 @@ class _BlogDetailsViewState extends State<BlogDetailsView> {
                                   ),
                                 ),
                                 SizedBox(width: size.width * 0.01),
-                                KText(
-                                  text: blog.author!,
+                                Text(
+                                  blog.author!,
                                   style: GoogleFonts.openSans(
                                     color: Constants().primaryAppColor,
                                     fontSize: Constants().getFontSize(context, 'M'),

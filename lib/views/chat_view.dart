@@ -6,17 +6,18 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_offline/flutter_offline.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lottie/lottie.dart';
 import 'package:intl/intl.dart';
 import '../models/user_model.dart';
 import '../services/user_firecrud.dart';
 
 class ChatView extends StatefulWidget {
-  ChatView({required this.userDocId, required this.uid, required this.collection, required this.title});
+  ChatView({required this.userDocId, required this.uid, required this.collection, required this.title, required this.isClan,required this.clanId});
   final String userDocId;
   final String uid;
   final String collection;
   final String title;
+  final String clanId;
+  final bool isClan;
   @override
   ChatViewState createState() => ChatViewState();
 }
@@ -55,6 +56,8 @@ class ChatViewState extends State<ChatView> {
                       ? Icons.groups
                       : widget.title == "Blood Requirement"
                       ? Icons.bloodtype
+                      : widget.title == "Committee Members"
+                      ? Icons.groups
                       : widget.title == "Clans"
                       ? Icons.bookmark_add
                       : Icons.music_video_outlined,
@@ -120,7 +123,12 @@ class ChatViewState extends State<ChatView> {
               builder: (BuildContext context) {
                 return
                   StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance
+                    stream: widget.isClan 
+                        ? FirebaseFirestore.instance
+                        .collection('ClansChat').doc(widget.clanId).collection('Chat')
+                        .orderBy("time")
+                        .snapshots()
+                        : FirebaseFirestore.instance
                         .collection(widget.collection)
                         .orderBy("time")
                         .snapshots(),
@@ -348,7 +356,11 @@ class ChatViewState extends State<ChatView> {
         "submitdate":"${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}",
       };
       chatMessage.clear();
-      await FirebaseFirestore.instance.collection(widget.collection).add(messages);
+      if(widget.isClan){
+        await FirebaseFirestore.instance.collection("ClansChat").doc(widget.clanId).collection('Chat').add(messages);
+      }else{
+        await FirebaseFirestore.instance.collection(widget.collection).add(messages);
+      }
       await sendNotification(messageText);
       messageText = '';
     }
@@ -389,17 +401,17 @@ class ChatViewState extends State<ChatView> {
           }
         }
         break;
-      case "Clans":
-        for (var element in users.docs) {
-          for(var clan in clans.docs){
-            if(element['phone'] == clan['phone'] && (element['fcmToken'] != null && element['fcmToken'] != "")){
-              for (var element in users.docs) {
-                usersForNotify.add(UserModel.fromJson(element.data()));
-              }
-            }
-          }
-        }
-        break;
+      // case "Clans":
+      //   for (var element in users.docs) {
+      //     for(var clan in clans.docs){
+      //       if(element['phone'] == clan['phone'] && (element['fcmToken'] != null && element['fcmToken'] != "")){
+      //         for (var element in users.docs) {
+      //           usersForNotify.add(UserModel.fromJson(element.data()));
+      //         }
+      //       }
+      //     }
+      //   }
+      //   break;
       case "Quire":
         for (var element in users.docs) {
           for(var chorus in choruses.docs){

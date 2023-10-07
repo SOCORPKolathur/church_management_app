@@ -6,6 +6,7 @@ class BlogModel {
   String? time;
   String? author;
   String? imgUrl;
+  List<String>? views;
 
   BlogModel(
       {this.id,
@@ -14,6 +15,7 @@ class BlogModel {
         this.description,
         this.time,
         this.author,
+        this.views,
         this.imgUrl});
 
   BlogModel.fromJson(Map<String, dynamic> json) {
@@ -24,6 +26,12 @@ class BlogModel {
     time = json['time'];
     author = json['author'];
     imgUrl = json['imgUrl'];
+    if (json['views'] != null) {
+      views = <String>[];
+      json['views'].forEach((v) {
+        views!.add(v);
+      });
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -35,6 +43,9 @@ class BlogModel {
     data['time'] = this.time;
     data['author'] = this.author;
     data['imgUrl'] = this.imgUrl;
+    if (this.views != null) {
+      data['views'] = this.views!.map((v) => v).toList();
+    }
     return data;
   }
 }
