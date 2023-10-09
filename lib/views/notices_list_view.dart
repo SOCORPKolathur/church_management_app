@@ -21,7 +21,6 @@ class NoticesListView extends StatefulWidget {
 class _NoticesListViewState extends State<NoticesListView> {
 
   bool hasScroll = true;
-  bool isLast = false;
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +55,7 @@ class _NoticesListViewState extends State<NoticesListView> {
             if (snapshot.hasData) {
               List<NoticeModel> notices = snapshot.data!;
               return ListView.builder(
-                physics: hasScroll ? ScrollPhysics() : NeverScrollableScrollPhysics(),
+                physics: widget.hasScroll ? ScrollPhysics() : NeverScrollableScrollPhysics(),
                 controller: widget.scrollController,
                 itemCount: notices.length,
                 itemBuilder: (ctx, i) {
@@ -69,7 +68,10 @@ class _NoticesListViewState extends State<NoticesListView> {
                       onVisibilityChanged: (VisibilityInfo visibilityInfo){
                         var visiblePercentage = visibilityInfo.visibleFraction;
                           updateNoticeViewCount(notices[i], widget.phone);
-                        if(i == 0 && ((!hasScroll && visiblePercentage < 0.9) || (!isLast && hasScroll))) {
+                          print(i);
+                          print(visiblePercentage);
+                          print("------------------");
+                        if(i == 0 && (!hasScroll && visiblePercentage == 1.0) || (hasScroll && visiblePercentage == 1.0)) {
                           setState(() {
                             hasScroll = false;
                           });

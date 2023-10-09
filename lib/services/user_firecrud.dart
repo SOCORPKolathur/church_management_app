@@ -77,6 +77,7 @@ class UserFireCrud {
       }) async {
     Response response = Response();
     DocumentReference documentReferencer = UserCollection.doc(userDocId).collection('Carts').doc();
+    print(price.toString() + "----------");
     CartModel cart = CartModel(
         id: "",
       time: DateFormat.jm().format(DateTime.now()),
@@ -89,6 +90,7 @@ class UserFireCrud {
     );
     cart.id = documentReferencer.id;
     var json = cart.toJson();
+    print(json);
     var result = await documentReferencer.set(json).whenComplete(() {
       response.code = 200;
       response.message = "Sucessfully added to the database";

@@ -20,6 +20,7 @@ class UserModel {
   String? about;
   String? address;
   String? imgUrl;
+  bool? isPrivacyEnabled;
 
   UserModel(
       {this.id,
@@ -33,6 +34,7 @@ class UserModel {
         this.profession,
         this.baptizeDate,
         this.anniversaryDate,
+        this.isPrivacyEnabled,
         this.maritialStatus,
         this.bloodGroup,
         this.dob,
@@ -48,6 +50,7 @@ class UserModel {
     fcmToken = json['fcmToken'];
     lastName = json['lastName'];
     phone = json['phone'];
+    isPrivacyEnabled = json['isPrivacyEnabled'];
     email = json['email'];
     maritialStatus = json['maritialStatus'];
     password = json['password'];
@@ -72,6 +75,7 @@ class UserModel {
     data['maritialStatus'] = this.maritialStatus;
     data['phone'] = this.phone;
     data['email'] = this.email;
+    data['isPrivacyEnabled'] = this.isPrivacyEnabled;
     data['password'] = this.password;
     data['profession'] = this.profession;
     data['baptizeDate'] = this.baptizeDate;

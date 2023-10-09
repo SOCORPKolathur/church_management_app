@@ -11,9 +11,10 @@ import '../services/blog_firecrud.dart';
 import 'blog_details_view.dart';
 
 class BlogsListView extends StatefulWidget {
-  const BlogsListView({super.key, required this.phone});
+  const BlogsListView({super.key, required this.phone, required this.scrollController});
 
   final String phone;
+  final ScrollController scrollController;
 
   @override
   State<BlogsListView> createState() => _BlogsListViewState();
@@ -54,6 +55,7 @@ class _BlogsListViewState extends State<BlogsListView> {
             if (snapshot.hasData) {
               List<BlogModel> blogs = snapshot.data!;
               return ListView.builder(
+                controller: widget.scrollController,
                 itemCount: blogs.length,
                 itemBuilder: (ctx, i) {
                   return VisibilityDetector(
@@ -109,7 +111,6 @@ class _BlogsListViewState extends State<BlogsListView> {
                                     height: size.height * 0.08,
                                     child: KText(
                                       text: blogs[i].title!,
-                                      textOverflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.openSans(
                                         fontSize: Constants().getFontSize(context, 'M'),
                                         color: const Color(0xff000850),
@@ -123,7 +124,6 @@ class _BlogsListViewState extends State<BlogsListView> {
                                     width: size.width * 0.5,
                                     child: KText(
                                       text: blogs[i].description!,
-                                      textOverflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.openSans(
                                         fontSize: Constants().getFontSize(context, 'S'),
                                         color: const Color(0xff454545),

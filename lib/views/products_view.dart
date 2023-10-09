@@ -181,7 +181,7 @@ class _ProductsViewState extends State<ProductsView> {
                                         ),
                                         InkWell(
                                           onTap: () async {
-                                           Response response = await UserFireCrud.addToCart(userDocId: widget.userDocId, price: products[i].price!, imgUrl: products[i].imgUrl!, quantity: 1, productId: products[i].productId!, productName: products[i].title!);
+                                           Response response = await UserFireCrud.addToCart(userDocId: widget.userDocId, price: products[i].price!, imgUrl: products[i].imgUrl!, quantity: 1, productId: products[i].title!+ " 001", productName: products[i].title!);
                                            },
                                           child: Container(
                                             height: size.height * 0.05,

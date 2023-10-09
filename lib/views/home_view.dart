@@ -127,6 +127,14 @@ class _HomeViewState extends State<HomeView>
     return counts;
   }
 
+  bool? isPrivacyEnabled;
+
+  setUserPrivacy(bool privacy) async {
+    var document = await FirebaseFirestore.instance.collection('Users').doc(widget.userDocId).update({
+      "isPrivacyEnabled": privacy
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -179,6 +187,7 @@ class _HomeViewState extends State<HomeView>
             builder: (ctx, snaps) {
               if (snaps.hasData) {
                 UserModel user = snaps.data!;
+                isPrivacyEnabled = user.isPrivacyEnabled!;
                 return Row(
                   children: [
                     StreamBuilder(
@@ -250,147 +259,173 @@ class _HomeViewState extends State<HomeView>
                       },
                     ),
                     SizedBox(width: size.width / 41.1),
-                    PopupMenuButton(
-                      itemBuilder: (context) => [
-                        PopupMenuItem(
-                          value: 'Languages',
-                          child: KText(
-                            text: 'Languages',
-                            style: TextStyle(
-                                fontSize:
-                                    Constants().getFontSize(context, "S")),
+                    StatefulBuilder(
+                      builder: (context,setState) {
+                        return PopupMenuButton(
+                          itemBuilder: (context) => [
+                            PopupMenuItem(
+                              value: 'Languages',
+                              child: KText(
+                                text: 'Languages',
+                                style: TextStyle(
+                                    fontSize:
+                                        Constants().getFontSize(context, "S")),
+                              ),
+                              onTap: () {},
+                            ),
+                            PopupMenuItem(
+                              value: 'About Church',
+                              child: KText(
+                                text: 'About Church',
+                                style: TextStyle(
+                                    fontSize:
+                                        Constants().getFontSize(context, "S")),
+                              ),
+                              onTap: () {},
+                            ),
+                            PopupMenuItem(
+                              value: 'Church Pastors',
+                              child: KText(
+                                text: 'Church Pastors',
+                                style: TextStyle(
+                                    fontSize:
+                                        Constants().getFontSize(context, "S")),
+                              ),
+                              onTap: () {},
+                            ),
+                            PopupMenuItem(
+                              value: 'Social Media',
+                              child: KText(
+                                text: 'Social Media',
+                                style: TextStyle(
+                                    fontSize:
+                                        Constants().getFontSize(context, "S")),
+                              ),
+                              onTap: () {},
+                            ),
+                            PopupMenuItem(
+                              value: 'Contact Admin',
+                              child: KText(
+                                text: 'Contact Admin',
+                                style: TextStyle(
+                                    fontSize:
+                                        Constants().getFontSize(context, "S")),
+                              ),
+                              onTap: () {},
+                            ),
+                            PopupMenuItem(
+                              value: 'Edit Profile',
+                              child: KText(
+                                text: 'Edit Profile',
+                                style: TextStyle(
+                                    fontSize:
+                                        Constants().getFontSize(context, "S")),
+                              ),
+                              onTap: () {},
+                            ),
+                            PopupMenuItem(
+                              value: 'Privacy',
+                              child: Row(
+                                children: [
+                                  KText(
+                                    text: 'Privacy',
+                                    style: TextStyle(
+                                        fontSize:
+                                        Constants().getFontSize(context, "S")),
+                                  ),
+                                  SizedBox(width: size.width/18),
+                                  Switch(
+                                    value: isPrivacyEnabled!,
+                                    onChanged: (val) async {
+                                      setUserPrivacy(val);
+                                      Navigator.pop(context);
+                                    },
+                                  )
+                                ],
+                              ),
+                              onTap: () {},
+                            ),
+                            PopupMenuItem(
+                              value: 'Log out',
+                              child: KText(
+                                text: 'Log out',
+                                style: TextStyle(
+                                    fontSize:
+                                        Constants().getFontSize(context, "S")),
+                              ),
+                              onTap: () {},
+                            )
+                          ],
+                          position: PopupMenuPosition.over,
+                          offset: const Offset(0, 30),
+                          color: const Color(0xffFFFFFF),
+                          elevation: 2,
+                          onSelected: (val) async {
+                            switch (val) {
+                              case "Languages":
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (ctx) => LanguagesView(
+                                            phone: user.phone!,
+                                            uid: user.id!,
+                                            userDocId: widget.userDocId)));
+                                break;
+                              case "Church Pastors":
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (ctx) => const PastorsListView()));
+                                break;
+                              case "Social Media":
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (ctx) => const SocialMediaView()));
+                                break;
+                              case "About Church":
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (ctx) => const AboutChurchView()));
+                                break;
+                              case "Contact Admin":
+                                _showContactAdminPopUp(context, user);
+                                break;
+                              case "Edit Profile":
+                                showEditProfilePopUp(context, user);
+                                break;
+                              case "Log out":
+                                CoolAlert.show(
+                                    context: context,
+                                    type: CoolAlertType.warning,
+                                    text: "Are you sure want to Logout",
+                                    onConfirmBtnTap: () async {
+                                      await FirebaseAuth.instance.signOut();
+                                      Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (ctx) => const IntroView()));
+                                    },
+                                    confirmBtnText: 'Log Out',
+                                    cancelBtnText: 'Cancel',
+                                    showCancelBtn: true,
+                                    width: size.width * 0.4,
+                                    backgroundColor: Constants()
+                                        .primaryAppColor
+                                        .withOpacity(0.8));
+                                break;
+                            }
+                          },
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(20.0),
+                            ),
                           ),
-                          onTap: () {},
-                        ),
-                        PopupMenuItem(
-                          value: 'About Church',
-                          child: KText(
-                            text: 'About Church',
-                            style: TextStyle(
-                                fontSize:
-                                    Constants().getFontSize(context, "S")),
-                          ),
-                          onTap: () {},
-                        ),
-                        PopupMenuItem(
-                          value: 'Church Pastors',
-                          child: KText(
-                            text: 'Church Pastors',
-                            style: TextStyle(
-                                fontSize:
-                                    Constants().getFontSize(context, "S")),
-                          ),
-                          onTap: () {},
-                        ),
-                        PopupMenuItem(
-                          value: 'Social Media',
-                          child: KText(
-                            text: 'Social Media',
-                            style: TextStyle(
-                                fontSize:
-                                    Constants().getFontSize(context, "S")),
-                          ),
-                          onTap: () {},
-                        ),
-                        PopupMenuItem(
-                          value: 'Contact Admin',
-                          child: KText(
-                            text: 'Contact Admin',
-                            style: TextStyle(
-                                fontSize:
-                                    Constants().getFontSize(context, "S")),
-                          ),
-                          onTap: () {},
-                        ),
-                        PopupMenuItem(
-                          value: 'Edit Profile',
-                          child: KText(
-                            text: 'Edit Profile',
-                            style: TextStyle(
-                                fontSize:
-                                    Constants().getFontSize(context, "S")),
-                          ),
-                          onTap: () {},
-                        ),
-                        PopupMenuItem(
-                          value: 'Log out',
-                          child: KText(
-                            text: 'Log out',
-                            style: TextStyle(
-                                fontSize:
-                                    Constants().getFontSize(context, "S")),
-                          ),
-                          onTap: () {},
-                        )
-                      ],
-                      position: PopupMenuPosition.over,
-                      offset: const Offset(0, 30),
-                      color: const Color(0xffFFFFFF),
-                      elevation: 2,
-                      onSelected: (val) async {
-                        switch (val) {
-                          case "Languages":
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (ctx) => LanguagesView(
-                                        phone: user.phone!,
-                                        uid: user.id!,
-                                        userDocId: widget.userDocId)));
-                            break;
-                          case "Church Pastors":
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (ctx) => const PastorsListView()));
-                            break;
-                          case "Social Media":
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (ctx) => const SocialMediaView()));
-                            break;
-                          case "About Church":
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (ctx) => const AboutChurchView()));
-                            break;
-                          case "Contact Admin":
-                            _showContactAdminPopUp(context, user);
-                            break;
-                          case "Edit Profile":
-                            showEditProfilePopUp(context, user);
-                            break;
-                          case "Log out":
-                            CoolAlert.show(
-                                context: context,
-                                type: CoolAlertType.warning,
-                                text: "Are you sure want to Logout",
-                                onConfirmBtnTap: () async {
-                                  await FirebaseAuth.instance.signOut();
-                                  Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (ctx) => const IntroView()));
-                                },
-                                confirmBtnText: 'Log Out',
-                                cancelBtnText: 'Cancel',
-                                showCancelBtn: true,
-                                width: size.width * 0.4,
-                                backgroundColor: Constants()
-                                    .primaryAppColor
-                                    .withOpacity(0.8));
-                            break;
-                        }
-                      },
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(20.0),
-                        ),
-                      ),
-                      child: const Icon(Icons.settings,
-                          size: 28, color: Colors.white)
+                          child: const Icon(Icons.settings,
+                              size: 28, color: Colors.white)
+                        );
+                      }
                     ),
                     SizedBox(width: size.width / 27.4),
                   ],
@@ -405,35 +440,27 @@ class _HomeViewState extends State<HomeView>
         padding: EdgeInsets.symmetric(
             horizontal: size.width / 34.25, vertical: size.height / 173.2),
         child: NotificationListener(
-          onNotification: (t) {
-            // if (t is ScrollEndNotification) {
-            //   if(tabScrollController.position.pixels == 0.0){
-            //     setState(() {
-            //       tabIsScrollable = false;
-            //     });
-            //     print(tabScrollController.position.pixels.toString() + "++");
-            //   }else{
-            //     setState(() {
-            //       tabIsScrollable = true;
-            //     });
-            //     print(tabScrollController.position.pixels.toString() + "**");
-            //   }
-            //   if(scrollController.position.pixels == 0.0){
-            //     setState(() {
-            //       tabIsScrollable = false;
-            //     });
-            //   }else{
-            //     setState(() {
-            //       tabIsScrollable = true;
-            //     });
-            //   }
-            //   print(tabScrollController.position.pixels.toString() + "**");
-            //   print(scrollController.position.pixels.toString() + "--");
-            // }
+          onNotification: (ScrollNotification notification) {
+            if (notification is ScrollUpdateNotification) {
+              if (notification.metrics.pixels == notification.metrics.maxScrollExtent) {
+                debugPrint('Reached the bottom');
+                scrollController.animateTo(
+                    scrollController.position.maxScrollExtent,
+                    duration: const Duration(seconds: 1),
+                    curve: Curves.easeIn);
+              } else if (notification.metrics.pixels ==
+                  notification.metrics.minScrollExtent) {
+                debugPrint('Reached the top');
+                scrollController.animateTo(
+                    scrollController.position.minScrollExtent,
+                    duration: const Duration(seconds: 1),
+                    curve: Curves.easeIn);
+              }
+            }
             return true;
           },
           child: SingleChildScrollView(
-            physics: RangeMaintainingScrollPhysics(),
+            physics: ScrollPhysics(),
             controller: scrollController,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -577,7 +604,7 @@ class _HomeViewState extends State<HomeView>
                                 controller: tabController,
                                 tabs: [
                                   Tab(
-                                    height: size.width / 17,
+                                    height: size.height / 17,
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
@@ -606,7 +633,7 @@ class _HomeViewState extends State<HomeView>
                                     ),
                                   ),
                                   Tab(
-                                    height: size.width / 17,
+                                    height: size.height / 17,
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
@@ -634,7 +661,7 @@ class _HomeViewState extends State<HomeView>
                                     ),
                                   ),
                                   Tab(
-                                    height: size.width / 17,
+                                    height: size.height / 17,
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
@@ -665,7 +692,7 @@ class _HomeViewState extends State<HomeView>
                                 labelColor: Constants().primaryAppColor,
                                 dividerColor: Colors.transparent,
                                 indicatorSize: TabBarIndicatorSize.label,
-                                indicatorColor: Colors.yellow,
+                                indicatorColor: Constants().primaryAppColor,
                               ),
                             ),
                             Expanded(
@@ -678,8 +705,8 @@ class _HomeViewState extends State<HomeView>
                                         phone: widget.phone,
                                         scrollController: tabScrollController,
                                         hasScroll: tabIsScrollable),
-                                    EventsListView(phone: widget.phone),
-                                    BlogsListView(phone: widget.phone)
+                                    EventsListView(phone: widget.phone,scrollController: tabScrollController,),
+                                    BlogsListView(phone: widget.phone,scrollController: tabScrollController,)
                                   ],
                                 ),
                               ),

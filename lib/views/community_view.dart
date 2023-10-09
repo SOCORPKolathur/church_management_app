@@ -50,7 +50,13 @@ class _CommunityViewState extends State<CommunityView> {
                   : UserFireCrud.fetchUsers(),
               builder: (ctx, snapshot) {
                 if (snapshot.hasData) {
-                  List<UserModel> users = snapshot.data!;
+                  List<UserModel> users1 = snapshot.data!;
+                  List<UserModel> users = [];
+                  users1.forEach((element) {
+                    if(element.isPrivacyEnabled == false){
+                      users.add(element);
+                    }
+                  });
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
