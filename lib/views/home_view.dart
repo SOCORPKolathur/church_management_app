@@ -152,18 +152,23 @@ class _HomeViewState extends State<HomeView>
                 UserModel user = snaps.data!;
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        fit: BoxFit.fill,
-                        image: (user.imgUrl != null)
-                            ? CachedNetworkImageProvider(
-                                user.imgUrl!,
-                              )
-                            : const CachedNetworkImageProvider(
-                                "https://firebasestorage.googleapis.com/v0/b/church-management-cbf7d.appspot.com/o/dailyupdates%2Fblank-profile-picture-973460_1280.png?alt=media&token=a9cde0ad-6cac-49d3-ae62-851a174e44b4"),
+                  child: InkWell(
+                    onTap: (){
+                      showImageModel(context,(user.imgUrl == "" ||user.imgUrl == null) ? "https://firebasestorage.googleapis.com/v0/b/church-management-cbf7d.appspot.com/o/dailyupdates%2Fblank-profile-picture-973460_1280.png?alt=media&token=a9cde0ad-6cac-49d3-ae62-851a174e44b4" : user.imgUrl!);
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          fit: BoxFit.fill,
+                          image: (user.imgUrl != null)
+                              ? CachedNetworkImageProvider(
+                                  user.imgUrl!,
+                                )
+                              : const CachedNetworkImageProvider(
+                                  "https://firebasestorage.googleapis.com/v0/b/church-management-cbf7d.appspot.com/o/dailyupdates%2Fblank-profile-picture-973460_1280.png?alt=media&token=a9cde0ad-6cac-49d3-ae62-851a174e44b4"),
+                        ),
                       ),
                     ),
                   ),

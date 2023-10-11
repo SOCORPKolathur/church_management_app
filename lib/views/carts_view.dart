@@ -120,7 +120,7 @@ class _CartViewState extends State<CartView> {
                                     child: Row(
                                       children: [
                                         Container(
-                                          height: size.height * 0.18,
+                                          height: size.height * 0.21,
                                           width: size.width * 0.55,
                                           padding: const EdgeInsets.all(8),
                                           child: Column(
@@ -143,6 +143,18 @@ class _CartViewState extends State<CartView> {
                                                         .getFontSize(
                                                             context, "M"),
                                                   ),
+                                                ),
+                                              ),
+                                              SizedBox(height: size.height/173.2),
+                                              Text(
+                                                "Qty :" +
+                                                    carts[i].quantity!.toString(),
+                                                style: GoogleFonts.urbanist(
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w700,
+                                                  fontSize: Constants()
+                                                      .getFontSize(
+                                                      context, "S"),
                                                 ),
                                               ),
                                               SizedBox(height: size.height/173.2),
@@ -189,7 +201,7 @@ class _CartViewState extends State<CartView> {
                                           ),
                                         ),
                                         Container(
-                                          height: size.height * 0.16,
+                                          height: size.height * 0.18,
                                           width: size.width * 0.3,
                                           decoration: BoxDecoration(
                                               image: DecorationImage(
@@ -271,7 +283,7 @@ class _CartViewState extends State<CartView> {
                         imgUrl: element.imgUrl,
                         price: element.price,
                         name: element.productName,
-                        id: element.id));
+                        id: element.productId));
                   });
                   Response response = await UserFireCrud.addToOrder(
                     userDocId: widget.userDocId,

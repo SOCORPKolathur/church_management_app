@@ -118,6 +118,7 @@ class UserFireCrud {
     OrdersModel order = OrdersModel(
       id: "",
       date: DateFormat('dd/MM/yyyy').format(DateTime.now()),
+      time: DateFormat('hh:mm a').format(DateTime.now()),
       phone: phone,
       method: method,
       status: status,
@@ -157,6 +158,15 @@ class UserFireCrud {
     }).catchError((e){
       res.code = 500;
       res.message = e;
+    });
+    return res;
+  }
+
+  static Future<Response> updateCartQuantity({required String userDocId,required String docId,required int quantity}) async {
+    Response res = Response();
+    DocumentReference documentReferencer = UserCollection.doc(userDocId).collection('Carts').doc(docId);
+    var result = await documentReferencer.update({
+      "quantity" : quantity
     });
     return res;
   }

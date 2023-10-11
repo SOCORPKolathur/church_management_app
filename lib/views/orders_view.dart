@@ -28,6 +28,7 @@ class _OrdersViewState extends State<OrdersView> {
         title: KText(
           text: "Orders",
           style: GoogleFonts.openSans(
+            color: Colors.white,
             fontSize: Constants().getFontSize(context, "L"),
             fontWeight: FontWeight.w700,
           ),
@@ -87,7 +88,7 @@ class _OrdersViewState extends State<OrdersView> {
                     for (int i = 0; i < orders.length; i++)
                       InkWell(
                         onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (ctx)=> OrderDetailsView(orderId: orders[i].orderId!)));
+                          Navigator.push(context, MaterialPageRoute(builder: (ctx)=> OrderDetailsView(orderId: orders[i].orderId!,userDocId: widget.userDocId,order: orders[i])));
                         },
                         child: Container(
                           width: size.width,
@@ -104,61 +105,113 @@ class _OrdersViewState extends State<OrdersView> {
                           ),
                           margin: const EdgeInsets.all(8),
                           padding: const EdgeInsets.all(8),
-                          child: Row(
-                            children: [
-                              Container(
-                                height: size.height * 0.18,
-                                width: size.width * 0.55,
-                                padding: const EdgeInsets.all(8),
-                                child: Column(
-                                  crossAxisAlignment:
-                                  CrossAxisAlignment.start,
-                                  mainAxisAlignment:
-                                  MainAxisAlignment.spaceEvenly,
+                          child: Container(
+                            height: size.height * 0.18,
+                            width: size.width,
+                            padding: const EdgeInsets.all(8),
+                            child: Column(
+                              crossAxisAlignment:
+                              CrossAxisAlignment.start,
+                              mainAxisAlignment:
+                              MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Text(
+                                  maxLines: null,
+                                  "Order ID : ${orders[i].orderId!}",
+                                  style: GoogleFonts.urbanist(
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: Constants()
+                                        .getFontSize(context, "SM"),
+                                  ),
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    KText(
-                                      maxLines: null,
-                                      text: orders[i].orderId!,
-                                      style: GoogleFonts.urbanist(
-                                        color: const Color(0xff5F5F5F),
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: Constants()
-                                            .getFontSize(context, "S"),
-                                      ),
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.date_range,
+                                          color: Constants().primaryAppColor,
+                                        ),
+                                        SizedBox(width: size.width/72),
+                                        Text(
+                                          orders[i].date!.toString(),
+                                          style: GoogleFonts.urbanist(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: Constants()
+                                                .getFontSize(context, "SM"),
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    Text(
-                                      orders[i].date!.toString(),
-                                      style: GoogleFonts.urbanist(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: Constants()
-                                            .getFontSize(context, "SM"),
-                                      ),
-                                    ),
-                                    Text(
-                                      r"$ " + orders[i].amount!.toString(),
-                                      style: GoogleFonts.urbanist(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w700,
-                                        fontSize: Constants()
-                                            .getFontSize(context, "SM"),
-                                      ),
+                                    Row(
+                                      children: [
+                                        Icon(
+                                          Icons.timelapse,
+                                          color: Constants().primaryAppColor,
+                                        ),
+                                        SizedBox(width: size.width/72),
+                                        Text(
+                                          orders[i].time.toString(),
+                                          style: GoogleFonts.urbanist(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: Constants()
+                                                .getFontSize(context, "SM"),
+                                          ),
+                                        ),
+                                      ],
                                     )
                                   ],
                                 ),
-                              ),
-                              Container(
-                                height: size.height * 0.16,
-                                width: size.width * 0.3,
-                                decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      fit: BoxFit.fill,
-                                      image: CachedNetworkImageProvider(
-                                        orders[i].products!.first.imgUrl!,
+                                Row(
+                                  children: [
+                                    Text(
+                                      "Total : ",
+                                      style: GoogleFonts.urbanist(
+                                        color: Colors.grey,
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: Constants()
+                                            .getFontSize(context, "SM"),
                                       ),
-                                    )),
-                              ),
-                            ],
+                                    ),
+                                    Text(
+                                      "₹${orders[i].amount!} rs",
+                                      style: GoogleFonts.urbanist(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: Constants()
+                                            .getFontSize(context, "SM"),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Text(
+                                      "Order Status : ",
+                                      style: GoogleFonts.urbanist(
+                                        color: Colors.grey,
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: Constants()
+                                            .getFontSize(context, "SM"),
+                                      ),
+                                    ),
+                                    Text(
+                                       orders[i].status!,
+                                      style: GoogleFonts.urbanist(
+                                        color: orders[i].status!.toLowerCase() == "ordered" ? Colors.orange : orders[i].status!.toLowerCase() == "canceled" ? Colors.red : Colors.green,
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: Constants()
+                                            .getFontSize(context, "SM"),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
                           ),
                         ),
                       )

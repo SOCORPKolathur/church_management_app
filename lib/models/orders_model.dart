@@ -6,6 +6,7 @@ class OrdersModel {
   double? amount;
   String? method;
   String? date;
+  late String time;
   String? phone;
   String? address;
   String? status;
@@ -17,6 +18,7 @@ class OrdersModel {
         this.userName,
         this.orderId,
         this.amount,
+        required this.time,
         this.method,
         this.date,
         this.phone,
@@ -27,6 +29,7 @@ class OrdersModel {
   OrdersModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     timestamp = json['timestamp'];
+    time = json['time'];
     userName = json['userName'];
     orderId = json['orderId'];
     amount = json['amount'];
@@ -51,6 +54,7 @@ class OrdersModel {
     data['orderId'] = this.orderId;
     data['amount'] = this.amount;
     data['method'] = this.method;
+    data['time'] = this.time;
     data['date'] = this.date;
     data['phone'] = this.phone;
     data['address'] = this.address;
