@@ -144,64 +144,64 @@ class _IntroViewState extends State<IntroView> {
                         ],
                       ),
                       SizedBox(height: size.height/43.3),
-                      Text(
-                        "Or login with",
-                        style: GoogleFonts.openSans(
-                          fontSize: size.width/25.6875,
-                          color: const Color(0xff000000)
-                        ),
-                      ),
-                      SizedBox(height: size.height/43.3),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          InkWell(
-                            onTap:(){},
-                            child: Container(
-                              height: size.height/19.681818182,
-                              width: size.width*0.25,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(30),
-                                border: Border.all(color: Constants().primaryAppColor, width: 2),
-                              ),
-                              child: Center(
-                                child: SvgPicture.asset("assets/Group 10.svg"),
-                              ),
-                            ),
-                          ),
-                          InkWell(
-                            onTap:(){},
-                            child: Container(
-                              height: size.height/19.681818182,
-                              width: size.width*0.25,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(30),
-                                border: Border.all(color: Constants().primaryAppColor, width: 2),
-                              ),
-                              child: Center(
-                                child: SvgPicture.asset("assets/Group 9.svg"),
-                              ),
-                            ),
-                          ),
-                          InkWell(
-                            onTap:(){},
-                            child: Container(
-                              height: size.height/19.681818182,
-                              width: size.width*0.25,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(30),
-                                border: Border.all(color: Constants().primaryAppColor, width: 2),
-                              ),
-                              child:  Center(
-                                child: SvgPicture.asset("assets/Vector.svg"),
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
+                      // Text(
+                      //   "Or login with",
+                      //   style: GoogleFonts.openSans(
+                      //     fontSize: size.width/25.6875,
+                      //     color: const Color(0xff000000)
+                      //   ),
+                      // ),
+                      // SizedBox(height: size.height/43.3),
+                      // Row(
+                      //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      //   children: [
+                      //     InkWell(
+                      //       onTap:(){},
+                      //       child: Container(
+                      //         height: size.height/19.681818182,
+                      //         width: size.width*0.25,
+                      //         decoration: BoxDecoration(
+                      //           color: Colors.white,
+                      //           borderRadius: BorderRadius.circular(30),
+                      //           border: Border.all(color: Constants().primaryAppColor, width: 2),
+                      //         ),
+                      //         child: Center(
+                      //           child: SvgPicture.asset("assets/Group 10.svg"),
+                      //         ),
+                      //       ),
+                      //     ),
+                      //     InkWell(
+                      //       onTap:(){},
+                      //       child: Container(
+                      //         height: size.height/19.681818182,
+                      //         width: size.width*0.25,
+                      //         decoration: BoxDecoration(
+                      //           color: Colors.white,
+                      //           borderRadius: BorderRadius.circular(30),
+                      //           border: Border.all(color: Constants().primaryAppColor, width: 2),
+                      //         ),
+                      //         child: Center(
+                      //           child: SvgPicture.asset("assets/Group 9.svg"),
+                      //         ),
+                      //       ),
+                      //     ),
+                      //     InkWell(
+                      //       onTap:(){},
+                      //       child: Container(
+                      //         height: size.height/19.681818182,
+                      //         width: size.width*0.25,
+                      //         decoration: BoxDecoration(
+                      //           color: Colors.white,
+                      //           borderRadius: BorderRadius.circular(30),
+                      //           border: Border.all(color: Constants().primaryAppColor, width: 2),
+                      //         ),
+                      //         child:  Center(
+                      //           child: SvgPicture.asset("assets/Vector.svg"),
+                      //         ),
+                      //       ),
+                      //     )
+                      //   ],
+                      // ),
                       SizedBox(height: size.height * 0.04)
                     ],
                   )

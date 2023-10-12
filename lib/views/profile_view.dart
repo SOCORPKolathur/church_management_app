@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_launcher_icons/xml_templates.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import '../Widgets/kText.dart';
@@ -841,10 +842,10 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
                             builder: (ctx, snapshot) {
                               bool noData = true;
                               if (snapshot.hasData) {
-                                var data;
+                                List data = [];
                                 snapshot.data!.docs.forEach((element) {
                                   if(element.get("lastName") == user.phone){
-                                    data = element;
+                                    data.add(element);
                                     noData = false;
                                   }
                                 });
@@ -860,102 +861,106 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
                                     children: [
                                       SizedBox(height: size.height/86.6),
                                       SizedBox(height: size.height/86.6),
-                                      Card(
-                                        color: Colors.white,
-                                        child: SizedBox(
-                                          width: double.infinity,
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(20.0),
-                                            child: Column(
-                                              mainAxisAlignment:
-                                              MainAxisAlignment.spaceAround,
-                                              children: [
-                                                InkWell(
-                                                  onTap: () {},
-                                                  child: Row(
-                                                    children: [
-                                                      Icon(Icons.date_range,color: Constants().primaryAppColor,),
-                                                      SizedBox(width: size.width/41.1),
-                                                      KText(
-                                                        text: "Date :",
-                                                        style: TextStyle(
-                                                            fontWeight: FontWeight.w700,
-                                                            fontSize: Constants()
-                                                                .getFontSize(context, 'S')),
-                                                      ),
-                                                      SizedBox(width: size.width/82.2),
-                                                      KText(
-                                                        text: data['Date'],
-                                                        style: TextStyle(
-                                                            color: Colors.grey,
-                                                            fontWeight: FontWeight.w500,
-                                                            fontSize: Constants()
-                                                                .getFontSize(context, 'S')),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                                SizedBox(height: size.height/86.6),
-                                                InkWell(
-                                                  onTap: () {},
-                                                  child: Row(
-                                                    children: [
-                                                      Icon(Icons.timelapse,color: Constants().primaryAppColor,),
-                                                      SizedBox(width: size.width/41.1),
-                                                      KText(
-                                                        text: "Time :",
-                                                        style: TextStyle(
-                                                            fontWeight: FontWeight.w700,
-                                                            fontSize: Constants()
-                                                                .getFontSize(context, 'S')),
-                                                      ),
-                                                      SizedBox(width: size.width/82.2),
-                                                      KText(
-                                                        text: data['Time'],
-                                                        style: TextStyle(
-                                                            color: Colors.grey,
-                                                            fontWeight: FontWeight.w500,
-                                                            fontSize: Constants()
-                                                                .getFontSize(context, 'S')),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                                SizedBox(height: size.height/86.6),
-                                                InkWell(
-                                                  onTap: () {},
-                                                  child: Row(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      Icon(Icons.text_snippet_sharp,color: Constants().primaryAppColor,),
-                                                      SizedBox(width: size.width/41.1),
-                                                      KText(
-                                                        text: "Speech :",
-                                                        style: TextStyle(
-                                                            fontWeight: FontWeight.w700,
-                                                            fontSize: Constants()
-                                                                .getFontSize(context, 'S')),
-                                                      ),
-                                                      SizedBox(width: size.width/82.2),
-                                                      SizedBox(
-                                                        width: size.width * 0.5,
-                                                        child: KText(
-                                                          text: data['speech'],
-                                                          style: TextStyle(
-                                                              color: Colors.grey,
-                                                              fontWeight: FontWeight.w500,
-                                                              fontSize: Constants()
-                                                                  .getFontSize(context, 'S')),
+                                      for(int i = 0; i < data.length; i ++)
+                                        Column(
+                                          children: [
+                                            InkWell(
+                                              onTap: (){
+                                                showSpeechPopUp(context, data[i]);
+                                              },
+                                              child: Card(
+                                                color: Colors.white,
+                                                child: SizedBox(
+                                                  height: size.height * 0.2,
+                                                  width: double.infinity,
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.all(20.0),
+                                                    child: Column(
+                                                      mainAxisAlignment:
+                                                      MainAxisAlignment.spaceAround,
+                                                      children: [
+                                                        Row(
+                                                          children: [
+                                                            Icon(Icons.date_range,color: Constants().primaryAppColor,),
+                                                            SizedBox(width: size.width/41.1),
+                                                            KText(
+                                                              text: "Date :",
+                                                              style: TextStyle(
+                                                                  fontWeight: FontWeight.w700,
+                                                                  fontSize: Constants()
+                                                                      .getFontSize(context, 'S')),
+                                                            ),
+                                                            SizedBox(width: size.width/82.2),
+                                                            KText(
+                                                              text: data[i]['Date'],
+                                                              style: TextStyle(
+                                                                  color: Colors.grey,
+                                                                  fontWeight: FontWeight.w500,
+                                                                  fontSize: Constants()
+                                                                      .getFontSize(context, 'S')),
+                                                            )
+                                                          ],
                                                         ),
-                                                      )
-                                                    ],
+                                                        SizedBox(height: size.height/86.6),
+                                                        Row(
+                                                          children: [
+                                                            Icon(Icons.timelapse,color: Constants().primaryAppColor,),
+                                                            SizedBox(width: size.width/41.1),
+                                                            KText(
+                                                              text: "Time :",
+                                                              style: TextStyle(
+                                                                  fontWeight: FontWeight.w700,
+                                                                  fontSize: Constants()
+                                                                      .getFontSize(context, 'S')),
+                                                            ),
+                                                            SizedBox(width: size.width/82.2),
+                                                            KText(
+                                                              text: data[i]['Time'],
+                                                              style: TextStyle(
+                                                                  color: Colors.grey,
+                                                                  fontWeight: FontWeight.w500,
+                                                                  fontSize: Constants()
+                                                                      .getFontSize(context, 'S')),
+                                                            )
+                                                          ],
+                                                        ),
+                                                        SizedBox(height: size.height/86.6),
+                                                        Row(
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          children: [
+                                                            Icon(Icons.text_snippet_sharp,color: Constants().primaryAppColor,),
+                                                            SizedBox(width: size.width/41.1),
+                                                            KText(
+                                                              text: "Speech :",
+                                                              style: TextStyle(
+                                                                  fontWeight: FontWeight.w700,
+                                                                  fontSize: Constants()
+                                                                      .getFontSize(context, 'S')),
+                                                            ),
+                                                            SizedBox(width: size.width/82.2),
+                                                            SizedBox(
+                                                              height: size.height * 0.05,
+                                                              width: size.width * 0.5,
+                                                              child: KText(
+                                                                text: data[i]['speech'],
+                                                                style: TextStyle(
+                                                                    color: Colors.grey,
+                                                                    fontWeight: FontWeight.w500,
+                                                                    fontSize: Constants()
+                                                                        .getFontSize(context, 'S')),
+                                                              ),
+                                                            )
+                                                          ],
+                                                        )
+                                                      ],
+                                                    ),
                                                   ),
-                                                )
-                                              ],
+                                                ),
+                                              ),
                                             ),
-                                          ),
+                                            SizedBox(height: size.height/86.6),
+                                          ],
                                         ),
-                                      ),
                                     ],
                                   ),
                                 );
@@ -973,6 +978,140 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
           }return Container();
         },
       )
+    );
+  }
+
+  showSpeechPopUp(context, var data) async {
+    Size size = MediaQuery.of(context).size;
+    await showDialog(
+      context: context,
+      builder: (ctx) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: Container(
+            height: size.height * 0.8,
+            width: size.width,
+            decoration: BoxDecoration(
+              color: Constants().primaryAppColor,
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black26,
+                  offset: Offset(1, 2),
+                  blurRadius: 3,
+                ),
+              ],
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                SizedBox(
+                  height: size.height * 0.07,
+                  child: Padding(
+                    padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        KText(
+                          text: 'Speech',
+                          style: GoogleFonts.openSans(
+                            fontSize: Constants().getFontSize(context, 'M'),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            setState(() {});
+                            Navigator.pop(context);
+                          },
+                          child: const Icon(
+                            Icons.cancel_outlined,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Container(
+                  height: size.height * 0.73,
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
+                    color: Color(0xffF7FAFC),
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(10),
+                      bottomRight: Radius.circular(10),
+                    ),
+                  ),
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                data['Date'],
+                                style: GoogleFonts.openSans(
+                                  color: Colors.grey,
+                                  fontSize:
+                                  Constants().getFontSize(context, "S"),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              Text(
+                                data['Time'],
+                                style: GoogleFonts.openSans(
+                                  color: Colors.grey,
+                                  fontSize:
+                                  Constants().getFontSize(context, "S"),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: size.height / 86.6),
+                          SizedBox(height: size.height / 216.5),
+                          SizedBox(
+                            height: size.height * 0.65,
+                            child: SingleChildScrollView(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(5),
+                                      ),
+                                      child: KText(
+                                        text: data['speech'],
+                                        style: GoogleFonts.openSans(
+                                          fontSize: Constants()
+                                              .getFontSize(context, 'S'),
+                                          fontWeight: FontWeight.normal,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 

@@ -84,7 +84,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
-                          height: size.height * 0.22,
+                          height: size.height * 0.24,
                           width: size.width * 0.55,
                           padding: const EdgeInsets.all(8),
                           child: Column(
@@ -104,6 +104,29 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                               Row(
                                 children: [
                                   Text(
+                                    "Amount : ",
+                                    style: GoogleFonts.urbanist(
+                                      color: Colors.grey,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: Constants()
+                                          .getFontSize(context, "SM"),
+                                    ),
+                                  ),
+                                  Text(
+                                    "₹${widget.order.products![i].price}",
+                                    style: GoogleFonts.urbanist(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize:
+                                      Constants().getFontSize(context, "SM"),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: size.height/173.2),
+                              Row(
+                                children: [
+                                  Text(
                                     "Qty : ",
                                     style: GoogleFonts.urbanist(
                                       color: Colors.grey,
@@ -113,7 +136,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                                     ),
                                   ),
                                   Text(
-                                    "${widget.order.products![i].quantity}",
+                                    "${widget.order.products![i].quantity!}",
                                     style: GoogleFonts.urbanist(
                                       color: Colors.black,
                                       fontWeight: FontWeight.w700,
@@ -135,7 +158,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                                     ),
                                   ),
                                   Text(
-                                    "₹${products[i].price!}",
+                                    "₹${widget.order.products![i].quantity! * widget.order.products![i].price!}",
                                     style: GoogleFonts.urbanist(
                                       color: Colors.black,
                                       fontWeight: FontWeight.w700,

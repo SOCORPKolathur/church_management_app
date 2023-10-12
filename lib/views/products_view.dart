@@ -211,7 +211,7 @@ class _ProductsViewState extends State<ProductsView> {
                                               color: Colors.black,
                                               fontWeight: FontWeight.w700,
                                               fontSize:
-                                                  Constants().getFontSize(context, "S"),
+                                                  Constants().getFontSize(context, "SM"),
                                             ),
                                           ),
                                           InkWell(

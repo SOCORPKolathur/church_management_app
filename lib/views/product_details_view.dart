@@ -4,6 +4,7 @@ import 'package:church_management_client/models/product_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:photo_view/photo_view.dart';
 
 import '../Widgets/kText.dart';
 import '../models/cart_model.dart';
@@ -74,16 +75,21 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
             return SingleChildScrollView(
               child: Column(
                 children: [
-                  Container(
-                    height: size.height/3.036,
-                    width: size.width,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      image: DecorationImage(
-                        image: NetworkImage(
-                          currentProduct.imgUrl!
+                  InkWell(
+                    onTap: (){
+                      showImageModel(context,currentProduct.imgUrl!);
+                    },
+                    child: Container(
+                      height: size.height/3.036,
+                      width: size.width,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        image: DecorationImage(
+                          image: NetworkImage(
+                            currentProduct.imgUrl!
+                          )
                         )
-                      )
+                      ),
                     ),
                   ),
                   Padding(
@@ -404,4 +410,19 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
       )
     );
   }
+
+  showImageModel(context, String imgUrl) {
+    showDialog(
+      barrierColor: Colors.transparent,
+      context: context,
+      builder: (BuildContext context) {
+        return PhotoView(
+          imageProvider: CachedNetworkImageProvider(
+            imgUrl,
+          ),
+        );
+      },
+    );
+  }
+
 }
