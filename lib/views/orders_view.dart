@@ -178,7 +178,7 @@ class _OrdersViewState extends State<OrdersView> {
                                       ),
                                     ),
                                     Text(
-                                      "₹${orders[i].amount!} rs",
+                                      "₹${orders[i].amount!}",
                                       style: GoogleFonts.urbanist(
                                         color: Colors.black,
                                         fontWeight: FontWeight.w700,

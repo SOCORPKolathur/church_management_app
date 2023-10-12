@@ -226,7 +226,7 @@ class _CommunityViewState extends State<CommunityView>  with SingleTickerProvide
                               ],
                             ),
                           ),
-                          SizedBox(height: size.height * 0.1),
+                          SizedBox(height: size.height * 0.01),
                         ],
                       );
                     }
@@ -326,8 +326,8 @@ class _CommunityViewState extends State<CommunityView>  with SingleTickerProvide
                               Expanded(child: Container()),
                               InkWell(
                                 onTap: () async {
-                                  final Uri launchUri = Uri(
-                                    path: 'https://api.whatsapp.com/send?phone=${users[i].phone!}&text=Hii%20${users[i].firstName!} ${users[i].lastName!},%20I%20got%20your%20contact%20on%20IKIA',
+                                  final Uri launchUri = Uri.parse(
+                                    'https://api.whatsapp.com/send?phone=${users[i].phone!}&text=Hii%20${users[i].firstName!} ${users[i].lastName!},%20I%20got%20your%20contact%20on%20IKIA',
                                   );
                                   await launchUrl(launchUri);
                                 },
@@ -428,8 +428,8 @@ class _CommunityViewState extends State<CommunityView>  with SingleTickerProvide
                                 Expanded(child: Container()),
                                 InkWell(
                                     onTap: () async {
-                                      final Uri launchUri = Uri(
-                                        path: 'https://api.whatsapp.com/send?phone=${members[i]['phone']}&text=Hii%20${members[i]['firstName']!} ${members[i]['lastName']!},%20I%20got%20your%20contact%20on%20IKIA',
+                                      final Uri launchUri = Uri.parse(
+                                        'https://api.whatsapp.com/send?phone=${members[i]['phone']}&text=Hii%20${members[i]['firstName']!} ${members[i]['lastName']!},%20I%20got%20your%20contact%20on%20IKIA',
                                       );
                                       await launchUrl(launchUri);
                                     },

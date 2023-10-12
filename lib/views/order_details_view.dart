@@ -135,7 +135,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                                     ),
                                   ),
                                   Text(
-                                    "₹${products[i].price!} rs",
+                                    "₹${products[i].price!}",
                                     style: GoogleFonts.urbanist(
                                       color: Colors.black,
                                       fontWeight: FontWeight.w700,

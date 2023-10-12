@@ -183,30 +183,35 @@ class _ProductsViewState extends State<ProductsView> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Container(
-                                      height: size.height * 0.22,
+                                      height: size.height * 0.16,
                                       width: size.width * 0.55,
                                       padding: const EdgeInsets.all(8),
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                         children: [
-                                          KText(
-                                            maxLines: null,
-                                            text: products[i].title!,
-                                            style: GoogleFonts.urbanist(
-                                              color: const Color(0xff5F5F5F),
-                                              fontWeight: FontWeight.w700,
-                                              fontSize: Constants().getFontSize(context, "ML"),
+                                          SizedBox(
+                                            height:size.height/25.3,
+                                            width: size.width * 0.45,
+                                            child: KText(
+                                              maxLines: 1,
+                                              textOverflow: TextOverflow.ellipsis,
+                                              text: products[i].title!,
+                                              style: GoogleFonts.urbanist(
+                                                color: const Color(0xff5F5F5F),
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: Constants().getFontSize(context, "M"),
+                                              ),
                                             ),
                                           ),
                                           SizedBox(height: size.height/173.2),
                                           Text(
-                                            "₹${products[i].price!} rs",
+                                            "₹${products[i].price!}",
                                             style: GoogleFonts.urbanist(
                                               color: Colors.black,
                                               fontWeight: FontWeight.w700,
                                               fontSize:
-                                                  Constants().getFontSize(context, "SM"),
+                                                  Constants().getFontSize(context, "S"),
                                             ),
                                           ),
                                           InkWell(
@@ -292,22 +297,17 @@ class _ProductsViewState extends State<ProductsView> {
                                         ],
                                       ),
                                     ),
-                                    InkWell(
-                                      onTap: (){
-                                        showImageModel(context, products[i].imgUrl!);
-                                      },
-                                      child: Container(
-                                        height: size.height * 0.2,
-                                        width: size.width * 0.3,
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(10),
-                                            image: DecorationImage(
-                                          fit: BoxFit.fitHeight,
-                                          image: CachedNetworkImageProvider(
-                                            products[i].imgUrl!,
-                                          ),
+                                    Container(
+                                      height: size.height * 0.16,
+                                      width: size.width * 0.3,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                          image: DecorationImage(
+                                        fit: BoxFit.fitHeight,
+                                        image: CachedNetworkImageProvider(
+                                          products[i].imgUrl!,
                                         ),
-                                        ),
+                                      ),
                                       ),
                                     ),
                                   ],

@@ -95,7 +95,7 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "₹${currentProduct.title!}",
+                              currentProduct.title!,
                               style: GoogleFonts.urbanist(
                                 color: Colors.black,
                                 fontWeight: FontWeight.w700,
@@ -192,7 +192,7 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                         ),
                         SizedBox(height: size.height/75.9),
                         SizedBox(
-                          height: size.height/3.3,
+                          height: size.height/3.608333333,
                           width: size.width,
                           child: StreamBuilder(
                             stream: FirebaseFirestore.instance.collection('Products').snapshots(),
@@ -207,68 +207,71 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                                       onTap: (){
                                         Navigator.push(context, MaterialPageRoute(builder: (ctx)=> ProductDetailsView(productId: products[i].productId!,productName: products[i].title!,userDocId: widget.userDocId)));
                                       },
-                                      child: Container(
-                                        width: size.width/2.305882352941176,
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.circular(10),
-                                          boxShadow: const [
-                                            BoxShadow(
-                                              color: Colors.black12,
-                                              blurRadius: 4,
-                                              offset: Offset(2, 3),
-                                            )
-                                          ],
-                                        ),
-                                        padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 8),
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                              height: size.height/5.421428571428571,
-                                              decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius: BorderRadius.circular(10),
-                                                image: DecorationImage(
-                                                  fit: BoxFit.fitHeight,
-                                                  image: CachedNetworkImageProvider(
-                                                    products[i].imgUrl!,
-                                                  ),
-                                                ),
-                                              ),
-                                              width: double.infinity,
-                                            ),
-                                            SizedBox(height: size.height/90),
-                                            Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              mainAxisAlignment: MainAxisAlignment.start,
-                                              children: [
-                                                SizedBox(
-                                                  height: size.height/18.975,
-                                                  child: KText(
-                                                    maxLines: 1,
-                                                    textOverflow: TextOverflow.ellipsis,
-                                                    text: products[i].title!,
-                                                    style: GoogleFonts.urbanist(
-                                                      color: Colors.grey,
-                                                      fontWeight: FontWeight.w700,
-                                                      fontSize: Constants().getFontSize(context, "M"),
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                                        child: Container(
+                                          width: size.width/2.305882352941176,
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.circular(10),
+                                            boxShadow: const [
+                                              BoxShadow(
+                                                color: Colors.black12,
+                                                blurRadius: 4,
+                                                offset: Offset(2, 3),
+                                              )
+                                            ],
+                                          ),
+                                          padding: const EdgeInsets.symmetric(horizontal: 8,vertical: 8),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            children: [
+                                              Container(
+                                                height: size.height/5.421428571428571,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius: BorderRadius.circular(10),
+                                                  image: DecorationImage(
+                                                    fit: BoxFit.fitHeight,
+                                                    image: CachedNetworkImageProvider(
+                                                      products[i].imgUrl!,
                                                     ),
                                                   ),
                                                 ),
-                                                KText(
-                                                  maxLines: null,
-                                                  text: "₹${products[i].price!}",
-                                                  style: GoogleFonts.urbanist(
-                                                    color: Colors.black,
-                                                    fontWeight: FontWeight.w700,
-                                                    fontSize: Constants().getFontSize(context, "S"),
+                                                width: double.infinity,
+                                              ),
+                                              SizedBox(height: size.height/90),
+                                              Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                mainAxisAlignment: MainAxisAlignment.start,
+                                                children: [
+                                                  SizedBox(
+                                                    height: size.height/28.866666667,
+                                                    child: KText(
+                                                      maxLines: 1,
+                                                      textOverflow: TextOverflow.ellipsis,
+                                                      text: products[i].title!,
+                                                      style: GoogleFonts.urbanist(
+                                                        color: Colors.grey,
+                                                        fontWeight: FontWeight.w700,
+                                                        fontSize: Constants().getFontSize(context, "M"),
+                                                      ),
+                                                    ),
                                                   ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
+                                                  KText(
+                                                    maxLines: null,
+                                                    text: "₹${products[i].price!}",
+                                                    style: GoogleFonts.urbanist(
+                                                      color: Colors.black,
+                                                      fontWeight: FontWeight.w700,
+                                                      fontSize: Constants().getFontSize(context, "S"),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     );
@@ -377,7 +380,7 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                                     },
                                     child: Center(
                                       child: KText(
-                                        text: "Add",
+                                        text: "Add Cart",
                                         style: GoogleFonts.openSans(
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold,

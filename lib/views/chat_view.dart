@@ -11,13 +11,15 @@ import '../models/user_model.dart';
 import '../services/user_firecrud.dart';
 
 class ChatView extends StatefulWidget {
-  ChatView({required this.userDocId, required this.uid, required this.collection, required this.title, required this.isClan,required this.clanId});
+  ChatView({required this.userDocId, required this.uid, required this.collection, required this.title, required this.isClan,required this.clanId, required this.isCommittee,required this.committeeId});
   final String userDocId;
   final String uid;
   final String collection;
   final String title;
   final String clanId;
   final bool isClan;
+  final String committeeId;
+  final bool isCommittee;
   @override
   ChatViewState createState() => ChatViewState();
 }
@@ -56,9 +58,9 @@ class ChatViewState extends State<ChatView> {
                       ? Icons.groups
                       : widget.title == "Blood Requirement"
                       ? Icons.bloodtype
-                      : widget.title == "Committee Members"
+                      : widget.isCommittee
                       ? Icons.groups
-                      : widget.title == "Clans"
+                      : widget.isClan
                       ? Icons.bookmark_add
                       : Icons.music_video_outlined,
                   size: width/13, color: Constants().primaryAppColor,
@@ -123,7 +125,12 @@ class ChatViewState extends State<ChatView> {
               builder: (BuildContext context) {
                 return
                   StreamBuilder<QuerySnapshot>(
-                    stream: widget.isClan 
+                    stream: widget.isCommittee
+                        ? FirebaseFirestore.instance
+                        .collection('CommitteeChat').doc(widget.committeeId).collection('Chat')
+                        .orderBy("time")
+                        .snapshots()
+                        : widget.isClan
                         ? FirebaseFirestore.instance
                         .collection('ClansChat').doc(widget.clanId).collection('Chat')
                         .orderBy("time")
@@ -294,17 +301,22 @@ class ChatViewState extends State<ChatView> {
                   onLongPress: () {
                     showDialog(context: context, builder: (ctx) =>
                         AlertDialog(
-                          title: Text('Are you sure delete this message'),
+                          title: const Text('Are you sure delete this message'),
                           actions: [
                             TextButton(onPressed: () {
                               if(chatMap['sender']== "${user.firstName!} ${user.lastName!}"){
-                                FirebaseFirestore.instance.collection(widget.collection).doc(id).delete();
+                                if(widget.isClan) {
+                                  FirebaseFirestore.instance.collection("ClansChat").doc(widget.clanId).collection('Chat').doc(id).delete();
+                                }else if(widget.isCommittee){
+                                  FirebaseFirestore.instance.collection("CommitteeChat").doc(widget.committeeId).collection('Chat').doc(id).delete();
+                                }else{
+                                  FirebaseFirestore.instance.collection(widget.collection).doc(id).delete();
+                                }
                               }
                               Navigator.pop(context);
                             }, child: const Text('Delete'))
                           ],
                         ));
-                    print('ir');
                   },
                   child: Container(
                       padding: EdgeInsets.symmetric(
@@ -358,6 +370,8 @@ class ChatViewState extends State<ChatView> {
       chatMessage.clear();
       if(widget.isClan){
         await FirebaseFirestore.instance.collection("ClansChat").doc(widget.clanId).collection('Chat').add(messages);
+      }else if(widget.isCommittee){
+        await FirebaseFirestore.instance.collection("CommitteeChat").doc(widget.committeeId).collection('Chat').add(messages);
       }else{
         await FirebaseFirestore.instance.collection(widget.collection).add(messages);
       }

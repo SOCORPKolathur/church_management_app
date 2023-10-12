@@ -120,7 +120,7 @@ class _CartViewState extends State<CartView> {
                                     child: Row(
                                       children: [
                                         Container(
-                                          height: size.height * 0.21,
+                                          height: size.height * 0.18,
                                           width: size.width * 0.55,
                                           padding: const EdgeInsets.all(8),
                                           child: Column(
@@ -130,10 +130,10 @@ class _CartViewState extends State<CartView> {
                                                 MainAxisAlignment.spaceEvenly,
                                             children: [
                                               SizedBox(
-                                                height: size.height * 0.065,
-                                                width: size.width * 0.55,
+                                                height: size.height/28.866666667,
+                                                width: size.width * 0.45,
                                                 child: KText(
-                                                  maxLines: null,
+                                                  maxLines: 1,
                                                   text: carts[i].productName!,
                                                   style: GoogleFonts.urbanist(
                                                     color:
@@ -147,8 +147,7 @@ class _CartViewState extends State<CartView> {
                                               ),
                                               SizedBox(height: size.height/173.2),
                                               Text(
-                                                "Qty :" +
-                                                    carts[i].quantity!.toString(),
+                                                "Qty :${carts[i].quantity!}",
                                                 style: GoogleFonts.urbanist(
                                                   color: Colors.black,
                                                   fontWeight: FontWeight.w700,
@@ -201,7 +200,7 @@ class _CartViewState extends State<CartView> {
                                           ),
                                         ),
                                         Container(
-                                          height: size.height * 0.18,
+                                          height: size.height * 0.16,
                                           width: size.width * 0.3,
                                           decoration: BoxDecoration(
                                               image: DecorationImage(
