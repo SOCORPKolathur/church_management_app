@@ -4,6 +4,7 @@ import 'package:church_management_client/models/product_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 import 'package:photo_view/photo_view.dart';
 
 import '../Widgets/kText.dart';
@@ -32,15 +33,12 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
     carts.forEach((element) {
       if(element.productId == itemId){
         isAltreadyIn = true;
-      }else{
-        isAltreadyIn = false;
       }
     });
     return isAltreadyIn;
   }
 
   getQuantity(List<CartModel> carts, String itemId){
-    print(itemId);
     int quantity = 0;
     carts.forEach((element) {
       if(element.productId == itemId){
@@ -300,7 +298,16 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                 ],
               ),
             );
-          }return Container();
+          }return Container(
+            child: Center(
+              child: Lottie.asset(
+                'assets/churchLoading.json',
+                fit: BoxFit.contain,
+                height: size.height * 0.4,
+                width: size.width * 0.7,
+              ),
+            ),
+          );
         },
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -346,9 +353,9 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                                         onTap: (){
                                           int qty = getQuantity(carts,widget.productId)-1;
                                           if(qty == 0){
-                                            UserFireCrud.deleteCart(userDocId: widget.userDocId, docId: cart.id!);
+                                            UserFireCrud.deleteCart(userDocId: widget.userDocId, docId: cart.productId!);
                                           }else{
-                                            UserFireCrud.updateCartQuantity(userDocId: widget.userDocId, docId: cart.id!,quantity: qty);
+                                            UserFireCrud.updateCartQuantity(userDocId: widget.userDocId, docId: cart.productId!,quantity: qty);
                                           }
                                         },
                                         child: Icon(
@@ -370,7 +377,7 @@ class _ProductDetailsViewState extends State<ProductDetailsView> {
                                       InkWell(
                                         onTap:(){
                                           int qty = getQuantity(carts,widget.productId)+1;
-                                          UserFireCrud.updateCartQuantity(userDocId: widget.userDocId, docId: cart.id!,quantity: qty);
+                                          UserFireCrud.updateCartQuantity(userDocId: widget.userDocId, docId: cart.productId!,quantity: qty);
                                         },
                                         child: Icon(
                                           Icons.add_circle_outline,

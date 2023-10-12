@@ -22,6 +22,27 @@ class CartView extends StatefulWidget {
 }
 
 class _CartViewState extends State<CartView> {
+
+  bool isAltredyInCart(List<CartModel> carts, String itemId){
+    bool isAltreadyIn = false;
+    carts.forEach((element) {
+      if(element.id == itemId){
+        isAltreadyIn = true;
+      }
+    });
+    return isAltreadyIn;
+  }
+
+  getQuantity(List<CartModel> carts, String itemId){
+    int quantity = 0;
+    carts.forEach((element) {
+      if(element.productId == itemId){
+        quantity = element.quantity!;
+      }
+    });
+    return quantity;
+  }
+
   double getTotalAmount(List<CartModel> products) {
     double amount = 0.0;
     for (int i = 0; i < products.length; i++) {
@@ -120,7 +141,7 @@ class _CartViewState extends State<CartView> {
                                     child: Row(
                                       children: [
                                         Container(
-                                          height: size.height * 0.18,
+                                          height: size.height * 0.21,
                                           width: size.width * 0.55,
                                           padding: const EdgeInsets.all(8),
                                           child: Column(
@@ -147,6 +168,17 @@ class _CartViewState extends State<CartView> {
                                               ),
                                               SizedBox(height: size.height/173.2),
                                               Text(
+                                                "Amount :${carts[i].price!}",
+                                                style: GoogleFonts.urbanist(
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w700,
+                                                  fontSize: Constants()
+                                                      .getFontSize(
+                                                      context, "S"),
+                                                ),
+                                              ),
+                                              SizedBox(height: size.height/173.2),
+                                              Text(
                                                 "Qty :${carts[i].quantity!}",
                                                 style: GoogleFonts.urbanist(
                                                   color: Colors.black,
@@ -158,8 +190,7 @@ class _CartViewState extends State<CartView> {
                                               ),
                                               SizedBox(height: size.height/173.2),
                                               Text(
-                                                r"$ " +
-                                                    carts[i].price!.toString(),
+                                                r"$ " +(carts[i].price! * carts[i].quantity!).toString(),
                                                 style: GoogleFonts.urbanist(
                                                   color: Colors.black,
                                                   fontWeight: FontWeight.w700,
@@ -169,32 +200,65 @@ class _CartViewState extends State<CartView> {
                                                 ),
                                               ),
                                               InkWell(
-                                                onTap: () async {
-                                                  Response res = await UserFireCrud.deleteCart(userDocId: widget.userDocId, docId: carts[i].id!);
-                                                },
-                                                child: Container(
-                                                  height: size.height * 0.05,
-                                                  width: size.width * 0.46,
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(10),
-                                                    color: Constants()
-                                                        .primaryAppColor,
-                                                  ),
-                                                  child: Center(
-                                                    child: KText(
-                                                      text: "Remove",
-                                                      style: GoogleFonts.openSans(
-                                                        color: Colors.white,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: Constants()
-                                                            .getFontSize(
-                                                                context, "S"),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
+                                                  child: StreamBuilder(
+                                                    stream: UserFireCrud.fetchCartsForUser(widget.userDocId),
+                                                    builder: (ctx,snap){
+                                                      if(snap.hasData){
+                                                        List<CartModel> carts = snap.data!;
+                                                        return Container(
+                                                          height: size.height * 0.05,
+                                                          width: size.width * 0.46,
+                                                          decoration: BoxDecoration(
+                                                            borderRadius: BorderRadius.circular(10),
+                                                            color: Constants().primaryAppColor,
+                                                          ),
+                                                          child: Center(
+                                                            child: Row(
+                                                              mainAxisAlignment: MainAxisAlignment.center,
+                                                              children: [
+                                                                InkWell(
+                                                                  onTap: (){
+                                                                    int qty = getQuantity(carts,carts[i].productId!)-1;
+                                                                    if(qty == 0){
+                                                                      UserFireCrud.deleteCart(userDocId: widget.userDocId, docId: carts[i].productId!);
+                                                                    }else{
+                                                                      UserFireCrud.updateCartQuantity(userDocId: widget.userDocId, docId: carts[i].productId!,quantity: qty);
+                                                                    }
+                                                                  },
+                                                                  child: Icon(
+                                                                    Icons.remove_circle_outline,
+                                                                    color: Colors.white,
+                                                                    size: size.height * 0.035,
+                                                                  ),
+                                                                ),
+                                                                SizedBox(width: size.width/41.1),
+                                                                KText(
+                                                                  text: getQuantity(carts,carts[i].productId!).toString(),
+                                                                  style: GoogleFonts.openSans(
+                                                                    color: Colors.white,
+                                                                    fontWeight: FontWeight.bold,
+                                                                    fontSize: Constants().getFontSize(context, "S"),
+                                                                  ),
+                                                                ),
+                                                                SizedBox(width: size.width/41.1),
+                                                                InkWell(
+                                                                  onTap:(){
+                                                                    int qty = getQuantity(carts,carts[i].productId!)+1;
+                                                                    UserFireCrud.updateCartQuantity(userDocId: widget.userDocId, docId: carts[i].productId!,quantity: qty);
+                                                                  },
+                                                                  child: Icon(
+                                                                    Icons.add_circle_outline,
+                                                                    color: Colors.white,
+                                                                    size: size.height * 0.035,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            )
+                                                          ),
+                                                        );
+                                                      }return Container();
+                                                    },
+                                                  )
                                               )
                                             ],
                                           ),
@@ -204,7 +268,7 @@ class _CartViewState extends State<CartView> {
                                           width: size.width * 0.3,
                                           decoration: BoxDecoration(
                                               image: DecorationImage(
-                                            fit: BoxFit.fill,
+                                            fit: BoxFit.contain,
                                             image: CachedNetworkImageProvider(
                                               carts[i].imgUrl!,
                                             ),
@@ -289,7 +353,7 @@ class _CartViewState extends State<CartView> {
                     phone: widget.user.phone!,
                     method: "method",
                     status: "Ordered",
-                    userName: widget.user.firstName! + widget.user.firstName!,
+                    userName: widget.user.firstName! + widget.user.lastName!,
                     amount: getTotalAmount(carts),
                     products: tempProducts,
                     address: widget.user.address!,
@@ -297,7 +361,7 @@ class _CartViewState extends State<CartView> {
                   if (response.code == 200) {
                     for (int k = 0; k < carts.length; k++) {
                       Response res = await UserFireCrud.deleteCart(
-                          userDocId: widget.userDocId, docId: carts[k].id!);
+                          userDocId: widget.userDocId, docId: carts[k].productId!);
                     }
                     CoolAlert.show(
                         context: context,

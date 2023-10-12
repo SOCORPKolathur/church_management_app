@@ -871,7 +871,7 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
                                               child: Card(
                                                 color: Colors.white,
                                                 child: SizedBox(
-                                                  height: size.height * 0.2,
+                                                  height: size.height * 0.18,
                                                   width: double.infinity,
                                                   child: Padding(
                                                     padding: const EdgeInsets.all(20.0),
@@ -939,10 +939,12 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
                                                             ),
                                                             SizedBox(width: size.width/82.2),
                                                             SizedBox(
-                                                              height: size.height * 0.05,
+                                                              height: size.height * 0.03,
                                                               width: size.width * 0.5,
                                                               child: KText(
+                                                                maxLines: 1,
                                                                 text: data[i]['speech'],
+                                                                textOverflow : TextOverflow.ellipsis,
                                                                 style: TextStyle(
                                                                     color: Colors.grey,
                                                                     fontWeight: FontWeight.w500,

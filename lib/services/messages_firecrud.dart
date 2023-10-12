@@ -26,6 +26,8 @@ class MessagesFireCrud {
       content: content,
       time: DateFormat('hh:mm a').format(DateTime.now()),
       title: "Requested from $userId",
+      timestamp: DateTime.now().millisecondsSinceEpoch,
+      isViewed: false,
     );
     user.id = documentReferencer.id;
     var json = user.toJson();

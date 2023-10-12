@@ -68,9 +68,6 @@ class _NoticesListViewState extends State<NoticesListView> {
                       onVisibilityChanged: (VisibilityInfo visibilityInfo){
                         var visiblePercentage = visibilityInfo.visibleFraction;
                           updateNoticeViewCount(notices[i], widget.phone);
-                          print(i);
-                          print(visiblePercentage);
-                          print("------------------");
                         if(i == 0 && (!hasScroll && visiblePercentage == 1.0) || (hasScroll && visiblePercentage == 1.0)) {
                           setState(() {
                             hasScroll = false;

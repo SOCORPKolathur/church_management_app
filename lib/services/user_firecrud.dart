@@ -55,7 +55,10 @@ class UserFireCrud {
           .toList());
 
   static Stream<List<OrdersModel>> fetchOrdersForUser(String userId) =>
-      UserCollection.doc(userId).collection("Orders").snapshots()
+      firestore.collection('Users')
+          .doc(userId).collection("Orders")
+          .orderBy("timestamp",descending: true)
+          .snapshots()
           .map((snapshot) => snapshot.docs
           .map((doc) => OrdersModel.fromJson(doc.data() as Map<String,dynamic>))
           .toList());
@@ -76,8 +79,7 @@ class UserFireCrud {
         required String productName,
       }) async {
     Response response = Response();
-    DocumentReference documentReferencer = UserCollection.doc(userDocId).collection('Carts').doc();
-    print(price.toString() + "----------");
+    DocumentReference documentReferencer = UserCollection.doc(userDocId).collection('Carts').doc(productId);
     CartModel cart = CartModel(
         id: "",
       time: DateFormat.jm().format(DateTime.now()),
@@ -88,7 +90,7 @@ class UserFireCrud {
       productId: productId,
       productName: productName,
     );
-    cart.id = documentReferencer.id;
+    cart.id = productId;
     var json = cart.toJson();
     print(json);
     var result = await documentReferencer.set(json).whenComplete(() {

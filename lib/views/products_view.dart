@@ -31,17 +31,14 @@ class _ProductsViewState extends State<ProductsView> {
   bool isAltredyInCart(List<CartModel> carts, String itemId){
     bool isAltreadyIn = false;
     carts.forEach((element) {
-      if(element.productId == itemId){
+      if(element.id == itemId){
         isAltreadyIn = true;
-      }else{
-        isAltreadyIn = false;
       }
     });
     return isAltreadyIn;
   }
 
   getQuantity(List<CartModel> carts, String itemId){
-    print(itemId);
     int quantity = 0;
     carts.forEach((element) {
       if(element.productId == itemId){
@@ -216,7 +213,7 @@ class _ProductsViewState extends State<ProductsView> {
                                           ),
                                           InkWell(
                                             onTap: () async {
-                                             Response response = await UserFireCrud.addToCart(userDocId: widget.userDocId, price: products[i].price!, imgUrl: products[i].imgUrl!, quantity: 1, productId: products[i].title!+ " 001", productName: products[i].title!);
+                                             Response response = await UserFireCrud.addToCart(userDocId: widget.userDocId, price: products[i].price!, imgUrl: products[i].imgUrl!, quantity: 1, productId: products[i].productId!, productName: products[i].title!);
                                              },
                                             child: StreamBuilder(
                                               stream: UserFireCrud.fetchCartsForUser(widget.userDocId),
@@ -239,9 +236,9 @@ class _ProductsViewState extends State<ProductsView> {
                                                             onTap: (){
                                                               int qty = getQuantity(carts,products[i].productId!)-1;
                                                               if(qty == 0){
-                                                                UserFireCrud.deleteCart(userDocId: widget.userDocId, docId: carts[i].id!);
+                                                                UserFireCrud.deleteCart(userDocId: widget.userDocId, docId: products[i].productId!);
                                                               }else{
-                                                                UserFireCrud.updateCartQuantity(userDocId: widget.userDocId, docId: carts[i].id!,quantity: qty);
+                                                                UserFireCrud.updateCartQuantity(userDocId: widget.userDocId, docId: products[i].productId!,quantity: qty);
                                                               }
                                                             },
                                                             child: Icon(
@@ -263,7 +260,7 @@ class _ProductsViewState extends State<ProductsView> {
                                                           InkWell(
                                                             onTap:(){
                                                               int qty = getQuantity(carts,products[i].productId!)+1;
-                                                              UserFireCrud.updateCartQuantity(userDocId: widget.userDocId, docId: carts[i].id!,quantity: qty);
+                                                              UserFireCrud.updateCartQuantity(userDocId: widget.userDocId, docId: products[i].productId!,quantity: qty);
                                                             },
                                                             child: Icon(
                                                               Icons.add_circle_outline,
@@ -303,7 +300,7 @@ class _ProductsViewState extends State<ProductsView> {
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(10),
                                           image: DecorationImage(
-                                        fit: BoxFit.fitHeight,
+                                        fit: BoxFit.contain,
                                         image: CachedNetworkImageProvider(
                                           products[i].imgUrl!,
                                         ),

@@ -6,7 +6,7 @@ class FirebaseApi {
   final firebaseMessaging = FirebaseMessaging.instance;
 
   Future<void> handleBackgroundMessage(RemoteMessage message) async {
-    print("checking");
+
   }
 
   Future<void> initNotifications() async {

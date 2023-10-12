@@ -63,7 +63,6 @@ class _NotificationsViewState extends State<NotificationsView> {
                   child: VisibilityDetector(
                     key: Key('my-widget-key $i'),
                     onVisibilityChanged: (VisibilityInfo visibilityInfo){
-                      print("object $i");
                       var visiblePercentage = visibilityInfo.visibleFraction * 6;
                       //if(visiblePercentage >= 0.2){
                         if(!snap.data!.docs[i]['isViewed']) {
