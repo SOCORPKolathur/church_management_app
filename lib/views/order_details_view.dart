@@ -84,7 +84,7 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Container(
-                          height: size.height * 0.24,
+                          height: size.height * 0.2,
                           width: size.width * 0.55,
                           padding: const EdgeInsets.all(8),
                           child: Column(
@@ -176,12 +176,12 @@ class _OrderDetailsViewState extends State<OrderDetailsView> {
                             showImageModel(context, products[i].imgUrl!);
                           },
                           child: Container(
-                            height: size.height * 0.2,
+                            height: size.height * 0.17,
                             width: size.width * 0.3,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
                               image: DecorationImage(
-                                fit: BoxFit.fitHeight,
+                                fit: BoxFit.contain,
                                 image: CachedNetworkImageProvider(
                                   products[i].imgUrl!,
                                 ),

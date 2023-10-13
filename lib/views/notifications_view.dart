@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
@@ -66,7 +67,7 @@ class _NotificationsViewState extends State<NotificationsView> {
                       var visiblePercentage = visibilityInfo.visibleFraction * 6;
                       //if(visiblePercentage >= 0.2){
                         if(!snap.data!.docs[i]['isViewed']) {
-                          updateNottificationStatus(snap.data!.docs[i].id);
+                          updateNottificationStatus(id:snap.data!.docs[i].id);
                         }
                       //}
                     },
@@ -182,13 +183,30 @@ class _NotificationsViewState extends State<NotificationsView> {
     );
   }
 
-  updateNottificationStatus(String id)  {
+  updateNottificationStatus({required String id}) async {
+    List<String> viewsList = [];
+    var notiDocument = await FirebaseFirestore.instance
+        .collection('Notifications')
+        .doc(id).get();
+    notiDocument.get("viewsCount").forEach((user){
+      viewsList.add(user);
+    });
+    if(!viewsList.contains(FirebaseAuth.instance.currentUser!.phoneNumber)){
+      viewsList.add(FirebaseAuth.instance.currentUser!.phoneNumber!);
+    }
      FirebaseFirestore.instance
         .collection('Users')
         .doc(widget.userDocId)
         .collection("Notifications").doc(id).update({
       "isViewed" : true
     });
+
+     FirebaseFirestore.instance
+         .collection('Notifications')
+         .doc(id).update({
+       "viewsCount" : viewsList
+     });
+
      setState(() {});
   }
 

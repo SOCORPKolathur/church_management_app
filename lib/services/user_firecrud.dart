@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import '../models/cart_model.dart';
@@ -13,6 +14,13 @@ final CollectionReference OrdersCollection = firestore.collection('Orders');
 final FirebaseStorage fs = FirebaseStorage.instance;
 
 class UserFireCrud {
+
+  static String generateRandomString(int len) {
+    var r = Random();
+    const _chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+    return List.generate(len, (index) => _chars[r.nextInt(_chars.length)])
+        .join();
+  }
 
   static Stream<List<UserModel>> fetchUsers() =>
       UserCollection.orderBy("timestamp", descending: false)
@@ -132,7 +140,7 @@ class UserFireCrud {
       orderId: "",
     );
     order.id = documentReferencer.id;
-    order.orderId = documentReferencer.id;
+    order.orderId = generateRandomString(8);
     var json = order.toJson();
     var result = await documentReferencer.set(json).whenComplete(() {
       response.code = 200;
