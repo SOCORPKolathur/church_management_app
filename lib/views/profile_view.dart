@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
-import 'package:upi_pay/upi_pay.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../Widgets/kText.dart';
 import '../constants.dart';
@@ -175,6 +174,7 @@ class _ProfileViewState extends State<ProfileView>
                               color: Constants().primaryAppColor,
                               borderRadius: BorderRadius.circular(10.0)),
                           labelColor: Colors.white,
+                          isScrollable:false,
                           unselectedLabelColor: Colors.black,
                           indicatorPadding: const EdgeInsets.symmetric(
                               horizontal: 5, vertical: 5),

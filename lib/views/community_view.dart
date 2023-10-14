@@ -138,6 +138,7 @@ class _CommunityViewState extends State<CommunityView>  with SingleTickerProvide
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: TabBar(
+                                isScrollable:false,
                                 controller: tabController,
                                 labelColor: Constants().primaryAppColor,
                                 dividerColor: Colors.transparent,

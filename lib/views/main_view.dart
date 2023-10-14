@@ -253,11 +253,13 @@ class _MainViewState extends State<MainView> with SingleTickerProviderStateMixin
                       SizedBox(
                         height: size.height / 6.3,
                         width: double.infinity,
-                        child: Text(
-                          document.docs.first['verseForToday']['date'] == DateFormat('dd-MM-yyyy').format(DateTime.now()) ? document.docs.first['verseForToday']['text'] : bible.docs[randnum]['text'],
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w700,
+                        child: SingleChildScrollView(
+                          child: Text(
+                            document.docs.first['verseForToday']['date'] == DateFormat('dd-MM-yyyy').format(DateTime.now()) ? document.docs.first['verseForToday']['text'] : bible.docs[randnum]['text'],
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                         ),
                       ),
