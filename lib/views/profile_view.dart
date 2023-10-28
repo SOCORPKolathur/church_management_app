@@ -3,10 +3,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
+import 'package:neopop/widgets/buttons/neopop_button/neopop_button.dart';
+import 'package:neopop/widgets/buttons/neopop_tilted_button/neopop_tilted_button.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../Widgets/kText.dart';
 import '../constants.dart';
 import '../models/user_model.dart';
+import 'membership_view.dart';
 
 class ProfileView extends StatefulWidget {
   const ProfileView({super.key, required this.uid, required this.userDocId});
@@ -1387,7 +1390,45 @@ class _ProfileViewState extends State<ProfileView>
                           ],
                         ),
                       ),
-                    )
+                    ),
+                    Center(
+                      child: FutureBuilder(
+                        future: checkMemberAccess(user.phone!),
+                        builder: (ctx, snap){
+                          if(snap.hasData){
+                            return snap.data == true ? Container(
+                              width: size.width * 0.6,
+                              height: 40,
+                              child: NeoPopTiltedButton(
+                                decoration: NeoPopTiltedButtonDecoration(
+                                  color: Constants().primaryAppColor,
+                                  showShimmer: true,
+                                ),
+                                onTapUp: () {
+                                  // FirebaseAuth.instance.currentUser == null ?
+                                  // Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute(builder: (context) =>
+                                  //       Loginpage2("planpage")),
+                                  // ) :
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) =>
+                                        MembershipView(phone: user.phone!),
+                                    ),
+                                  );
+
+                                },
+                                child: Center(child: Text('Your Membership',style: GoogleFonts.montserrat(
+                                    color: Colors.white,fontWeight: FontWeight.bold,fontSize: 15
+                                ),)),
+                              ),
+                            ) : Container();
+                          }return Container();
+                        },
+                      ),
+                    ),
+                    SizedBox(height: 20),
                   ],
                 ),
               );
@@ -1396,6 +1437,17 @@ class _ProfileViewState extends State<ProfileView>
           },
         )
     );
+  }
+
+  Future<bool> checkMemberAccess(String phone) async {
+    bool isHaveAccess = false;
+    var members = await FirebaseFirestore.instance.collection('Members').get();
+    members.docs.forEach((member) {
+      if(phone == member.get("phone")){
+        isHaveAccess = true;
+      }
+    });
+    return isHaveAccess;
   }
 
   showSpeechPopUp(context, var data) async {

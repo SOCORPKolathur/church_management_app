@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:animated_widgets/widgets/rotation_animated.dart';
 import 'package:animated_widgets/widgets/shake_animated_widget.dart';
+import 'package:church_management_client/views/edit_profile_view.dart';
 import 'package:intl/intl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -398,7 +399,8 @@ class _HomeViewState extends State<HomeView>
                                 _showContactAdminPopUp(context, user);
                                 break;
                               case "Edit Profile":
-                                showEditProfilePopUp(context, user);
+                                // showEditProfilePopUp(context, user);
+                                Navigator.push(context, MaterialPageRoute(builder: (ctx)=> EditProfileView(userDocId: widget.userDocId)));
                                 break;
                               case "Log out":
                                 CoolAlert.show(
