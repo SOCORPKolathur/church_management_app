@@ -7,6 +7,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:lottie/lottie.dart';
 import '../Widgets/kText.dart';
 import '../constants.dart';
 
@@ -30,6 +31,7 @@ class _EditProfileViewState extends State<EditProfileView> {
   TextEditingController localityController = TextEditingController();
   TextEditingController professionController = TextEditingController();
   TextEditingController addressController = TextEditingController();
+  TextEditingController aboutController = TextEditingController();
   String oldImgUrl = '';
   final ImagePicker _picker = ImagePicker();
 
@@ -54,6 +56,7 @@ class _EditProfileViewState extends State<EditProfileView> {
     localityController.text = user.get("locality");
     professionController.text = user.get("profession");
     addressController.text = user.get("address");
+    aboutController.text = user.get("about");
     setState(() {
 
     });
@@ -66,6 +69,8 @@ class _EditProfileViewState extends State<EditProfileView> {
       imageForShow = pickedFile;
     });
   }
+
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -92,473 +97,530 @@ class _EditProfileViewState extends State<EditProfileView> {
           child: const Icon(Icons.arrow_back, color: Colors.white),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  height: 150,
-                  width: 150,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Constants().primaryAppColor,
-                    image: imageForShow != null
-                        ? DecorationImage(
-                        fit: BoxFit.fill,
-                      image: FileImage(File(imageForShow!.path))
-                    ) : DecorationImage(
-                      fit: BoxFit.fill,
-                      image: NetworkImage(oldImgUrl)
-                    ),
-                    border: Border.all(color: Constants().primaryAppColor,width: 3),
-                  ),
-                  // child:
-                  // imageForShow != null
-                  //     ? Image.file(
-                  //     File(imageForShow!.path))
-                  //     : null,
-                )
-              ),
-              const SizedBox(height: 10),
-              Center(
-                child: InkWell(
-                  onTap: (){
-                    selectImage();
-                  },
-                  child: Container(
-                    height: 40,
-                    width: size.width * 0.5,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                            color: Constants().primaryAppColor,
-                            width: 3,
+      body: Stack(
+        alignment: Alignment.center,
+        children: [
+          SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(15.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      height: 150,
+                      width: 150,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Constants().primaryAppColor,
+                        image: imageForShow != null
+                            ? DecorationImage(
+                            fit: BoxFit.fill,
+                          image: FileImage(File(imageForShow!.path))
+                        ) : DecorationImage(
+                          fit: BoxFit.fill,
+                          image: NetworkImage(oldImgUrl)
                         ),
+                        border: Border.all(color: Constants().primaryAppColor,width: 3),
+                      ),
+                      // child:
+                      // imageForShow != null
+                      //     ? Image.file(
+                      //     File(imageForShow!.path))
+                      //     : null,
+                    )
+                  ),
+                  const SizedBox(height: 10),
+                  Center(
+                    child: InkWell(
+                      onTap: (){
+                        selectImage();
+                      },
+                      child: Container(
+                        height: 40,
+                        width: size.width * 0.5,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                                color: Constants().primaryAppColor,
+                                width: 3,
+                            ),
+                        ),
+                        child: Center(
+                          child: KText(
+                              text: "Change Profile Picture",
+                              style: TextStyle(
+                                color: Constants().primaryAppColor,
+                                fontWeight: FontWeight.w600,
+                              )
+                          ),
+                        ),
+                      ),
                     ),
-                    child: Center(
-                      child: KText(
-                          text: "Change Profile Picture",
-                          style: TextStyle(
-                            color: Constants().primaryAppColor,
-                            fontWeight: FontWeight.w600,
+                  ),
+                  const SizedBox(height: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 4),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          KText(
+                            text: "Firstname :",
+                            style: GoogleFonts.poppins(
+                              fontSize:
+                              Constants().getFontSize(context, 'M'),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Container(
+                            height: size.height * 0.07,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: TextField(
+                              maxLines: null,
+                              controller: firstNameController,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                              ),
+                              decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.all(7)),
+                            ),
                           )
+                        ],
                       ),
-                    ),
+                    ],
                   ),
-                ),
-              ),
-              const SizedBox(height: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 10),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      KText(
-                        text: "Firstname :",
-                        style: GoogleFonts.poppins(
-                          fontSize:
-                          Constants().getFontSize(context, 'M'),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Container(
-                        height: size.height * 0.07,
-                        decoration: BoxDecoration(
-                          color: Colors.grey.withOpacity(0.3),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: TextField(
-                          maxLines: null,
-                          controller: firstNameController,
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
+                      const SizedBox(height: 4),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          KText(
+                            text: "Lastname :",
+                            style: GoogleFonts.poppins(
+                              fontSize:
+                              Constants().getFontSize(context, 'M'),
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                          decoration: const InputDecoration(
-                              border: InputBorder.none,
-                              contentPadding: EdgeInsets.all(7)),
-                        ),
-                      )
+                          const SizedBox(height: 6),
+                          Container(
+                            height: size.height * 0.07,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: TextField(
+                              maxLines: null,
+                              controller: lastNameController,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                              ),
+                              decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.all(7)),
+                            ),
+                          )
+                        ],
+                      ),
                     ],
                   ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 10),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      KText(
-                        text: "Lastname :",
-                        style: GoogleFonts.poppins(
-                          fontSize:
-                          Constants().getFontSize(context, 'M'),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Container(
-                        height: size.height * 0.07,
-                        decoration: BoxDecoration(
-                          color: Colors.grey.withOpacity(0.3),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: TextField(
-                          maxLines: null,
-                          controller: lastNameController,
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
+                      const SizedBox(height: 4),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          KText(
+                            text: "Email :",
+                            style: GoogleFonts.poppins(
+                              fontSize:
+                              Constants().getFontSize(context, 'M'),
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                          decoration: const InputDecoration(
-                              border: InputBorder.none,
-                              contentPadding: EdgeInsets.all(7)),
-                        ),
-                      )
+                          const SizedBox(height: 6),
+                          Container(
+                            height: size.height * 0.07,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: TextField(
+                              maxLines: null,
+                              controller: emailController,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                              ),
+                              decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.all(7)),
+                            ),
+                          )
+                        ],
+                      ),
                     ],
                   ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 10),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      KText(
-                        text: "Email :",
-                        style: GoogleFonts.poppins(
-                          fontSize:
-                          Constants().getFontSize(context, 'M'),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Container(
-                        height: size.height * 0.07,
-                        decoration: BoxDecoration(
-                          color: Colors.grey.withOpacity(0.3),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: TextField(
-                          maxLines: null,
-                          controller: emailController,
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
+                      const SizedBox(height: 4),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          KText(
+                            text: "Phone :",
+                            style: GoogleFonts.poppins(
+                              fontSize:
+                              Constants().getFontSize(context, 'M'),
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                          decoration: const InputDecoration(
-                              border: InputBorder.none,
-                              contentPadding: EdgeInsets.all(7)),
-                        ),
-                      )
+                          const SizedBox(height: 6),
+                          Container(
+                            height: size.height * 0.07,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: TextField(
+                              maxLines: null,
+                              controller: phoneController,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                              ),
+                              decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.all(7)),
+                            ),
+                          )
+                        ],
+                      ),
                     ],
                   ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 10),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      KText(
-                        text: "Phone :",
-                        style: GoogleFonts.poppins(
-                          fontSize:
-                          Constants().getFontSize(context, 'M'),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Container(
-                        height: size.height * 0.07,
-                        decoration: BoxDecoration(
-                          color: Colors.grey.withOpacity(0.3),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: TextField(
-                          maxLines: null,
-                          controller: phoneController,
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
+                      const SizedBox(height: 4),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          KText(
+                            text: "Marital Status :",
+                            style: GoogleFonts.poppins(
+                              fontSize:
+                              Constants().getFontSize(context, 'M'),
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                          decoration: const InputDecoration(
-                              border: InputBorder.none,
-                              contentPadding: EdgeInsets.all(7)),
-                        ),
-                      )
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 4),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      KText(
-                        text: "Marital Status :",
-                        style: GoogleFonts.poppins(
-                          fontSize:
-                          Constants().getFontSize(context, 'M'),
-                          fontWeight: FontWeight.bold,
-                        ),
+                          const SizedBox(height: 6),
+                          Container(
+                            height: size.height * 0.07,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: DropdownButton(
+                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                              isExpanded: true,
+                              value: marriedController.text,
+                              icon: Icon(Icons.keyboard_arrow_down),
+                              underline: Container(),
+                              items: [
+                                "Select Status",
+                                "Single",
+                                "Engaged",
+                                "Married",
+                                "Seperated",
+                                "Divorced",
+                                "Widow"
+                              ].map((items) {
+                                return DropdownMenuItem(
+                                  value: items,
+                                  child: Text(items),
+                                );
+                              }).toList(),
+                              onChanged: (newValue) {
+                                setState(() {
+                                  marriedController.text = newValue!;
+                                });
+                              },
+                            ),
+                          )
+                        ],
                       ),
-                      const SizedBox(height: 6),
-                      Container(
-                        height: size.height * 0.07,
-                        decoration: BoxDecoration(
-                          color: Colors.grey.withOpacity(0.3),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: DropdownButton(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          isExpanded: true,
-                          value: marriedController.text,
-                          icon: Icon(Icons.keyboard_arrow_down),
-                          underline: Container(),
-                          items: [
-                            "Select Status",
-                            "Single",
-                            "Engaged",
-                            "Married",
-                            "Seperated",
-                            "Divorced",
-                            "Widow"
-                          ].map((items) {
-                            return DropdownMenuItem(
-                              value: items,
-                              child: Text(items),
-                            );
-                          }).toList(),
-                          onChanged: (newValue) {
-                            setState(() {
-                              marriedController.text = newValue!;
-                            });
-                          },
-                        ),
-                      )
                     ],
                   ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Visibility(
-                visible: marriedController.text.toLowerCase() == "married",
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 4),
-                    Column(
+                  const SizedBox(height: 10),
+                  Visibility(
+                    visible: marriedController.text.toLowerCase() == "married",
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        KText(
-                          text: "Anniversary Date :",
-                          style: GoogleFonts.poppins(
-                            fontSize:
-                            Constants().getFontSize(context, 'M'),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 6),
-                        Container(
-                          height: size.height * 0.07,
-                          decoration: BoxDecoration(
-                            color: Colors.grey.withOpacity(0.3),
-                            borderRadius: BorderRadius.circular(5),
-                          ),
-                          child: TextField(
-                            maxLines: null,
-                            controller: anniversaryDateController,
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
+                        const SizedBox(height: 4),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            KText(
+                              text: "Anniversary Date :",
+                              style: GoogleFonts.poppins(
+                                fontSize:
+                                Constants().getFontSize(context, 'M'),
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                            decoration: const InputDecoration(
-                                border: InputBorder.none,
-                                contentPadding: EdgeInsets.all(7)),
-                          ),
-                        )
+                            const SizedBox(height: 6),
+                            Container(
+                              height: size.height * 0.07,
+                              decoration: BoxDecoration(
+                                color: Colors.grey.withOpacity(0.3),
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: TextField(
+                                maxLines: null,
+                                controller: anniversaryDateController,
+                                style: const TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 18,
+                                ),
+                                decoration: const InputDecoration(
+                                    border: InputBorder.none,
+                                    contentPadding: EdgeInsets.all(7)),
+                              ),
+                            )
+                          ],
+                        ),
                       ],
                     ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 4),
+                  ),
+                  const SizedBox(height: 10),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      KText(
-                        text: "Locality :",
-                        style: GoogleFonts.poppins(
-                          fontSize:
-                          Constants().getFontSize(context, 'M'),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Container(
-                        height: size.height * 0.07,
-                        decoration: BoxDecoration(
-                          color: Colors.grey.withOpacity(0.3),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: TextField(
-                          maxLines: null,
-                          controller: localityController,
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
+                      const SizedBox(height: 4),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          KText(
+                            text: "Locality :",
+                            style: GoogleFonts.poppins(
+                              fontSize:
+                              Constants().getFontSize(context, 'M'),
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                          decoration: const InputDecoration(
-                              border: InputBorder.none,
-                              contentPadding: EdgeInsets.all(7)),
-                        ),
-                      )
+                          const SizedBox(height: 6),
+                          Container(
+                            height: size.height * 0.07,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: TextField(
+                              maxLines: null,
+                              controller: localityController,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                              ),
+                              decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.all(7)),
+                            ),
+                          )
+                        ],
+                      ),
                     ],
                   ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 10),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      KText(
-                        text: "Profession :",
-                        style: GoogleFonts.poppins(
-                          fontSize:
-                          Constants().getFontSize(context, 'M'),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Container(
-                        height: size.height * 0.07,
-                        decoration: BoxDecoration(
-                          color: Colors.grey.withOpacity(0.3),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: TextField(
-                          maxLines: null,
-                          controller: professionController,
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
+                      const SizedBox(height: 4),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          KText(
+                            text: "Profession :",
+                            style: GoogleFonts.poppins(
+                              fontSize:
+                              Constants().getFontSize(context, 'M'),
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                          decoration: const InputDecoration(
-                              border: InputBorder.none,
-                              contentPadding: EdgeInsets.all(7)),
-                        ),
-                      )
+                          const SizedBox(height: 6),
+                          Container(
+                            height: size.height * 0.07,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: TextField(
+                              maxLines: null,
+                              controller: professionController,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                              ),
+                              decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.all(7)),
+                            ),
+                          )
+                        ],
+                      ),
                     ],
                   ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 10),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      KText(
-                        text: "Address :",
-                        style: GoogleFonts.poppins(
-                          fontSize:
-                          Constants().getFontSize(context, 'M'),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      Container(
-                        height: size.height * 0.07,
-                        decoration: BoxDecoration(
-                          color: Colors.grey.withOpacity(0.3),
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                        child: TextField(
-                          maxLines: null,
-                          controller: addressController,
-                          style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
+                      const SizedBox(height: 4),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          KText(
+                            text: "About :",
+                            style: GoogleFonts.poppins(
+                              fontSize:
+                              Constants().getFontSize(context, 'M'),
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                          decoration: const InputDecoration(
-                              border: InputBorder.none,
-                              contentPadding: EdgeInsets.all(7)),
-                        ),
-                      )
+                          const SizedBox(height: 6),
+                          Container(
+                            height: size.height * 0.07,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: TextField(
+                              maxLines: null,
+                              controller: aboutController,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                              ),
+                              decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.all(7)),
+                            ),
+                          )
+                        ],
+                      ),
                     ],
                   ),
-                ],
-              ),
-              const SizedBox(height: 10),
-              Center(
-                child: InkWell(
-                  onTap: (){
-                    updateProfile(size);
-                  },
-                  child: Material(
-                    elevation: 4,
-                    borderRadius: BorderRadius.circular(10),
-                    child: Container(
-                      height: 40,
-                      width: size.width * 0.5,
-                      decoration: BoxDecoration(
-                        color: Constants().primaryAppColor,
+                  const SizedBox(height: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 4),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          KText(
+                            text: "Address :",
+                            style: GoogleFonts.poppins(
+                              fontSize:
+                              Constants().getFontSize(context, 'M'),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Container(
+                            height: size.height * 0.07,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: TextField(
+                              maxLines: null,
+                              controller: addressController,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                              ),
+                              decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.all(7)),
+                            ),
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Center(
+                    child: InkWell(
+                      onTap: (){
+                        updateProfile(size);
+                      },
+                      child: Material(
+                        elevation: 4,
                         borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Center(
-                        child: KText(
-                            text: "Update Profile",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 18,
-                            )
+                        child: Container(
+                          height: 40,
+                          width: size.width * 0.5,
+                          decoration: BoxDecoration(
+                            color: Constants().primaryAppColor,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Center(
+                            child: KText(
+                                text: "Update Profile",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 18,
+                                )
+                            ),
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
+                  const SizedBox(height: 10),
+                ],
               ),
-              const SizedBox(height: 10),
-            ],
+            ),
           ),
-        ),
+          Visibility(
+            visible: isLoading,
+            child: Center(
+            child: Lottie.asset(
+              'assets/churchLoading.json',
+              fit: BoxFit.contain,
+              height: size.height * 0.4,
+              width: size.width * 0.7,
+            ),
+          ),)
+        ],
       ),
     );
   }
 
   updateProfile(Size size) async {
+    setState(() {
+      isLoading = true;
+    });
     String imgUrl = '';
     if(profileImage != null){
       imgUrl = await uploadImageToStorage(profileImage);
@@ -575,6 +637,10 @@ class _EditProfileViewState extends State<EditProfileView> {
       "locality":localityController.text,
       "profession":professionController.text,
       "address": addressController.text,
+      "about": aboutController.text,
+    });
+    setState(() {
+      isLoading = false;
     });
     await CoolAlert.show(
         context: context,
