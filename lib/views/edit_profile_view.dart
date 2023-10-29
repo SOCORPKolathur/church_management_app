@@ -1,14 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
-
 import '../Widgets/kText.dart';
 import '../constants.dart';
 
@@ -33,10 +31,9 @@ class _EditProfileViewState extends State<EditProfileView> {
   TextEditingController professionController = TextEditingController();
   TextEditingController addressController = TextEditingController();
   String oldImgUrl = '';
-
   final ImagePicker _picker = ImagePicker();
 
-  File? profileImage;
+  var profileImage;
   XFile? imageForShow;
 
   @override
@@ -46,7 +43,6 @@ class _EditProfileViewState extends State<EditProfileView> {
   }
 
   setProfileFields() async {
-    print("--------------------------------");
     var user = await FirebaseFirestore.instance.collection('Users').doc(widget.userDocId).get();
     oldImgUrl = user.get("imgUrl");
     firstNameController.text = user.get("firstName");
@@ -110,13 +106,20 @@ class _EditProfileViewState extends State<EditProfileView> {
                     shape: BoxShape.circle,
                     color: Constants().primaryAppColor,
                     image: imageForShow != null
-                        ? null : DecorationImage(
+                        ? DecorationImage(
+                        fit: BoxFit.fill,
+                      image: FileImage(File(imageForShow!.path))
+                    ) : DecorationImage(
                       fit: BoxFit.fill,
                       image: NetworkImage(oldImgUrl)
                     ),
                     border: Border.all(color: Constants().primaryAppColor,width: 3),
                   ),
-                  child: imageForShow != null ? Image.file(File(imageForShow!.path)) : null,
+                  // child:
+                  // imageForShow != null
+                  //     ? Image.file(
+                  //     File(imageForShow!.path))
+                  //     : null,
                 )
               ),
               const SizedBox(height: 10),
@@ -588,8 +591,8 @@ class _EditProfileViewState extends State<EditProfileView> {
     var snapshot = await  FirebaseStorage.instance
         .ref()
         .child('dailyupdates')
-        .child("${file.name}")
-        .putBlob(file);
+        //.child("${file.name}")
+        .putFile(file);
     String downloadUrl = await snapshot.ref.getDownloadURL();
     return downloadUrl;
   }
