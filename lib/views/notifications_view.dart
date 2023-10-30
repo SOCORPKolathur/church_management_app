@@ -44,7 +44,7 @@ class _NotificationsViewState extends State<NotificationsView> {
             .collection('Users')
             .doc(widget.userDocId)
             .collection("Notifications")
-            .orderBy("time",descending: true)
+            .orderBy("timestamp",descending: true)
             .snapshots(),
         builder: (ctx, snap) {
           if (snap.hasData) {
