@@ -2013,6 +2013,7 @@ class _ProfileViewState extends State<ProfileView>
                                 setState(() {
                                   descriptionController.text = "";
                                 });
+                                ////////////////////
                                 Navigator.pop(context);
                               },
                               child: Container(
