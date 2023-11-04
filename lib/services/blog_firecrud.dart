@@ -7,8 +7,7 @@ final CollectionReference BlogCollection = firestore.collection('Blogs');
 
 class BlogFireCrud {
   static Stream<List<BlogModel>> fetchBlogs() => BlogCollection.orderBy(
-          "timestamp",
-          descending: true)
+          "timestamp", descending: true)
       .snapshots()
       .map((snapshot) => snapshot.docs
           .map((doc) => BlogModel.fromJson(doc.data() as Map<String, dynamic>))

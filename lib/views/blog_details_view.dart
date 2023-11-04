@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:photo_view/photo_view.dart';
@@ -8,15 +9,32 @@ import '../models/blog_model.dart';
 import '../services/blog_firecrud.dart';
 
 class BlogDetailsView extends StatefulWidget {
-  const BlogDetailsView({super.key, required this.id});
+  const BlogDetailsView({super.key, required this.id, required this.phone});
 
   final String id;
+  final String phone;
 
   @override
   State<BlogDetailsView> createState() => _BlogDetailsViewState();
 }
 
 class _BlogDetailsViewState extends State<BlogDetailsView> {
+
+  updateLike(BlogModel blog, String phone) async {
+    List<String> likes = [];
+    blog.likes!.forEach((element) {
+      likes.add(element);
+    });
+    if (!likes.contains(phone)) {
+      likes.add(phone);
+    }else{
+      likes.remove(phone);
+    }
+    var document = await FirebaseFirestore.instance
+        .collection('Blogs')
+        .doc(blog.id)
+        .update({"likes": likes});
+  }
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -50,9 +68,9 @@ class _BlogDetailsViewState extends State<BlogDetailsView> {
                         ),
                       ),
                       padding: const EdgeInsets.all(20),
-                      child: Column(
+                      child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           InkWell(
                             onTap: () {
@@ -64,6 +82,21 @@ class _BlogDetailsViewState extends State<BlogDetailsView> {
                               child: const CircleAvatar(
                                 backgroundColor: Colors.white,
                                 child: Icon(Icons.arrow_back),
+                              ),
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              updateLike(blog,widget.phone);
+                            },
+                            child: Material(
+                              borderRadius: BorderRadius.circular(100),
+                              elevation: 2,
+                              child: CircleAvatar(
+                                backgroundColor: Colors.white,
+                                child: Icon(
+                                    blog.likes!.contains(widget.phone) ? Icons.favorite : Icons.favorite_border
+                                ),
                               ),
                             ),
                           ),
@@ -102,7 +135,7 @@ class _BlogDetailsViewState extends State<BlogDetailsView> {
                                   blog.author!,
                                   style: GoogleFonts.openSans(
                                     color: Constants().primaryAppColor,
-                                    fontSize: Constants().getFontSize(context, 'M'),
+                                    fontSize: Constants().getFontSize(context, 'S'),
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),

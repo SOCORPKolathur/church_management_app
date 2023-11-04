@@ -33,6 +33,7 @@ class _EditProfileViewState extends State<EditProfileView> {
   TextEditingController localityController = TextEditingController();
   TextEditingController professionController = TextEditingController();
   TextEditingController addressController = TextEditingController();
+  TextEditingController aboutController = TextEditingController();
   String oldImgUrl = '';
 
   final ImagePicker _picker = ImagePicker();
@@ -60,6 +61,7 @@ class _EditProfileViewState extends State<EditProfileView> {
     anniversaryDateController.text = user.get("anniversaryDate");
     localityController.text = user.get("locality");
     professionController.text = user.get("profession");
+    aboutController.text = user.get("about");
     addressController.text = user.get("address");
 
     var requests = await FirebaseFirestore.instance.collection('ProfileEditRequest').get();
@@ -500,6 +502,45 @@ class _EditProfileViewState extends State<EditProfileView> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           KText(
+                            text: "About :",
+                            style: GoogleFonts.poppins(
+                              fontSize:
+                              Constants().getFontSize(context, 'M'),
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Container(
+                            height: size.height * 0.1,
+                            decoration: BoxDecoration(
+                              color: Colors.grey.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: TextField(
+                              maxLines: null,
+                              controller: aboutController,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                              ),
+                              decoration: const InputDecoration(
+                                  border: InputBorder.none,
+                                  contentPadding: EdgeInsets.all(7)),
+                            ),
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 4),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          KText(
                             text: "Address :",
                             style: GoogleFonts.poppins(
                               fontSize:
@@ -509,7 +550,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                           ),
                           const SizedBox(height: 6),
                           Container(
-                            height: size.height * 0.07,
+                            height: size.height * 0.12,
                             decoration: BoxDecoration(
                               color: Colors.grey.withOpacity(0.3),
                               borderRadius: BorderRadius.circular(5),
@@ -626,6 +667,7 @@ class _EditProfileViewState extends State<EditProfileView> {
       "locality":localityController.text,
       "profession":professionController.text,
       "address": addressController.text,
+      "about" : aboutController.text,
     });
     await CoolAlert.show(
         context: context,

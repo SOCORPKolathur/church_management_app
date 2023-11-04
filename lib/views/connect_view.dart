@@ -191,10 +191,14 @@ class _ConnectViewState extends State<ConnectView> {
                                               color: Colors.black,
                                             ),
                                           ),
-                                          subtitle: Text(
-                                            snap1.data!.docs.isEmpty ? "" : snap1.data!.docs.last['message'],
-                                            style: const TextStyle(
-                                              color: Colors.grey,
+                                          subtitle: SizedBox(
+                                            height: 20,
+                                            child: Text(
+                                              snap1.data!.docs.isEmpty ? "" : snap1.data!.docs.last['message'],
+                                              overflow: TextOverflow.ellipsis,
+                                              style: const TextStyle(
+                                                color: Colors.grey,
+                                              ),
                                             ),
                                           ),
                                           trailing: Column(
@@ -250,10 +254,14 @@ class _ConnectViewState extends State<ConnectView> {
                                               color: Colors.black,
                                             ),
                                           ),
-                                          subtitle: Text(
-                                            snap1.data!.docs.isEmpty ? "" :snap1.data!.docs.last['message'],
-                                            style: const TextStyle(
-                                              color: Colors.grey,
+                                          subtitle: SizedBox(
+                                            height: 20,
+                                            child: Text(
+                                              snap1.data!.docs.isEmpty ? "" :snap1.data!.docs.last['message'],
+                                              overflow: TextOverflow.ellipsis,
+                                              style: const TextStyle(
+                                                color: Colors.grey,
+                                              ),
                                             ),
                                           ),
                                           trailing: Column(
@@ -298,10 +306,14 @@ class _ConnectViewState extends State<ConnectView> {
                                               color: Colors.black,
                                             ),
                                           ),
-                                          subtitle: Text(
-                                            snap1.data!.docs.last['message'],
-                                            style: const TextStyle(
-                                              color: Colors.grey,
+                                          subtitle: SizedBox(
+                                            height: 20,
+                                            child: Text(
+                                              snap1.data!.docs.last['message'],
+                                              overflow: TextOverflow.ellipsis,
+                                              style: const TextStyle(
+                                                color: Colors.grey,
+                                              ),
                                             ),
                                           ),
                                           trailing: Column(
@@ -357,10 +369,14 @@ class _ConnectViewState extends State<ConnectView> {
                                               color: Colors.black,
                                             ),
                                           ),
-                                          subtitle: Text(
-                                            snap1.data!.docs.isEmpty ? "" : snap1.data!.docs.last['message'],
-                                            style: const TextStyle(
-                                              color: Colors.grey,
+                                          subtitle: SizedBox(
+                                            height: 20,
+                                            child: Text(
+                                              snap1.data!.docs.isEmpty ? "" : snap1.data!.docs.last['message'],
+                                              overflow: TextOverflow.ellipsis,
+                                              style: const TextStyle(
+                                                color: Colors.grey,
+                                              ),
                                             ),
                                           ),
                                           trailing: Column(
@@ -425,10 +441,14 @@ class _ConnectViewState extends State<ConnectView> {
                                                             color: Colors.black,
                                                           ),
                                                         ),
-                                                        subtitle: Text(
-                                                          snap1.data!.docs.isEmpty ? "" : snap1.data!.docs.last['message'],
-                                                          style: const TextStyle(
-                                                            color: Colors.grey,
+                                                        subtitle: SizedBox(
+                                                          height: 20,
+                                                          child: Text(
+                                                            snap1.data!.docs.isEmpty ? "" : snap1.data!.docs.last['message'],
+                                                            overflow: TextOverflow.ellipsis,
+                                                            style: const TextStyle(
+                                                              color: Colors.grey,
+                                                            ),
                                                           ),
                                                         ),
                                                         trailing: Column(
@@ -500,10 +520,14 @@ class _ConnectViewState extends State<ConnectView> {
                                                             color: Colors.black,
                                                           ),
                                                         ),
-                                                        subtitle: Text(
-                                                          snap1.data!.docs.isEmpty ? "" : snap1.data!.docs.last['message'],
-                                                          style: const TextStyle(
-                                                            color: Colors.grey,
+                                                        subtitle: SizedBox(
+                                                          height: 20,
+                                                          child: Text(
+                                                            snap1.data!.docs.isEmpty ? "" : snap1.data!.docs.last['message'],
+                                                            overflow: TextOverflow.ellipsis,
+                                                            style: const TextStyle(
+                                                              color: Colors.grey,
+                                                            ),
                                                           ),
                                                         ),
                                                         trailing: Column(

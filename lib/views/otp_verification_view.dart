@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../Widgets/kText.dart';
@@ -116,11 +117,17 @@ class _OtpVerificationViewState extends State<OtpVerificationView> {
                                 color: const Color(0xff757879).withOpacity(0.3),
                                 borderRadius: BorderRadius.circular(15)),
                             child: Center(
-                                child: TextField(
+                                child: TextFormField(
+                                  maxLength: 6,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp(r'[0-9]')),
+                                  ],
                               controller: otp,
                               keyboardType: TextInputType.phone,
                               decoration: InputDecoration(
                                 hintText: "OTP",
+                                counterText: "",
                                 prefixIcon: const Icon(Icons.password),
                                 labelText: "Code",
                                 labelStyle: GoogleFonts.poppins(

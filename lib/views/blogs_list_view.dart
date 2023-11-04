@@ -25,7 +25,6 @@ class _BlogsListViewState extends State<BlogsListView> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      //backgroundColor: Colors.white,
       backgroundColor: Colors.transparent,
       // appBar: AppBar(
       //   backgroundColor: Constants().primaryAppColor,
@@ -50,10 +49,15 @@ class _BlogsListViewState extends State<BlogsListView> {
         width: size.width,
         padding: const EdgeInsets.all(10),
         child: StreamBuilder(
-          stream: BlogFireCrud.fetchBlogs(),
+          stream: FirebaseFirestore.instance.collection("Blogs").snapshots(),// BlogFireCrud.fetchBlogs(),
           builder: (ctx, snapshot) {
             if (snapshot.hasData) {
-              List<BlogModel> blogs = snapshot.data!;
+              List<BlogModel> blogs = [];
+              snapshot.data!.docs.forEach((element) {
+                blogs.add(
+                  BlogModel.fromJson(element.data())
+                );
+              });
               return ListView.builder(
                 controller: widget.scrollController,
                 itemCount: blogs.length,
@@ -107,10 +111,12 @@ class _BlogsListViewState extends State<BlogsListView> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  SizedBox(
-                                    height: size.height * 0.08,
-                                    child: KText(
-                                      text: blogs[i].title!,
+                                  Container(
+                                    height: size.height * 0.06,
+                                    child: Text(
+                                      blogs[i].title!,
+                                      maxLines: null,
+                                      overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.openSans(
                                         fontSize: Constants().getFontSize(context, 'M'),
                                         color: const Color(0xff000850),
@@ -119,8 +125,8 @@ class _BlogsListViewState extends State<BlogsListView> {
                                     ),
                                   ),
                                   SizedBox(height: size.height/173.2),
-                                  SizedBox(
-                                    height: size.height * 0.08,
+                                  Container(
+                                    height: size.height * 0.06,
                                     width: size.width * 0.5,
                                     child: KText(
                                       text: blogs[i].description!,
@@ -128,6 +134,27 @@ class _BlogsListViewState extends State<BlogsListView> {
                                         fontSize: Constants().getFontSize(context, 'S'),
                                         color: const Color(0xff454545),
                                         fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    height: size.height * 0.04,
+                                    width: size.width * 0.5,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.favorite),
+                                          SizedBox(width: 10),
+                                          Text(
+                                            "${blogs[i].likes!.length}",
+                                            style: GoogleFonts.openSans(
+                                              fontSize: Constants().getFontSize(context, 'SM'),
+                                              color: const Color(0xff454545),
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   ),
@@ -139,7 +166,7 @@ class _BlogsListViewState extends State<BlogsListView> {
                                             context,
                                             MaterialPageRoute(
                                                 builder: (ctx) =>
-                                                    BlogDetailsView(id: blogs[i].id!)));
+                                                    BlogDetailsView(phone: widget.phone,id: blogs[i].id!)));
                                       },
                                       child: Container(
                                         height: size.height/21.65,

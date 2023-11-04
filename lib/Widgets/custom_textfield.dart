@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 
 class CustomTextField extends StatefulWidget {
@@ -45,6 +46,11 @@ class _CustomTextFieldState extends State<CustomTextField> {
         height: 60,
         child: Center(
           child: TextFormField(
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(
+                  RegExp(r'[0-9]')),
+            ],
+            maxLength: 10,
             controller: widget.controller,
             validator: widget.validator,
             obscureText: isObsecure,
@@ -52,6 +58,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             enableSuggestions: !widget.passType,
             autocorrect: !widget.passType,
             decoration: InputDecoration(
+              counterText: "",
               border: InputBorder.none,
               prefixIcon: widget.icon != null
                   ? Icon(
