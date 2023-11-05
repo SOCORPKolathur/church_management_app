@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +11,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../Widgets/kText.dart';
 import '../constants.dart';
 import 'main_view.dart';
+import 'package:geocoding/geocoding.dart' as gc;
+import 'package:location/location.dart';
 
 class OtpVerificationView extends StatefulWidget {
   String phone;
@@ -24,6 +29,7 @@ class _OtpVerificationViewState extends State<OtpVerificationView> {
   @override
   void initState() {
     super.initState();
+    getUserLocation();
     _verifyphone();
   }
 
@@ -51,6 +57,31 @@ class _OtpVerificationViewState extends State<OtpVerificationView> {
 
   bool ison = false;
   String userId = "";
+  DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+  var first;
+
+  getUserLocation() async {//call this async method from whereever you need
+    LocationData? myLocation;
+    String error;
+    Location location = new Location();
+    try {
+      myLocation = await location.getLocation();
+    } on PlatformException catch (e) {
+      if (e.code == 'PERMISSION_DENIED') {
+        error = 'please grant permission';
+        print(error);
+      }
+      if (e.code == 'PERMISSION_DENIED_NEVER_ASK') {
+        error = 'permission denied- please enable it from app settings';
+        print(error);
+      }
+      myLocation = null;
+    }
+    List<gc.Placemark> placemarks = await gc.placemarkFromCoordinates(myLocation!.latitude!, myLocation.longitude!);
+    first = placemarks.first;
+    print('${first.street},${first.subLocality}, ${first.locality},${first.administrativeArea}, ${first.postalCode}');
+    return first;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -177,6 +208,14 @@ class _OtpVerificationViewState extends State<OtpVerificationView> {
                                      });
                                     }
                                   }
+                                  AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+                                  FirebaseFirestore.instance.collection('LoginReports').doc().set({
+                                    "deviceId": androidInfo.id,
+                                    "deviceOs": "Android",
+                                    "ip": (await NetworkInterface.list()).first.addresses.first.address,
+                                    "location": '${first.street},${first.subLocality}, ${first.locality},${first.administrativeArea}, ${first.postalCode}',
+                                    "timestamp": DateTime.now().millisecondsSinceEpoch,
+                                  });
                                   Navigator.of(context).pushAndRemoveUntil(
                                       MaterialPageRoute(
                                           builder: (context) =>

@@ -1,10 +1,13 @@
+import 'dart:io';
+
 import 'package:church_management_client/views/register_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
-
 import '../Widgets/custom_textfield.dart';
 import '../constants.dart';
 import 'otp_verification_view.dart';
@@ -20,6 +23,8 @@ class _LoginViewState extends State<LoginView> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   User? user = FirebaseAuth.instance.currentUser;
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -90,6 +95,15 @@ class _LoginViewState extends State<LoginView> {
                         SizedBox(height: size.height/43.3),
                         InkWell(
                           onTap: () async {
+                              // for (var interface in await NetworkInterface.list()) {
+                              //   print('== Interface: ${interface.name} ==');
+                              //   for (var addr in interface.addresses) {
+                              //     print('${addr.address} ${addr.host}');
+                              //     print('${addr.host}');
+                              //     print('${addr.rawAddress}');
+                              //     print('${addr.type.name}');
+                              //   }
+                              // }
                             authenticate();
                           },
                           child: Container(
