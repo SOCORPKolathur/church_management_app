@@ -8,9 +8,21 @@ class EventsModel {
   String? location;
   String? time;
   List<String>? views;
+  List<String>? registeredUsers;
 
   EventsModel(
-      {this.id, this.date, this.views, this.title, this.description, this.imgUrl, this.timestamp, this.location, this.time});
+      {
+        this.id,
+        this.date,
+        this.views,
+        this.title,
+        this.description,
+        this.imgUrl,
+        this.timestamp,
+        this.location,
+        this.time,
+        this.registeredUsers,
+      });
 
   EventsModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -19,6 +31,12 @@ class EventsModel {
       views = <String>[];
       json['views'].forEach((v) {
         views!.add(v);
+      });
+    }
+    if (json['registeredUsers'] != null) {
+      registeredUsers = <String>[];
+      json['registeredUsers'].forEach((v) {
+        registeredUsers!.add(v);
       });
     }
     title = json['title'];
@@ -41,6 +59,9 @@ class EventsModel {
     data['time'] = this.time;
     if (this.views != null) {
       data['views'] = this.views!.map((v) => v).toList();
+    }
+    if (this.registeredUsers != null) {
+      data['registeredUsers'] = this.registeredUsers!.map((v) => v).toList();
     }
     return data;
   }

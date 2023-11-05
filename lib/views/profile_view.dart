@@ -1,4 +1,7 @@
+import 'dart:math';
+import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -25,6 +28,8 @@ class ProfileView extends StatefulWidget {
 class _ProfileViewState extends State<ProfileView>
     with SingleTickerProviderStateMixin {
   TextEditingController descriptionController = TextEditingController();
+  TextEditingController prayerTitleCon = TextEditingController();
+  TextEditingController prayerDescriptionCon = TextEditingController();
   TabController? tabController;
 
   @override
@@ -1392,7 +1397,7 @@ class _ProfileViewState extends State<ProfileView>
                               },
                             ),
                             StreamBuilder(
-                              stream: FirebaseFirestore.instance.collection('PrayerRequests').snapshots(),
+                              stream: FirebaseFirestore.instance.collection('Prayers').snapshots(),
                               builder: (ctx, snapshot) {
                                 bool noData = true;
                                 if (snapshot.hasData) {
@@ -1415,7 +1420,7 @@ class _ProfileViewState extends State<ProfileView>
                                         ),
                                         InkWell(
                                           onTap: (){
-
+                                            showRequestPrayerPopUp(context, user);
                                           },
                                           child: Material(
                                             elevation: 4,
@@ -1445,186 +1450,129 @@ class _ProfileViewState extends State<ProfileView>
                                       : SingleChildScrollView(
                                     child: Column(
                                       children: [
-                                        SizedBox(
-                                            height: size.height / 86.6),
-                                        SizedBox(
-                                            height: size.height / 86.6),
-                                        for (int i = 0;
-                                        i < data.length;
-                                        i++)
-                                          Column(
-                                            children: [
-                                              InkWell(
-                                                onTap: () {
-                                                  showSpeechPopUp(
-                                                      context, data[i]);
-                                                },
-                                                child: Card(
-                                                  color: Colors.white,
-                                                  child: SizedBox(
-                                                    height: size.height *
-                                                        0.18,
-                                                    width:
-                                                    double.infinity,
-                                                    child: Padding(
-                                                      padding:
-                                                      const EdgeInsets
-                                                          .all(20.0),
-                                                      child: Column(
-                                                        mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceAround,
-                                                        children: [
-                                                          Row(
-                                                            children: [
-                                                              Icon(
-                                                                Icons
-                                                                    .date_range,
-                                                                color: Constants()
-                                                                    .primaryAppColor,
-                                                              ),
-                                                              SizedBox(
-                                                                  width: size.width /
-                                                                      41.1),
-                                                              KText(
-                                                                text:
-                                                                "Date :",
-                                                                style: TextStyle(
-                                                                    fontWeight: FontWeight
-                                                                        .w700,
-                                                                    fontSize: Constants().getFontSize(
-                                                                        context,
-                                                                        'S')),
-                                                              ),
-                                                              SizedBox(
-                                                                  width: size.width /
-                                                                      82.2),
-                                                              KText(
-                                                                text: data[
-                                                                i]
-                                                                [
-                                                                'Date'],
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .grey,
-                                                                    fontWeight: FontWeight
-                                                                        .w500,
-                                                                    fontSize: Constants().getFontSize(
-                                                                        context,
-                                                                        'S')),
-                                                              )
-                                                            ],
-                                                          ),
-                                                          SizedBox(
-                                                              height: size
-                                                                  .height /
-                                                                  86.6),
-                                                          Row(
-                                                            children: [
-                                                              Icon(
-                                                                Icons
-                                                                    .timelapse,
-                                                                color: Constants()
-                                                                    .primaryAppColor,
-                                                              ),
-                                                              SizedBox(
-                                                                  width: size.width /
-                                                                      41.1),
-                                                              KText(
-                                                                text:
-                                                                "Time :",
-                                                                style: TextStyle(
-                                                                    fontWeight: FontWeight
-                                                                        .w700,
-                                                                    fontSize: Constants().getFontSize(
-                                                                        context,
-                                                                        'S')),
-                                                              ),
-                                                              SizedBox(
-                                                                  width: size.width /
-                                                                      82.2),
-                                                              KText(
-                                                                text: data[
-                                                                i]
-                                                                [
-                                                                'Time'],
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .grey,
-                                                                    fontWeight: FontWeight
-                                                                        .w500,
-                                                                    fontSize: Constants().getFontSize(
-                                                                        context,
-                                                                        'S')),
-                                                              )
-                                                            ],
-                                                          ),
-                                                          SizedBox(
-                                                              height: size
-                                                                  .height /
-                                                                  86.6),
-                                                          Row(
-                                                            crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                            children: [
-                                                              Icon(
-                                                                Icons
-                                                                    .text_snippet_sharp,
-                                                                color: Constants()
-                                                                    .primaryAppColor,
-                                                              ),
-                                                              SizedBox(
-                                                                  width: size.width /
-                                                                      41.1),
-                                                              KText(
-                                                                text:
-                                                                "Speech :",
-                                                                style: TextStyle(
-                                                                    fontWeight: FontWeight
-                                                                        .w700,
-                                                                    fontSize: Constants().getFontSize(
-                                                                        context,
-                                                                        'S')),
-                                                              ),
-                                                              SizedBox(
-                                                                  width: size.width /
-                                                                      82.2),
-                                                              SizedBox(
-                                                                height: size
-                                                                    .height *
-                                                                    0.03,
-                                                                width: size
-                                                                    .width *
-                                                                    0.5,
-                                                                child:
-                                                                KText(
-                                                                  maxLines:
-                                                                  1,
-                                                                  text: data[i]
-                                                                  [
-                                                                  'speech'],
-                                                                  textOverflow:
-                                                                  TextOverflow.ellipsis,
-                                                                  style: TextStyle(
-                                                                      color:
-                                                                      Colors.grey,
-                                                                      fontWeight: FontWeight.w500,
-                                                                      fontSize: Constants().getFontSize(context, 'S')),
-                                                                ),
-                                                              )
-                                                            ],
-                                                          )
-                                                        ],
-                                                      ),
-                                                    ),
+                                        SizedBox(height: size.height / 86.6),
+                                        SizedBox(height: size.height / 86.6),
+                                        InkWell(
+                                          onTap: (){
+                                            showRequestPrayerPopUp(context, user);
+                                          },
+                                          child: Material(
+                                            elevation: 4,
+                                            borderRadius: BorderRadius.circular(10),
+                                            child: Container(
+                                              height: 35,
+                                              width: 200,
+                                              decoration: BoxDecoration(
+                                                color: Constants().primaryAppColor,
+                                                borderRadius: BorderRadius.circular(10),
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                  "Add Prayer Request",
+                                                  style: GoogleFonts.poppins(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
                                               ),
-                                              SizedBox(
-                                                  height:
-                                                  size.height / 86.6),
-                                            ],
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(height: size.height / 86.6),
+                                        for (int i = 0; i < data.length; i++)
+                                          Padding(
+                                            padding: const EdgeInsets.all(12.0),
+                                            child: Card(
+                                              color: Colors.white,
+                                              child: SizedBox(
+                                                height: size.height * 0.18,
+                                                width: double.infinity,
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(10.0),
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                    children: [
+                                                      Row(
+                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                        children: [
+                                                          KText(
+                                                            text: data[i]['date'],
+                                                            style: TextStyle(
+                                                                color: Colors.grey,
+                                                                fontWeight: FontWeight.w500,
+                                                                fontSize: Constants().getFontSize(context, 'S')),
+                                                          ),
+                                                          KText(text: data[i]['time'],
+                                                            style: TextStyle(
+                                                                color: Colors.grey,
+                                                                fontWeight: FontWeight.w500,
+                                                                fontSize: Constants().getFontSize(context, 'S')),
+                                                          )
+                                                        ],
+                                                      ),
+                                                      //SizedBox(height: size.height / 86.6),
+                                                      Row(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          SizedBox(
+                                                            height: size.height * 0.03,
+                                                            width: size.width * 0.8,
+                                                            child: KText(
+                                                              maxLines: 1,
+                                                              text: data[i]['title'],
+                                                              textOverflow: TextOverflow.ellipsis,
+                                                              style: TextStyle(
+                                                                  color: Colors.grey,
+                                                                  fontWeight: FontWeight.w500,
+                                                                  fontSize: Constants().getFontSize(context, 'SM'),
+                                                              ),
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
+                                                      Row(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          SizedBox(
+                                                            height: size.height * 0.03,
+                                                            width: size.width * 0.8,
+                                                            child: KText(
+                                                              maxLines: 1,
+                                                              text: data[i]['description'],
+                                                              textOverflow: TextOverflow.ellipsis,
+                                                              style: TextStyle(
+                                                                  color: Colors.grey,
+                                                                  fontWeight: FontWeight.w500,
+                                                                  fontSize: Constants().getFontSize(context, 'S'),
+                                                              ),
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
+                                                      Row(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          SizedBox(
+                                                            height: size.height * 0.03,
+                                                            width: size.width * 0.8,
+                                                            child: KText(
+                                                              maxLines: 1,
+                                                              text: "Status : " + data[i]['status'],
+                                                              textOverflow: TextOverflow.ellipsis,
+                                                              style: TextStyle(
+                                                                color: data[i]['status'].toString().toLowerCase() == 'approved' ? Colors.green: data[i]['status'].toString().toLowerCase() == 'approved' ? Colors.red : Colors.grey,
+                                                                fontWeight: FontWeight.w500,
+                                                                fontSize: Constants().getFontSize(context, 'S'),
+                                                              ),
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
                                           ),
                                       ],
                                     ),
@@ -1839,7 +1787,7 @@ class _ProfileViewState extends State<ProfileView>
         return Dialog(
           backgroundColor: Colors.transparent,
           child: Container(
-            height: size.height * 0.4,
+            height: size.height * 0.5,
             width: size.width,
             decoration: BoxDecoration(
               color: Constants().primaryAppColor,
@@ -1864,7 +1812,7 @@ class _ProfileViewState extends State<ProfileView>
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         KText(
-                          text: "EDIT PROFILE",
+                          text: "Send Prayer Request",
                           style: GoogleFonts.openSans(
                             fontSize: Constants().getFontSize(context, 'M'),
                             fontWeight: FontWeight.bold,
@@ -1873,7 +1821,8 @@ class _ProfileViewState extends State<ProfileView>
                         InkWell(
                           onTap: () {
                             setState(() {
-                              descriptionController.text = "";
+                              prayerTitleCon.clear();
+                              prayerDescriptionCon.clear();
                             });
                             Navigator.pop(context);
                           },
@@ -1906,6 +1855,48 @@ class _ProfileViewState extends State<ProfileView>
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 KText(
+                                  text: "Title",
+                                  style: GoogleFonts.openSans(
+                                    fontSize:
+                                    Constants().getFontSize(context, 'S'),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10),
+                                  child: Container(
+                                    height: size.height * 0.08,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey.withOpacity(0.3),
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    child: TextField(
+                                      maxLines: null,
+                                      controller: prayerTitleCon,
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 14,
+                                      ),
+                                      decoration: const InputDecoration(
+                                          border: InputBorder.none,
+                                          contentPadding: EdgeInsets.all(7)),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 4),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                KText(
                                   text: "Description",
                                   style: GoogleFonts.openSans(
                                     fontSize:
@@ -1925,7 +1916,7 @@ class _ProfileViewState extends State<ProfileView>
                                     ),
                                     child: TextField(
                                       maxLines: null,
-                                      controller: descriptionController,
+                                      controller: prayerDescriptionCon,
                                       style: const TextStyle(
                                         color: Colors.black,
                                         fontSize: 14,
@@ -1946,37 +1937,44 @@ class _ProfileViewState extends State<ProfileView>
                           children: [
                             InkWell(
                               onTap: () async {
-                                // if (descriptionController.text != "") {
-                                //   Response response =
-                                //   await MessagesFireCrud.addMessage(
-                                //     content: descriptionController.text,
-                                //     userId: user.email!,
-                                //   );
-                                //   if (response.code == 200) {
-                                //     await CoolAlert.show(
-                                //         context: context,
-                                //         type: CoolAlertType.success,
-                                //         text: "Request Sended successfully!",
-                                //         width: size.width * 0.4,
-                                //         backgroundColor: Constants()
-                                //             .primaryAppColor
-                                //             .withOpacity(0.8));
-                                //     setState(() {
-                                //       descriptionController.text = "";
-                                //     });
-                                //     Navigator.pop(context);
-                                //   } else {
-                                //     await CoolAlert.show(
-                                //         context: context,
-                                //         type: CoolAlertType.error,
-                                //         text: "Failed to send Request!",
-                                //         width: size.width * 0.4,
-                                //         backgroundColor: Constants()
-                                //             .primaryAppColor
-                                //             .withOpacity(0.8));
-                                //     Navigator.pop(context);
-                                //   }
-                                // }
+                                if (prayerDescriptionCon.text != "" && prayerTitleCon.text != "") {
+                                  String docId = getRandomString(16);
+                                  FirebaseFirestore.instance.collection('Prayers').doc(docId).set(
+                                    {
+                                      "id" : docId,
+                                      "date" : DateFormat('dd-MM-yyyy').format(DateTime.now()),
+                                      "time" : DateFormat('hh:mm a').format(DateTime.now()),
+                                      "title" : prayerTitleCon.text,
+                                      "description" : prayerDescriptionCon.text,
+                                      "timestamp" : DateTime.now().millisecondsSinceEpoch,
+                                      "status" : "Pending",
+                                      "requestedBy": "${user.firstName} ${user.lastName}",
+                                      "phone" : user.phone
+                                    }
+                                  ).whenComplete(() async {
+                                    await CoolAlert.show(
+                                        context: context,
+                                        type: CoolAlertType.success,
+                                        text: "Request Sended successfully!",
+                                        width: size.width * 0.4,
+                                        backgroundColor: Constants()
+                                            .primaryAppColor
+                                            .withOpacity(0.8));
+                                    setState(() {
+                                      descriptionController.text = "";
+                                    });
+                                    Navigator.pop(context);
+                                  }).catchError((e) async {
+                                    await CoolAlert.show(
+                                        context: context,
+                                        type: CoolAlertType.error,
+                                        text: "Failed to send Request!",
+                                        width: size.width * 0.4,
+                                        backgroundColor: Constants()
+                                            .primaryAppColor
+                                            .withOpacity(0.8));
+                                  });
+                                }
                               },
                               child: Container(
                                 height: 40,
@@ -2058,6 +2056,12 @@ class _ProfileViewState extends State<ProfileView>
       },
     );
   }
+
+  String _chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+  Random _rnd = Random();
+
+  String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
+      length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
 
 
 }

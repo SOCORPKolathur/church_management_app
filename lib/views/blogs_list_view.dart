@@ -112,7 +112,7 @@ class _BlogsListViewState extends State<BlogsListView> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Container(
-                                    height: size.height * 0.06,
+                                    height: size.height * 0.03,
                                     child: Text(
                                       blogs[i].title!,
                                       maxLines: null,
@@ -126,7 +126,7 @@ class _BlogsListViewState extends State<BlogsListView> {
                                   ),
                                   SizedBox(height: size.height/173.2),
                                   Container(
-                                    height: size.height * 0.06,
+                                    height: size.height * 0.03,
                                     width: size.width * 0.5,
                                     child: KText(
                                       text: blogs[i].description!,
@@ -144,8 +144,11 @@ class _BlogsListViewState extends State<BlogsListView> {
                                       padding: const EdgeInsets.symmetric(horizontal: 10),
                                       child: Row(
                                         children: [
-                                          Icon(Icons.favorite),
-                                          SizedBox(width: 10),
+                                          Icon(
+                                            Icons.thumb_up_alt_rounded,
+                                            size: 16,
+                                          ),
+                                          const SizedBox(width: 5),
                                           Text(
                                             "${blogs[i].likes!.length}",
                                             style: GoogleFonts.openSans(
@@ -154,6 +157,8 @@ class _BlogsListViewState extends State<BlogsListView> {
                                               fontWeight: FontWeight.w600,
                                             ),
                                           ),
+                                          const SizedBox(width: 5),
+                                          Text("Likes")
                                         ],
                                       ),
                                     ),

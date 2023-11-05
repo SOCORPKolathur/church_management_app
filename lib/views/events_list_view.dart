@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:church_management_client/models/event_model.dart';
+import 'package:church_management_client/views/event_details_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -68,7 +69,8 @@ class _EventsListViewState extends State<EventsListView> {
                     },
                     child: InkWell(
                       onTap: (){
-                        showEventsPopUp(context,events[j]);
+                        Navigator.push(context, MaterialPageRoute(builder: (ctx)=> EventDetailsView(id: events[j].id!,phone: widget.phone)));
+                        //showEventsPopUp(context,events[j]);
                       },
                       child: Container(
                         width: size.width * 0.88,

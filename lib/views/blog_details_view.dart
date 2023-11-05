@@ -18,7 +18,10 @@ class BlogDetailsView extends StatefulWidget {
   State<BlogDetailsView> createState() => _BlogDetailsViewState();
 }
 
-class _BlogDetailsViewState extends State<BlogDetailsView> {
+class _BlogDetailsViewState extends State<BlogDetailsView> with SingleTickerProviderStateMixin {
+
+  late final AnimationController _controller = AnimationController(
+      duration: const Duration(milliseconds: 500), vsync: this, value: 1.0);
 
   updateLike(BlogModel blog, String phone) async {
     List<String> likes = [];
@@ -87,6 +90,9 @@ class _BlogDetailsViewState extends State<BlogDetailsView> {
                           ),
                           InkWell(
                             onTap: () {
+                              _controller
+                                  .reverse()
+                                  .then((value) => _controller.forward());
                               updateLike(blog,widget.phone);
                             },
                             child: Material(
@@ -94,8 +100,13 @@ class _BlogDetailsViewState extends State<BlogDetailsView> {
                               elevation: 2,
                               child: CircleAvatar(
                                 backgroundColor: Colors.white,
-                                child: Icon(
-                                    blog.likes!.contains(widget.phone) ? Icons.favorite : Icons.favorite_border
+                                child: ScaleTransition(
+                                  scale: Tween(begin: 0.2, end: 1.0).animate(
+                                      CurvedAnimation(parent: _controller, curve: Curves.easeOut)),
+                                  child: Icon(
+                                    blog.likes!.contains(widget.phone) ? Icons.thumb_up_sharp : Icons.thumb_up_outlined,
+                                    color: Constants().primaryAppColor,
+                                  ),
                                 ),
                               ),
                             ),
@@ -120,24 +131,47 @@ class _BlogDetailsViewState extends State<BlogDetailsView> {
                               ),
                             ),
                             Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                KText(
-                                  text: "Author : ",
-                                  style: GoogleFonts.openSans(
-                                    fontSize: Constants().getFontSize(context, 'S'),
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.thumb_up_alt_sharp,
+                                      size: 16,
+                                    ),
+                                    const SizedBox(width: 5),
+                                    Text(
+                                      blog.likes!.length.toString(),
+                                      style: GoogleFonts.poppins(
+                                        color: Constants().primaryAppColor,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 5),
+                                    const Text("Likes"),
+                                  ],
                                 ),
-                                SizedBox(width: size.width * 0.01),
-                                Text(
-                                  blog.author!,
-                                  style: GoogleFonts.openSans(
-                                    color: Constants().primaryAppColor,
-                                    fontSize: Constants().getFontSize(context, 'S'),
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    KText(
+                                      text: "Author : ",
+                                      style: GoogleFonts.openSans(
+                                        fontSize: Constants().getFontSize(context, 'S'),
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    SizedBox(width: size.width * 0.01),
+                                    Text(
+                                      blog.author!,
+                                      style: GoogleFonts.openSans(
+                                        color: Constants().primaryAppColor,
+                                        fontSize: Constants().getFontSize(context, 'S'),
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ],
                             ),
