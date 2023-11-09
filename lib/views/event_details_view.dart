@@ -10,10 +10,10 @@ import 'package:photo_view/photo_view.dart';
 import '../Widgets/kText.dart';
 
 class EventDetailsView extends StatefulWidget {
-  const EventDetailsView({super.key,required this.id, required this.phone});
+  const EventDetailsView({super.key,required this.id, required this.userId});
 
   final String id;
-  final String phone;
+  final String userId;
 
   @override
   State<EventDetailsView> createState() => _EventDetailsViewState();
@@ -213,7 +213,7 @@ class _EventDetailsViewState extends State<EventDetailsView> {
             EventsModel event = EventsModel.fromJson(snap.data!.data() as Map<String,dynamic>);
             return InkWell(
               onTap: (){
-                updateEventRegistration(event,widget.phone);
+                updateEventRegistration(event,widget.userId);
               },
               child: Material(
                 elevation: 3,
@@ -227,7 +227,7 @@ class _EventDetailsViewState extends State<EventDetailsView> {
                   ),
                   child: Center(
                     child: Text(
-                      event.registeredUsers!.contains(widget.phone) ? 'Registered for this Event' : "Register for this Event",
+                      event.registeredUsers!.contains(widget.userId) ? 'Registered for this Event' : "Register for this Event",
                       style: GoogleFonts.poppins(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
@@ -244,13 +244,13 @@ class _EventDetailsViewState extends State<EventDetailsView> {
     );
   }
 
-  updateEventRegistration(EventsModel event,String phone) async {
+  updateEventRegistration(EventsModel event,String id) async {
     List<String> registeredUsers = [];
     event.registeredUsers!.forEach((element) {
       registeredUsers.add(element);
     });
-    if(!registeredUsers.contains(phone)){
-      registeredUsers.add(phone);
+    if(!registeredUsers.contains(id)){
+      registeredUsers.add(id);
     }
     var document = await FirebaseFirestore.instance.collection('Events').doc(event.id).update({
       "registeredUsers": registeredUsers

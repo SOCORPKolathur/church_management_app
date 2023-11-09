@@ -12,9 +12,10 @@ import '../constants.dart';
 import '../services/events_firecrud.dart';
 
 class EventsListView extends StatefulWidget {
-  const EventsListView({super.key, required this.phone, required this.scrollController});
+  const EventsListView({super.key, required this.phone, required this.userId, required this.scrollController});
 
   final String phone;
+  final String userId;
   final ScrollController scrollController;
 
 
@@ -69,7 +70,7 @@ class _EventsListViewState extends State<EventsListView> {
                     },
                     child: InkWell(
                       onTap: (){
-                        Navigator.push(context, MaterialPageRoute(builder: (ctx)=> EventDetailsView(id: events[j].id!,phone: widget.phone)));
+                        Navigator.push(context, MaterialPageRoute(builder: (ctx)=> EventDetailsView(id: events[j].id!,userId: widget.userId)));
                         //showEventsPopUp(context,events[j]);
                       },
                       child: Container(

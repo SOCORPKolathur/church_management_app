@@ -274,8 +274,7 @@ class _HomeViewState extends State<HomeView>
                               child: KText(
                                 text: 'Languages',
                                 style: TextStyle(
-                                    fontSize:
-                                        Constants().getFontSize(context, "S")),
+                                    fontSize: Constants().getFontSize(context, "S")),
                               ),
                               onTap: () {},
                             ),
@@ -712,7 +711,7 @@ class _HomeViewState extends State<HomeView>
                                         phone: widget.phone,
                                         scrollController: tabScrollController,
                                         hasScroll: tabIsScrollable),
-                                    EventsListView(phone: widget.phone,scrollController: tabScrollController,),
+                                    EventsListView(userId: widget.userDocId,phone: widget.phone,scrollController: tabScrollController,),
                                     BlogsListView(phone: widget.phone,scrollController: tabScrollController,)
                                   ],
                                 ),
