@@ -1,37 +1,26 @@
 {
   "project_info": {
-    "project_number": "804008888688",
-    "firebase_url": "https://church-management-cbf7d-default-rtdb.firebaseio.com",
-    "project_id": "church-management-cbf7d",
-    "storage_bucket": "church-management-cbf7d.appspot.com"
+    "project_number": "593479066939",
+    "project_id": "bcag-a6ac7",
+    "storage_bucket": "bcag-a6ac7.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:804008888688:android:f67fab0dfea28af07a67b5",
+        "mobilesdk_app_id": "1:593479066939:android:0b91c2fbf73a06fc52031e",
         "android_client_info": {
-          "package_name": "com.example.church_management_client"
+          "package_name": "church.ikia.bcag"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "804008888688-a90itatd30rmbecnhra72c072qdausdc.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBAuQUgGKVZWAm3gskviJXIhLrIiYNoey8"
+          "current_key": "AIzaSyACuu6hH4Xd195AHOPMIEfhjJMpc_PrZPc"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "804008888688-a90itatd30rmbecnhra72c072qdausdc.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

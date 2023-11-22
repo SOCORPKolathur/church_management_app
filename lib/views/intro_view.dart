@@ -1,4 +1,5 @@
 import 'package:church_management_client/views/register_view.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,6 +14,22 @@ class IntroView extends StatefulWidget {
 }
 
 class _IntroViewState extends State<IntroView> {
+
+  String churchLogo = '';
+
+  getChurchDetails() async {
+    var church = await FirebaseFirestore.instance.collection('ChurchDetails').get();
+    setState(() {
+      churchLogo = church.docs.first.get("logo");
+    });
+  }
+
+  @override
+  void initState() {
+    getChurchDetails();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -47,10 +64,34 @@ class _IntroViewState extends State<IntroView> {
                   Column(
                    crossAxisAlignment: CrossAxisAlignment.start,
                    children: [
-                     Icon(
+                     churchLogo != ""
+                         ? Container(
+                       height: 100,
+                       width: 100,
+                       decoration: BoxDecoration(
+                           borderRadius: BorderRadius.circular(200),
+                           color:Colors.white
+                       ),
+                       child: ClipRRect(
+                         borderRadius: BorderRadius.circular(200),
+                         child: Padding(
+                           padding: const EdgeInsets.all(8.0),
+                           child: Image.network(
+                             churchLogo,
+                             height: 110,
+                             width: 110,
+                           ),
+                         ),
+                       ),
+                     )
+                         : const Icon(
                        Icons.church,
-                       size: size.width/5.1375,
+                       size: 80,
                      ),
+                     // Icon(
+                     //   Icons.church,
+                     //   size: size.width/5.1375,
+                     // ),
                      SizedBox(height: size.height/57.733333333),
                      Column(
                        crossAxisAlignment: CrossAxisAlignment.start,

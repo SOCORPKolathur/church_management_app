@@ -25,8 +25,7 @@ class ProfileView extends StatefulWidget {
   State<ProfileView> createState() => _ProfileViewState();
 }
 
-class _ProfileViewState extends State<ProfileView>
-    with SingleTickerProviderStateMixin {
+class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStateMixin {
   TextEditingController descriptionController = TextEditingController();
   TextEditingController prayerTitleCon = TextEditingController();
   TextEditingController prayerDescriptionCon = TextEditingController();
@@ -34,7 +33,7 @@ class _ProfileViewState extends State<ProfileView>
 
   @override
   void initState() {
-    tabController = TabController(length: 4, vsync: this);
+    tabController = TabController(length: 5, vsync: this);
     super.initState();
   }
 
@@ -200,6 +199,9 @@ class _ProfileViewState extends State<ProfileView>
                             ),
                             Tab(
                               text: "My Prayer",
+                            ),
+                            Tab(
+                              text: "Testimonials",
                             )
                           ],
                         ),
@@ -1560,7 +1562,192 @@ class _ProfileViewState extends State<ProfileView>
                                                               text: "Status : " + data[i]['status'],
                                                               textOverflow: TextOverflow.ellipsis,
                                                               style: TextStyle(
-                                                                color: data[i]['status'].toString().toLowerCase() == 'approved' ? Colors.green: data[i]['status'].toString().toLowerCase() == 'approved' ? Colors.red : Colors.grey,
+                                                                color: data[i]['status'].toString().toLowerCase() == 'approved' ? Colors.green: data[i]['status'].toString().toLowerCase() == 'denied' ? Colors.red : Colors.grey,
+                                                                fontWeight: FontWeight.w500,
+                                                                fontSize: Constants().getFontSize(context, 'S'),
+                                                              ),
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                  );
+                                }
+                                return Container();
+                              },
+                            ),
+                            StreamBuilder(
+                              stream: FirebaseFirestore.instance.collection('Testimonials').snapshots(),
+                              builder: (ctx, snapshot) {
+                                bool noData = true;
+                                if (snapshot.hasData) {
+                                  List data = [];
+                                  snapshot.data!.docs.forEach((element) {
+                                    if (element.get("phone") == user.phone) {
+                                      data.add(element);
+                                      noData = false;
+                                    }
+                                  });
+                                  return noData
+                                      ? Center(
+                                    child: Column(
+                                      children: [
+                                        Lottie.asset(
+                                          'assets/no_data.json',
+                                          fit: BoxFit.contain,
+                                          height: size.height * 0.4,
+                                          width: size.width * 0.7,
+                                        ),
+                                        InkWell(
+                                          onTap: (){
+                                            showRequestTestimonialPopUp(context, user);
+                                          },
+                                          child: Material(
+                                            elevation: 4,
+                                            borderRadius: BorderRadius.circular(10),
+                                            child: Container(
+                                              height: 35,
+                                              width: 200,
+                                              decoration: BoxDecoration(
+                                                color: Constants().primaryAppColor,
+                                                borderRadius: BorderRadius.circular(10),
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                  "Request Testimonial",
+                                                  style: GoogleFonts.poppins(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                      : SingleChildScrollView(
+                                    child: Column(
+                                      children: [
+                                        SizedBox(height: size.height / 86.6),
+                                        SizedBox(height: size.height / 86.6),
+                                        InkWell(
+                                          onTap: (){
+                                            showRequestTestimonialPopUp(context, user);
+                                          },
+                                          child: Material(
+                                            elevation: 4,
+                                            borderRadius: BorderRadius.circular(10),
+                                            child: Container(
+                                              height: 35,
+                                              width: 200,
+                                              decoration: BoxDecoration(
+                                                color: Constants().primaryAppColor,
+                                                borderRadius: BorderRadius.circular(10),
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                  "Add Testimonials Request",
+                                                  style: GoogleFonts.poppins(
+                                                    color: Colors.white,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(height: size.height / 86.6),
+                                        for (int i = 0; i < data.length; i++)
+                                          Padding(
+                                            padding: const EdgeInsets.all(12.0),
+                                            child: Card(
+                                              color: Colors.white,
+                                              child: SizedBox(
+                                                height: size.height * 0.18,
+                                                width: double.infinity,
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(10.0),
+                                                  child: Column(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                    children: [
+                                                      Row(
+                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                        children: [
+                                                          KText(
+                                                            text: data[i]['date'],
+                                                            style: TextStyle(
+                                                                color: Colors.grey,
+                                                                fontWeight: FontWeight.w500,
+                                                                fontSize: Constants().getFontSize(context, 'S')),
+                                                          ),
+                                                          KText(text: data[i]['time'],
+                                                            style: TextStyle(
+                                                                color: Colors.grey,
+                                                                fontWeight: FontWeight.w500,
+                                                                fontSize: Constants().getFontSize(context, 'S')),
+                                                          )
+                                                        ],
+                                                      ),
+                                                      //SizedBox(height: size.height / 86.6),
+                                                      Row(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          SizedBox(
+                                                            height: size.height * 0.03,
+                                                            width: size.width * 0.8,
+                                                            child: KText(
+                                                              maxLines: 1,
+                                                              text: data[i]['title'],
+                                                              textOverflow: TextOverflow.ellipsis,
+                                                              style: TextStyle(
+                                                                color: Colors.grey,
+                                                                fontWeight: FontWeight.w500,
+                                                                fontSize: Constants().getFontSize(context, 'SM'),
+                                                              ),
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
+                                                      Row(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          SizedBox(
+                                                            height: size.height * 0.03,
+                                                            width: size.width * 0.8,
+                                                            child: KText(
+                                                              maxLines: 1,
+                                                              text: data[i]['description'],
+                                                              textOverflow: TextOverflow.ellipsis,
+                                                              style: TextStyle(
+                                                                color: Colors.grey,
+                                                                fontWeight: FontWeight.w500,
+                                                                fontSize: Constants().getFontSize(context, 'S'),
+                                                              ),
+                                                            ),
+                                                          )
+                                                        ],
+                                                      ),
+                                                      Row(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          SizedBox(
+                                                            height: size.height * 0.03,
+                                                            width: size.width * 0.8,
+                                                            child: KText(
+                                                              maxLines: 1,
+                                                              text: "Status : " + data[i]['status'],
+                                                              textOverflow: TextOverflow.ellipsis,
+                                                              style: TextStyle(
+                                                                color: data[i]['status'].toString().toLowerCase() == 'verified' ? Colors.green: data[i]['status'].toString().toLowerCase() == 'unverified' ? Colors.red : Colors.grey,
                                                                 fontWeight: FontWeight.w500,
                                                                 fontSize: Constants().getFontSize(context, 'S'),
                                                               ),
@@ -1951,6 +2138,284 @@ class _ProfileViewState extends State<ProfileView>
                                       "requestedBy": "${user.firstName} ${user.lastName}",
                                       "phone" : user.phone
                                     }
+                                  ).whenComplete(() async {
+                                    await CoolAlert.show(
+                                        context: context,
+                                        type: CoolAlertType.success,
+                                        text: "Request Sended successfully!",
+                                        width: size.width * 0.4,
+                                        backgroundColor: Constants()
+                                            .primaryAppColor
+                                            .withOpacity(0.8));
+                                    setState(() {
+                                      descriptionController.text = "";
+                                    });
+                                    Navigator.pop(context);
+                                  }).catchError((e) async {
+                                    await CoolAlert.show(
+                                        context: context,
+                                        type: CoolAlertType.error,
+                                        text: "Failed to send Request!",
+                                        width: size.width * 0.4,
+                                        backgroundColor: Constants()
+                                            .primaryAppColor
+                                            .withOpacity(0.8));
+                                  });
+                                }
+                              },
+                              child: Container(
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8),
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      color: Colors.black26,
+                                      offset: Offset(1, 2),
+                                      blurRadius: 3,
+                                    ),
+                                  ],
+                                ),
+                                child: Padding(
+                                  padding:
+                                  const EdgeInsets.symmetric(horizontal: 6),
+                                  child: Center(
+                                    child: KText(
+                                      text: "Update",
+                                      style: GoogleFonts.openSans(
+                                        fontSize: Constants()
+                                            .getFontSize(context, 'S'),
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            InkWell(
+                              onTap: () async {
+                                setState(() {
+                                  descriptionController.text = "";
+                                });
+                                ////////////////////
+                                Navigator.pop(context);
+                              },
+                              child: Container(
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(8),
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      color: Colors.black26,
+                                      offset: Offset(1, 2),
+                                      blurRadius: 3,
+                                    ),
+                                  ],
+                                ),
+                                child: Padding(
+                                  padding:
+                                  const EdgeInsets.symmetric(horizontal: 6),
+                                  child: Center(
+                                    child: KText(
+                                      text: "Cancel",
+                                      style: GoogleFonts.openSans(
+                                        fontSize: Constants()
+                                            .getFontSize(context, 'S'),
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  showRequestTestimonialPopUp(context, UserModel user) async {
+    Size size = MediaQuery.of(context).size;
+    await showDialog(
+      context: context,
+      builder: (ctx) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: Container(
+            height: size.height * 0.5,
+            width: size.width,
+            decoration: BoxDecoration(
+              color: Constants().primaryAppColor,
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black26,
+                  offset: Offset(1, 2),
+                  blurRadius: 3,
+                ),
+              ],
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                SizedBox(
+                  height: size.height * 0.07,
+                  child: Padding(
+                    padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        KText(
+                          text: "Send Testimonial Request",
+                          style: GoogleFonts.openSans(
+                            fontSize: Constants().getFontSize(context, 'M'),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            setState(() {
+                              prayerTitleCon.clear();
+                              prayerDescriptionCon.clear();
+                            });
+                            Navigator.pop(context);
+                          },
+                          child: const Icon(
+                            Icons.cancel_outlined,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    width: double.infinity,
+                    decoration: const BoxDecoration(
+                        color: Color(0xffF7FAFC),
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(10),
+                          bottomRight: Radius.circular(10),
+                        )),
+                    padding: const EdgeInsets.all(10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 4),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                KText(
+                                  text: "Title",
+                                  style: GoogleFonts.openSans(
+                                    fontSize:
+                                    Constants().getFontSize(context, 'S'),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10),
+                                  child: Container(
+                                    height: size.height * 0.08,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey.withOpacity(0.3),
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    child: TextField(
+                                      maxLines: null,
+                                      controller: prayerTitleCon,
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 14,
+                                      ),
+                                      decoration: const InputDecoration(
+                                          border: InputBorder.none,
+                                          contentPadding: EdgeInsets.all(7)),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 4),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                KText(
+                                  text: "Description",
+                                  style: GoogleFonts.openSans(
+                                    fontSize:
+                                    Constants().getFontSize(context, 'S'),
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 6),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10),
+                                  child: Container(
+                                    height: size.height * 0.14,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey.withOpacity(0.3),
+                                      borderRadius: BorderRadius.circular(5),
+                                    ),
+                                    child: TextField(
+                                      maxLines: null,
+                                      controller: prayerDescriptionCon,
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 14,
+                                      ),
+                                      decoration: const InputDecoration(
+                                          border: InputBorder.none,
+                                          contentPadding: EdgeInsets.all(7)),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
+                        Expanded(child: Container()),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            InkWell(
+                              onTap: () async {
+                                if (prayerDescriptionCon.text != "" && prayerTitleCon.text != "") {
+                                  String docId = getRandomString(16);
+                                  FirebaseFirestore.instance.collection('Testimonials').doc(docId).set(
+                                      {
+                                        "id" : docId,
+                                        "date" : DateFormat('dd-MM-yyyy').format(DateTime.now()),
+                                        "time" : DateFormat('hh:mm a').format(DateTime.now()),
+                                        "title" : prayerTitleCon.text,
+                                        "description" : prayerDescriptionCon.text,
+                                        "timestamp" : DateTime.now().millisecondsSinceEpoch,
+                                        "status" : "Pending",
+                                        "requestedBy": "${user.firstName} ${user.lastName}",
+                                        "phone" : user.phone
+                                      }
                                   ).whenComplete(() async {
                                     await CoolAlert.show(
                                         context: context,

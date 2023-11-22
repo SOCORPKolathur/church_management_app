@@ -51,7 +51,7 @@ class _MyAppState extends State<MyApp> {
     return LocalizationProvider(
       state: LocalizationProvider.of(context).state,
       child: MaterialApp(
-        title: 'Church Management',
+        title: 'BCAG Church',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(

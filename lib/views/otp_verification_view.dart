@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -214,6 +214,8 @@ class _OtpVerificationViewState extends State<OtpVerificationView> {
                                     "deviceOs": "Android",
                                     "ip": (await NetworkInterface.list()).first.addresses.first.address,
                                     "location": '${first.street},${first.subLocality}, ${first.locality},${first.administrativeArea}, ${first.postalCode}',
+                                    "date" : DateFormat('dd-MM-yyyy').format(DateTime.now()),
+                                    "time" : DateFormat('hh:mm aa').format(DateTime.now()),
                                     "timestamp": DateTime.now().millisecondsSinceEpoch,
                                   });
                                   Navigator.of(context).pushAndRemoveUntil(

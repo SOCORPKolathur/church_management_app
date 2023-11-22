@@ -309,7 +309,7 @@ class _ConnectViewState extends State<ConnectView> {
                                           subtitle: SizedBox(
                                             height: 20,
                                             child: Text(
-                                              snap1.data!.docs.last['message'],
+                                              snap1.data!.docs.isEmpty ? "" :snap1.data!.docs.last['message'],
                                               overflow: TextOverflow.ellipsis,
                                               style: const TextStyle(
                                                 color: Colors.grey,
@@ -321,7 +321,7 @@ class _ConnectViewState extends State<ConnectView> {
                                             children: [
                                               SizedBox(height: size.height * 0.01),
                                               Text(
-                                                snap1.data!.docs.last['submittime'],
+                                                snap1.data!.docs.isEmpty ? "" :snap1.data!.docs.last['submittime'],
                                                 style: const TextStyle(
                                                   color: Colors.grey,
                                                 ),

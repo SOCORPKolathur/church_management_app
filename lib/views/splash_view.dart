@@ -50,10 +50,10 @@ class _SplashViewState extends State<SplashView> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SvgPicture.asset("assets/path0.svg"),
+            SvgPicture.asset("assets/logo1.jpg"),
             SizedBox(height: size.height/57.733333333),
             Text(
-              "CHURCH",
+              "BCAG CHURCH",
               style: TextStyle(
                 color: Constants().primaryAppColor,
                 fontSize: size.width/10.275,
