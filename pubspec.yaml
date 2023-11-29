@@ -47,7 +47,7 @@ dependencies:
   flutter_localization: ^0.1.13
   translator: ^0.1.7
   firebase_storage: ^11.2.6
-  cached_network_image: ^3.2.3
+  cached_network_image: any
   salomon_bottom_bar: ^3.3.2
   cool_alert: ^2.0.1
   flutter_staggered_animations: ^1.1.1
