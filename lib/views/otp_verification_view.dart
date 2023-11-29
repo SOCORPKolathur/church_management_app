@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:io' show Platform;
 import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -211,7 +212,7 @@ class _OtpVerificationViewState extends State<OtpVerificationView> {
                                   AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
                                   FirebaseFirestore.instance.collection('LoginReports').doc().set({
                                     "deviceId": androidInfo.id,
-                                    "deviceOs": "Android",
+                                    "deviceOs": Platform.isAndroid ? "Android" : Platform.isIOS ? "Ios" : "",
                                     "ip": (await NetworkInterface.list()).first.addresses.first.address,
                                     "location": '${first.street},${first.subLocality}, ${first.locality},${first.administrativeArea}, ${first.postalCode}',
                                     "date" : DateFormat('dd-MM-yyyy').format(DateTime.now()),

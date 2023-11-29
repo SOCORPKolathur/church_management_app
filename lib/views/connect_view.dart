@@ -1,12 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:church_management_client/models/zone_model.dart';
 import 'package:church_management_client/views/chat_view.dart';
+import 'package:church_management_client/views/zone_tasks_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import '../Widgets/kText.dart';
 import '../constants.dart';
-import '../models/event_model.dart';
 import '../models/user_model.dart';
 import '../services/user_firecrud.dart';
 
@@ -25,16 +26,22 @@ class _ConnectViewState extends State<ConnectView> {
   
   List<CheckMemberModel> clansWithMembersList = [];
   List<CheckMemberModel> committeeWithMembersList = [];
+  List<ZoneModel> zoneList = [];
 
 
   navigateToChatPage(String collection,String title,bool isClan,String clanId,bool isCommittee,String committeeId){
       Navigator.push(context, MaterialPageRoute(builder: (ctx)=> ChatView(title: title,userDocId: widget.userDocId,uid: widget.uid,collection:collection,isClan: isClan,clanId: clanId,committeeId: committeeId,isCommittee: isCommittee)));
   }
 
+  navigateToZoneChat(){
+    Navigator.push(context, MaterialPageRoute(builder: (ctx)=> ZoneTaskView(userDocId: widget.userDocId, uid: widget.uid, title: "Zone Tasks")));
+  }
+
   UserModel currentUser = UserModel();
 
   setCurrentUser(UserModel user){
-    currentUser = user;
+      currentUser = user;
+      addZoneForUser();
   }
   
   addClansWithMembers() async {
@@ -70,6 +77,20 @@ class _ConnectViewState extends State<ConnectView> {
     });
     await Future.delayed(const Duration(milliseconds: 800));
     return committeeWithMembersList;
+  }
+
+  addZoneForUser() async {
+    zoneList.clear();
+    var zonesDoc = await FirebaseFirestore.instance.collection('Zones').orderBy("timestamp").get();
+    for(int z = 0; z < zonesDoc.docs.length; z++){
+      for(int a = 0; a < zonesDoc.docs[z].get("areas").length; a++){
+        if(currentUser.address!.toLowerCase().contains(zonesDoc.docs[z].get("areas")[a].toString().toLowerCase())){
+          setState(() {
+            zoneList.add(ZoneModel.fromJson(zonesDoc.docs[z].data()));
+          });
+        }
+      }
+    }
   }
 
   bool checkMemberAccess(String clanName){
@@ -396,6 +417,37 @@ class _ConnectViewState extends State<ConnectView> {
                                     }return Container();
                                   },
                                 ),
+                                Container(
+                                  height: zoneList.length * 100,
+                                  width: size.width,
+                                  color: Colors.red,
+                                  child: ListView.builder(
+                                    itemCount: zoneList.length,
+                                    itemBuilder: (ctx, i){
+                                      return InkWell(
+                                        onTap: (){
+                                          navigateToZoneChat();
+                                          //navigateToChatPage('ChurchChat','Church',false,"",false,"");
+                                        },
+                                        child: ListTile(
+                                          style: ListTileStyle.list,
+                                          leading: CircleAvatar(
+                                            radius: 25, child: Icon(Icons.map,size: size.width/11, color: Colors.white),
+                                            backgroundColor: Constants().primaryAppColor,
+                                          ),
+                                          title: Text(
+                                            zoneList[i].zoneName!,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
                                 StreamBuilder(
                                   stream: FirebaseFirestore.instance
                                       .collection("ClansChat")
@@ -553,7 +605,8 @@ class _ConnectViewState extends State<ConnectView> {
                                       );
                                     }return Container();
                                   },
-                                )
+                                ),
+
                               ],
                             ),
                           ),

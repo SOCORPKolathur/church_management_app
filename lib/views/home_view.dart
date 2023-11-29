@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:animated_widgets/widgets/rotation_animated.dart';
 import 'package:animated_widgets/widgets/shake_animated_widget.dart';
 import 'package:church_management_client/views/edit_profile_view.dart';
+import 'package:church_management_client/views/video_ceremonies_view.dart';
 import 'package:intl/intl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -73,7 +74,7 @@ class _HomeViewState extends State<HomeView>
 
   @override
   void initState() {
-    tabController = TabController(length: 3, vsync: this);
+    tabController = TabController(length: 4, vsync: this);
     setNotificationStop();
     super.initState();
   }
@@ -594,8 +595,7 @@ class _HomeViewState extends State<HomeView>
                               height: size.height * 0.08,
                               color: Colors.transparent,
                               child: TabBar(
-                                indicatorPadding: const EdgeInsets.symmetric(
-                                    horizontal: 0, vertical: 0),
+                                indicatorPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
                                 labelPadding: const EdgeInsets.all(0),
                                 splashBorderRadius: BorderRadius.zero,
                                 splashFactory: NoSplash.splashFactory,
@@ -694,6 +694,18 @@ class _HomeViewState extends State<HomeView>
                                       ],
                                     ),
                                   ),
+                                  Tab(
+                                    height: size.height / 17,
+                                    child: SizedBox(
+                                      width: 200,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          const Text('Video Ceremonies'),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
                                 ],
                                 labelColor: Constants().primaryAppColor,
                                 dividerColor: Colors.transparent,
@@ -712,7 +724,8 @@ class _HomeViewState extends State<HomeView>
                                         scrollController: tabScrollController,
                                         hasScroll: tabIsScrollable),
                                     EventsListView(userId: widget.userDocId,phone: widget.phone,scrollController: tabScrollController,),
-                                    BlogsListView(phone: widget.phone,scrollController: tabScrollController,)
+                                    BlogsListView(phone: widget.phone,scrollController: tabScrollController,),
+                                    VideoCeremoniesView(scrollController: tabScrollController,),
                                   ],
                                 ),
                               ),
