@@ -66,12 +66,15 @@ class _VideoCeremoniesViewState extends State<VideoCeremoniesView> {
                             ),
                           ],
                           image: DecorationImage(
-                            fit: BoxFit.contain,
-                            image: AssetImage(
-                                "assets/video_cover.png"
+                            fit: BoxFit.fill,
+                            image: NetworkImage(
+                                videos[i].thumbUrl!,
                             ),
                           ),
                         ),
+                        // child: Center(
+                        //   child: Icon(Icons.video_library_outlined,size: 60,color: Colors.grey,),
+                        // ),
                       ),
                     ),
                   );

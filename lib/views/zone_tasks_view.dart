@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:church_management_client/Widgets/kText.dart';
+import 'package:cool_alert/cool_alert.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:church_management_client/constants.dart';
@@ -11,8 +13,10 @@ import '../models/user_model.dart';
 import '../services/user_firecrud.dart';
 
 class ZoneTaskView extends StatefulWidget {
-  ZoneTaskView({required this.userDocId, required this.uid,required this.title});
+  ZoneTaskView({required this.userDocId,required this.zoneDocId,required this.zoneId, required this.uid,required this.title});
   final String userDocId;
+  final String zoneDocId;
+  final String zoneId;
   final String uid;
   final String title;
   @override
@@ -24,6 +28,7 @@ class ZoneTaskViewState extends State<ZoneTaskView> {
   bool isLeader = false;
   ScrollController _scrollController = new ScrollController();
   TextEditingController chatMessage = new TextEditingController();
+  TextEditingController feedBackController = new TextEditingController();
 
   UserModel currentUser = UserModel();
 
@@ -32,19 +37,17 @@ class ZoneTaskViewState extends State<ZoneTaskView> {
     checkIsLeader(currentUser.phone!);
   }
 
-  List<UserModel> usersForNotify = [];
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
   checkIsLeader(String phone) async {
-
-
-    setState(() {
-      isLeader = true;
-    });
+    var zoneDoc = await FirebaseFirestore.instance.collection('Zones').doc(widget.zoneDocId).get();
+    if(zoneDoc.get("leaderPhone") == phone){
+      setState(() {
+        isLeader = true;
+      });
+    }else{
+      setState(() {
+        isLeader = false;
+      });
+    }
   }
 
 
@@ -92,11 +95,12 @@ class ZoneTaskViewState extends State<ZoneTaskView> {
             )
         ),
       ),
-      body: StreamBuilder(
-        stream: UserFireCrud.fetchUsersWithId(widget.uid),
+      body: FutureBuilder(
+        //stream: UserFireCrud.fetchUsersWithId(widget.uid),
+        future: FirebaseFirestore.instance.collection('Users').where("id",isEqualTo: widget.uid).get(),
         builder: (ctx, snaps){
           if(snaps.hasData){
-            UserModel user = snaps.data!;
+            UserModel user = UserModel.fromJson(snaps.data!.docs.first.data());
             setCurrentUser(user);
             return OfflineBuilder(
               connectivityBuilder: (
@@ -125,14 +129,14 @@ class ZoneTaskViewState extends State<ZoneTaskView> {
               builder: (BuildContext context) {
                 return
                   StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance.collection('Tasks').orderBy("timestamp").snapshots(),
+                    stream: FirebaseFirestore.instance.collection('Tasks').where("zoneId",isEqualTo: widget.zoneId).snapshots(),
                     builder: (context, snapshot) {
                       if(snapshot.hasData){
                         return Container(
                           height: MediaQuery.of(context).size.height,
                           width: MediaQuery.of(context).size.width,
                           color: Colors.white,
-                          padding: EdgeInsets.symmetric(vertical: height / 37.95, horizontal: width / 19.6),
+                          padding: EdgeInsets.symmetric(/*vertical: height / 37.95,*/ horizontal: width / 19.6),
                           child: SingleChildScrollView(
                             reverse: true,
                             child: Column(
@@ -146,79 +150,145 @@ class ZoneTaskViewState extends State<ZoneTaskView> {
                                       shrinkWrap: true,
                                       physics: NeverScrollableScrollPhysics(),
                                       itemBuilder: (context, index) {
-                                        return Column(
-                                          crossAxisAlignment: snapshot.data!.docs[index]["sender"]=="${user.firstName!} ${user.lastName!}" ?CrossAxisAlignment.end: CrossAxisAlignment.start,
-                                          children: [
-                                            messageTile(Size(width, height), snapshot.data!.docs[index].data(), context, snapshot.data!.docs[index].id,user),
-                                            snapshot.data!.docs[index]["submitdate"] == "${DateTime.now().year}-${ DateTime.now().month}-${ DateTime.now().day}" ?
-                                            Text(
-                                              'Today  ${snapshot
-                                                  .data!
-                                                  .docs[index]["submittime"]}',
-                                              style: TextStyle(
-                                                  fontSize: width /
-                                                      40,
-                                                  color: Colors
-                                                      .grey,
-                                                  fontWeight: FontWeight
-                                                      .w700),)
-                                                :
-                                            snapshot
-                                                .data!
-                                                .docs[index]["date"] ==
-                                                "${DateTime
-                                                    .now()
-                                                    .year}-${ DateTime
-                                                    .now()
-                                                    .month}-${ DateTime
-                                                    .now()
-                                                    .day -
-                                                    1}"
-                                                ?
-                                            Text(
-                                              'Yesterday  ${snapshot
-                                                  .data!
-                                                  .docs[index]["time"]}',
-                                              style: TextStyle(
-                                                  fontSize: width /
-                                                      40,
-                                                  color: Colors
-                                                      .grey,
-                                                  fontWeight: FontWeight
-                                                      .w700),)
-                                                :
-                                            Text(
-                                              "${snapshot
-                                                  .data!
-                                                  .docs[index]["date"]}  ${snapshot
-                                                  .data!
-                                                  .docs[index]["time"]}",
-                                              style: TextStyle(
-                                                  fontSize: width /
-                                                      40,
-                                                  color: Colors
-                                                      .grey,
-                                                  fontWeight: FontWeight
-                                                      .w700),),
-                                            Text(
-                                              '${snapshot
-                                                  .data!
-                                                  .docs[index]["sender"]}',
-                                              style: TextStyle(
-                                                  fontSize: width /
-                                                      40,
-                                                  color: Colors
-                                                      .grey,
-                                                  fontWeight: FontWeight
-                                                      .w700),),
-                                            SizedBox(height: height / 80),
-                                          ],
+                                        var data = snapshot.data!.docs[index];
+                                        return Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Material(
+                                            elevation: 2,
+                                            borderRadius: BorderRadius.circular(10),
+                                            child: Container(
+                                              width: width,
+                                              decoration: BoxDecoration(
+                                                color: Colors.grey.shade50,
+                                                borderRadius: BorderRadius.circular(10),
+                                              ),
+                                              child: Padding(
+                                                padding: const EdgeInsets.all(12.0),
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    KText(
+                                                        text: data.get("taskName"),
+                                                        style: GoogleFonts.poppins(
+                                                          fontSize: 17,
+                                                          fontWeight: FontWeight.w700,
+                                                          color: Constants().primaryAppColor,
+                                                        ),
+                                                    ),
+                                                    SizedBox(height: 10),
+                                                    KText(
+                                                      text: "Description :",
+                                                      style: GoogleFonts.poppins(
+                                                        fontSize: 15,
+                                                        fontWeight: FontWeight.w600,
+                                                        color: Colors.black54,
+                                                      ),
+                                                    ),
+                                                    SizedBox(height: 10),
+                                                    KText(
+                                                      text: data.get("taskDescription"),
+                                                      style: GoogleFonts.poppins(
+                                                        fontSize: 15,
+                                                        fontWeight: FontWeight.w400,
+                                                        color: Colors.grey,
+                                                      ),
+                                                    ),
+                                                    SizedBox(height: 10),
+                                                    Row(
+                                                      children: [
+                                                        KText(
+                                                          text: "Status : ",
+                                                          style: GoogleFonts.poppins(
+                                                            fontSize: 15,
+                                                            fontWeight: FontWeight.w600,
+                                                            color: Colors.black54,
+                                                          ),
+                                                        ),
+                                                        KText(
+                                                          text: data.get("status"),
+                                                          style: GoogleFonts.poppins(
+                                                            fontSize: 15,
+                                                            fontWeight: FontWeight.w400,
+                                                            color: data.get("status").toString().toLowerCase() == "completed" ? Colors.green : Colors.red,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    Visibility(
+                                                      visible: data.get("status").toString().toLowerCase() == "completed",
+                                                      child: Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          SizedBox(height: 10),
+                                                          KText(
+                                                            text: "Feedback :",
+                                                            style: GoogleFonts.poppins(
+                                                              fontSize: 15,
+                                                              fontWeight: FontWeight.w600,
+                                                              color: Colors.black54,
+                                                            ),
+                                                          ),
+                                                          SizedBox(height: 10),
+                                                          SizedBox(
+                                                            width: width * 0.55,
+                                                            child: KText(
+                                                              text: data.get("feedback"),
+                                                              style: GoogleFonts.poppins(
+                                                                fontSize: 15,
+                                                                fontWeight: FontWeight.w400,
+                                                                color: Colors.grey,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    Visibility(
+                                                      visible: (isLeader && data.get("status").toString().toLowerCase() != "completed"),
+                                                      child: Row(
+                                                        mainAxisAlignment: MainAxisAlignment.center,
+                                                        children: [
+                                                          Padding(
+                                                            padding: const EdgeInsets.only(top: 10),
+                                                            child: InkWell(
+                                                              onTap: (){
+                                                                feedBackController.clear();
+                                                                sendFeedBack(
+                                                                  data.id
+                                                                );
+                                                              },
+                                                              child: Container(
+                                                                height: 35,
+                                                                width: width * 0.6,
+                                                                decoration: BoxDecoration(
+                                                                  color: Constants().primaryAppColor,
+                                                                  borderRadius: BorderRadius.circular(10),
+                                                                ),
+                                                                child: Center(
+                                                                  child: KText(
+                                                                    text: "Submit Feedback",
+                                                                    style: GoogleFonts.poppins(
+                                                                      fontSize: 15,
+                                                                      fontWeight: FontWeight.w400,
+                                                                      color: Colors.white,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
                                         );
-                                      }),
+                                      },
+                                  ),
                                 ),
-                                SizedBox(
-                                  height: height / 10.18,
-                                )
                               ],
                             ),
                           ),
@@ -231,232 +301,270 @@ class ZoneTaskViewState extends State<ZoneTaskView> {
           }return Container();
         },
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: isLeader ? SizedBox(
-        height: height / 15,
-        width: double.infinity,
-        child: SizedBox(
-          height: height / 18,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
+    );
+  }
+
+  sendFeedBack(String id) async {
+    Size size = MediaQuery.of(context).size;
+    await showDialog(
+    context: context,
+    builder: (ctx) {
+      return Dialog(
+        backgroundColor: Colors.transparent,
+        child: Container(
+          height: size.height * 0.4,
+          width: size.width,
+          decoration: BoxDecoration(
+            color: Constants().primaryAppColor,
+            boxShadow: const [
+              BoxShadow(
+                color: Colors.black26,
+                offset: Offset(1, 2),
+                blurRadius: 3,
+              ),
+            ],
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Container(
-                decoration: BoxDecoration(borderRadius: BorderRadius.circular(30)),
-                height: height / 18,
-                width: width * 0.8,
-                child: TextField(
-                  controller: chatMessage,
-                  onEditingComplete: onSendMessag,
-                  decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.all(8),
-                      hintText: "Type here",
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      )
+              SizedBox(
+                height: size.height * 0.07,
+                child: Padding(
+                  padding:
+                  const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      KText(
+                        text: "Feedback",
+                        style: GoogleFonts.openSans(
+                          fontSize: Constants().getFontSize(context, 'M'),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          setState(() {
+                            feedBackController.text = "";
+                          });
+                          Navigator.pop(context);
+                        },
+                        child: const Icon(
+                          Icons.cancel_outlined,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-              IconButton(
-                  icon: Icon(Icons.send,color: Constants().primaryAppColor),
-                  onPressed: onSendMessag
+              Expanded(
+                child: Container(
+                  width: double.infinity,
+                  decoration: const BoxDecoration(
+                      color: Color(0xffF7FAFC),
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(10),
+                        bottomRight: Radius.circular(10),
+                      )),
+                  padding: const EdgeInsets.all(10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 4),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              KText(
+                                text: "Description",
+                                style: GoogleFonts.openSans(
+                                  fontSize:
+                                  Constants().getFontSize(context, 'S'),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10),
+                                child: Container(
+                                  height: size.height * 0.14,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.withOpacity(0.3),
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  child: TextField(
+                                    maxLines: null,
+                                    controller: feedBackController,
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 14,
+                                    ),
+                                    decoration: const InputDecoration(
+                                        border: InputBorder.none,
+                                        contentPadding: EdgeInsets.all(7)),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
+                      Expanded(child: Container()),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          InkWell(
+                            onTap: () async {
+                              //if (feedBackController.text != "") {
+                                updateTask(id: id, feedBack: feedBackController.text);
+                              //}
+                            },
+                            child: Container(
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Colors.black26,
+                                    offset: Offset(1, 2),
+                                    blurRadius: 3,
+                                  ),
+                                ],
+                              ),
+                              child: Padding(
+                                padding:
+                                const EdgeInsets.symmetric(horizontal: 6),
+                                child: Center(
+                                  child: KText(
+                                    text: "Update",
+                                    style: GoogleFonts.openSans(
+                                      fontSize: Constants()
+                                          .getFontSize(context, 'S'),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          InkWell(
+                            onTap: () async {
+                              setState(() {
+                                feedBackController.text = "";
+                              });
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              height: 40,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                                boxShadow: const [
+                                  BoxShadow(
+                                    color: Colors.black26,
+                                    offset: Offset(1, 2),
+                                    blurRadius: 3,
+                                  ),
+                                ],
+                              ),
+                              child: Padding(
+                                padding:
+                                const EdgeInsets.symmetric(horizontal: 6),
+                                child: Center(
+                                  child: KText(
+                                    text: "Cancel",
+                                    style: GoogleFonts.openSans(
+                                      fontSize: Constants()
+                                          .getFontSize(context, 'S'),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),
         ),
-
-      ) : Container(),
+      );
+    },
     );
   }
 
-
-  Widget messageTile(Size size, chatMap,BuildContext context, id,UserModel user) {
-    double width = MediaQuery.of(context).size.width;
-    return Builder(builder: (_) {
-      if (chatMap['type'] == "text") {
-        return
-          Padding(
-            padding: const EdgeInsets.all(3.0),
-            child: Container(
-                width: size.width,
-                alignment:  chatMap['sender']== "${user.firstName!} ${user.lastName!}"? Alignment.centerRight: Alignment.centerLeft,
-                child:
-                GestureDetector(
-                  onLongPress: () {
-                    showDialog(context: context, builder: (ctx) =>
-                        AlertDialog(
-                          title: const Text('Are you sure delete this message'),
-                          actions: [
-                            TextButton(onPressed: () {
-                              if(chatMap['sender']== "${user.firstName!} ${user.lastName!}"){
-
-                              }
-                              Navigator.pop(context);
-                            }, child: const Text('Delete'))
-                          ],
-                        ));
-                  },
-                  child: Container(
-                      padding: EdgeInsets.symmetric(
-                          vertical: 8, horizontal: 14),
-                      margin: EdgeInsets.symmetric(
-                          vertical: 5, horizontal: 0),
-                      decoration: BoxDecoration(
-                        color:  chatMap['sender']=="${user.firstName!} ${user.lastName!}"? Colors.white: Constants().primaryAppColor,
-                        border: Border.all(color: chatMap['sender']=="${user.firstName!} ${user.lastName!}"? Constants().primaryAppColor
-                            .withOpacity(0.65) : Constants().primaryAppColor),
-                        borderRadius: BorderRadius.only(topLeft: Radius
-                            .circular(15),
-                          bottomLeft: chatMap['sender']=="${user.firstName!} ${user.lastName!}"? Radius.circular(15) : Radius.circular(0),
-                          bottomRight: chatMap['sender']=="${user.firstName!} ${user.lastName!}"? Radius.circular(0) : Radius.circular(15),
-                          topRight: Radius.circular(15),),
-                      ),
-                      child: Column(
-                        children: [
-                          Text(
-                            chatMap['message'],
-                            style: GoogleFonts.montserrat(
-                              fontSize: width/30.15384615,
-                              fontWeight: FontWeight.w500,
-                              color: chatMap['sender']=="${user.firstName!} ${user.lastName!}"? Colors.black : Colors.white,
-                            ),
-                          ),
-                        ],
-                      )),
-                )
-            ),
-          );
-      }
-      else {
-        return SizedBox();
-      }
+  updateTask({required String id,required String feedBack}){
+    Size size = MediaQuery.of(context).size;
+    FirebaseFirestore.instance.collection('Tasks').doc(id).update({
+      "feedback" : feedBack,
+      "status" : "Completed"
+    }).whenComplete(() async {
+      await CoolAlert.show(
+          context: context,
+          type: CoolAlertType.success,
+          text: "Feedback updated successfully!",
+          width: size.width * 0.4,
+          backgroundColor: Constants()
+              .primaryAppColor
+              .withOpacity(0.8));
+      feedBackController.clear();
+      Navigator.pop(context);
+    }).onError((error, stackTrace) async {
+      await CoolAlert.show(
+      context: context,
+      type: CoolAlertType.error,
+      text: "Failed to update Feedback!",
+      width: size.width * 0.4,
+      backgroundColor: Constants()
+          .primaryAppColor
+          .withOpacity(0.8));
+      feedBackController.clear();
+      Navigator.pop(context);
     });
-  }
-
-  void onSendMessag() async {
-    String messageText = '';
-    messageText = chatMessage.text;
-    if (chatMessage.text.isNotEmpty) {
-      Map<String, dynamic> messages = {
-        "message": chatMessage.text,
-        "type": "text",
-        "time": FieldValue.serverTimestamp(),
-        "submittime":"${DateFormat('hh:mm a').format(DateTime.now())}",
-        "sender": "${currentUser.firstName!} ${currentUser.lastName!}",
-        "submitdate":"${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}",
-      };
-      chatMessage.clear();
-      // if(widget.isClan){
-      //   await FirebaseFirestore.instance.collection("ClansChat").doc(widget.clanId).collection('Chat').add(messages);
-      // }else if(widget.isCommittee){
-      //   await FirebaseFirestore.instance.collection("CommitteeChat").doc(widget.committeeId).collection('Chat').add(messages);
-      // }else{
-      //   await FirebaseFirestore.instance.collection(widget.collection).add(messages);
-      // }
-      await sendNotification(messageText);
-      messageText = '';
-    }
-    else {
-      print("Enter Some Text");
-    }
-  }
-
-  sendNotification(String message) async {
-    var users = await FirebaseFirestore.instance.collection('Users').get();
-    var members = await FirebaseFirestore.instance.collection('Members').get();
-    var choruses = await FirebaseFirestore.instance.collection('Chorus').get();
-    var clans = await FirebaseFirestore.instance.collection('Clans').get();
-
-    switch(widget.title){
-      case "Church":
-        for (var element in users.docs) {
-          if(element['fcmToken'] != null && element['fcmToken'] != ""){
-            usersForNotify.add(UserModel.fromJson(element.data()));
-          }
-        }
-        break;
-      case "Members":
-        for (var element in users.docs) {
-          for(var member in members.docs){
-            if(element['phone'] == member['phone'] && (element['fcmToken'] != null && element['fcmToken'] != "")){
-              for (var element in users.docs) {
-                usersForNotify.add(UserModel.fromJson(element.data()));
-              }
-            }
-          }
-        }
-        break;
-      case "Blood Requirement":
-        for (var element in users.docs) {
-          if(element['fcmToken'] != null && element['fcmToken'] != ""){
-            usersForNotify.add(UserModel.fromJson(element.data()));
-          }
-        }
-        break;
-    // case "Clans":
-    //   for (var element in users.docs) {
-    //     for(var clan in clans.docs){
-    //       if(element['phone'] == clan['phone'] && (element['fcmToken'] != null && element['fcmToken'] != "")){
-    //         for (var element in users.docs) {
-    //           usersForNotify.add(UserModel.fromJson(element.data()));
-    //         }
-    //       }
-    //     }
-    //   }
-    //   break;
-      case "Quire":
-        for (var element in users.docs) {
-          for(var chorus in choruses.docs){
-            if(element['phone'] == chorus['phone'] && (element['fcmToken'] != null && element['fcmToken'] != "")){
-              for (var element in users.docs) {
-                usersForNotify.add(UserModel.fromJson(element.data()));
-              }
-            }
-          }
-        }
-        break;
-    }
-
-    usersForNotify.removeWhere((element) => element.id == widget.uid);
-    usersForNotify.forEach((element) {
-      sendPushMessage(element.fcmToken!);
-    });
-  }
 
 
 
-  Future<bool> sendPushMessage(String token) async {
-    bool isSended = false;
-    try {
-      var response = await http.post(
-        Uri.parse('https://fcm.googleapis.com/fcm/send'),
-        headers: <String, String>{
-          'Content-Type': 'application/json',
-          'Authorization':
-          'key=AAAAuzKqCXA:APA91bHpckZw1E2JuVr8MTPvoic6pDOOtxmTddTsSBno2ZYd3fMDo7kFmbsHHRfmuZurh0ut8n_46FgPAI5YdtfpwmJk85o9qeTMca9QgVhy7CiDUOdSer_ifyqaAQcGtF_oyBaX8UMQ',
-        },
-        body: jsonEncode(
-          <String, dynamic>{
-            'notification': <String, dynamic>{'body': chatMessage.text, 'title': "New Message from ${widget.title}"},
-            'priority': 'high',
-            'data': <String, dynamic>{
-              'click_action': 'FLUTTER_NOTIFICATION_CLICK',
-              'id': '1',
-              'status': 'done'
-            },
-            "to": token,
-          },
-        ),
-      );
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        isSended = true;
-      } else {
-        isSended = false;
-      }
-    } catch (e) {
-      print("error push notification");
-    }
-    return isSended;
+  //   Response response = await MessagesFireCrud.addMessage(
+  //     content: descriptionController.text,
+  //     userId: user.email!,
+  //   );
+  //
+  //   if (response.code == 200) {
+  //     await CoolAlert.show(
+  //         context: context,
+  //         type: CoolAlertType.success,
+  //         text: "Request Sended successfully!",
+  //         width: size.width * 0.4,
+  //         backgroundColor: Constants()
+  //             .primaryAppColor
+  //             .withOpacity(0.8));
+  //     setState(() {
+  //       descriptionController.text = "";
+  //     });
+  //   }  Navigator.pop(context);
+  // } else {
+  // await CoolAlert.show(
+  // context: context,
+  // type: CoolAlertType.error,
+  // text: "Failed to send Request!",
+  // width: size.width * 0.4,
+  // backgroundColor: Constants()
+  //     .primaryAppColor
+  //     .withOpacity(0.8));
+  // Navigator.pop(context);
+  // }
+
+
   }
 
 

@@ -593,11 +593,15 @@ class _HomeViewState extends State<HomeView>
                           children: [
                             Container(
                               height: size.height * 0.08,
+                              width: size.width,
                               color: Colors.transparent,
                               child: TabBar(
+                                tabAlignment: TabAlignment.start,
+                                isScrollable: true,
                                 indicatorPadding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-                                labelPadding: const EdgeInsets.all(0),
+                                labelPadding: const EdgeInsets.all(10),
                                 splashBorderRadius: BorderRadius.zero,
+                                padding: EdgeInsets.symmetric(horizontal: 13),
                                 splashFactory: NoSplash.splashFactory,
                                 labelStyle: GoogleFonts.openSans(
                                   fontSize: size.width / 20,
@@ -612,8 +616,7 @@ class _HomeViewState extends State<HomeView>
                                   Tab(
                                     height: size.height / 17,
                                     child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                      mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         const Text('Notices'),
                                         Visibility(
@@ -696,14 +699,11 @@ class _HomeViewState extends State<HomeView>
                                   ),
                                   Tab(
                                     height: size.height / 17,
-                                    child: SizedBox(
-                                      width: 200,
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          const Text('Video Ceremonies'),
-                                        ],
-                                      ),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        const Text('Video Ceremonies'),
+                                      ],
                                     ),
                                   ),
                                 ],

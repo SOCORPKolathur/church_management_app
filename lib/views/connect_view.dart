@@ -33,15 +33,24 @@ class _ConnectViewState extends State<ConnectView> {
       Navigator.push(context, MaterialPageRoute(builder: (ctx)=> ChatView(title: title,userDocId: widget.userDocId,uid: widget.uid,collection:collection,isClan: isClan,clanId: clanId,committeeId: committeeId,isCommittee: isCommittee)));
   }
 
-  navigateToZoneChat(){
-    Navigator.push(context, MaterialPageRoute(builder: (ctx)=> ZoneTaskView(userDocId: widget.userDocId, uid: widget.uid, title: "Zone Tasks")));
+  navigateToZoneChat({required String title,required String zoneDocId,required String zoneId}){
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (ctx)=> ZoneTaskView(
+        userDocId: widget.userDocId,
+        uid: widget.uid,
+        title: title,
+        zoneDocId: zoneDocId,
+        zoneId: zoneId,
+      ),
+    ),
+    );
   }
 
   UserModel currentUser = UserModel();
 
   setCurrentUser(UserModel user){
       currentUser = user;
-      addZoneForUser();
   }
   
   addClansWithMembers() async {
@@ -79,18 +88,20 @@ class _ConnectViewState extends State<ConnectView> {
     return committeeWithMembersList;
   }
 
-  addZoneForUser() async {
-    zoneList.clear();
+  Future<List<ZoneModel>> addZoneForUser() async {
+    //zoneList.clear();
+    List<ZoneModel> zoneList = [];
     var zonesDoc = await FirebaseFirestore.instance.collection('Zones').orderBy("timestamp").get();
     for(int z = 0; z < zonesDoc.docs.length; z++){
       for(int a = 0; a < zonesDoc.docs[z].get("areas").length; a++){
         if(currentUser.address!.toLowerCase().contains(zonesDoc.docs[z].get("areas")[a].toString().toLowerCase())){
-          setState(() {
+          //setState(() {
             zoneList.add(ZoneModel.fromJson(zonesDoc.docs[z].data()));
-          });
+          //});
         }
       }
     }
+    return zoneList;
   }
 
   bool checkMemberAccess(String clanName){
@@ -417,36 +428,50 @@ class _ConnectViewState extends State<ConnectView> {
                                     }return Container();
                                   },
                                 ),
-                                Container(
-                                  height: zoneList.length * 100,
-                                  width: size.width,
-                                  color: Colors.red,
-                                  child: ListView.builder(
-                                    itemCount: zoneList.length,
-                                    itemBuilder: (ctx, i){
-                                      return InkWell(
-                                        onTap: (){
-                                          navigateToZoneChat();
-                                          //navigateToChatPage('ChurchChat','Church',false,"",false,"");
-                                        },
-                                        child: ListTile(
-                                          style: ListTileStyle.list,
-                                          leading: CircleAvatar(
-                                            radius: 25, child: Icon(Icons.map,size: size.width/11, color: Colors.white),
-                                            backgroundColor: Constants().primaryAppColor,
-                                          ),
-                                          title: Text(
-                                            zoneList[i].zoneName!,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.black,
-                                            ),
-                                          ),
+                                FutureBuilder(
+                                  future: addZoneForUser(),
+                                  builder: (context,snap) {
+                                    if(snap.hasData){
+                                      List<ZoneModel> zones = snap.data!;
+                                      return Container(
+                                        height: double.parse((100 * zones.length).toString()),
+                                        width: size.width,
+                                        child: ListView.builder(
+                                          itemCount: zones.length,
+                                          scrollDirection: Axis.vertical,
+                                          itemBuilder: (ctx, i){
+                                            return Padding(
+                                              padding: const EdgeInsets.symmetric(vertical: 5),
+                                              child: InkWell(
+                                                onTap: (){
+                                                  navigateToZoneChat(
+                                                      title: zones[i].zoneName!,
+                                                      zoneDocId: zones[i].id!,
+                                                      zoneId: zones[i].zoneId!,
+                                                  );
+                                                  },
+                                                child: ListTile(
+                                                  style: ListTileStyle.list,
+                                                  leading: CircleAvatar(
+                                                    radius: 25, child: Icon(Icons.map,size: size.width/11, color: Colors.white),
+                                                    backgroundColor: Constants().primaryAppColor,
+                                                  ),
+                                                  title: Text(
+                                                    zones[i].zoneName!,
+                                                    overflow: TextOverflow.ellipsis,
+                                                    style: const TextStyle(
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Colors.black,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          },
                                         ),
                                       );
-                                    },
-                                  ),
+                                    }return Container();
+                                  }
                                 ),
                                 StreamBuilder(
                                   stream: FirebaseFirestore.instance
