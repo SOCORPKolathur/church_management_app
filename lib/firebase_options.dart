@@ -53,10 +53,11 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyACuu6hH4Xd195AHOPMIEfhjJMpc_PrZPc',
-    appId: '1:593479066939:android:0b91c2fbf73a06fc52031e',
-    messagingSenderId: '593479066939',
-    projectId: 'bcag-a6ac7',
-    storageBucket: 'bcag-a6ac7.appspot.com',
+    apiKey: 'AIzaSyBAuQUgGKVZWAm3gskviJXIhLrIiYNoey8',
+    appId: '1:804008888688:android:510213fa1c3fdc287a67b5',
+    messagingSenderId: '804008888688',
+    projectId: 'church-management-cbf7d',
+    databaseURL: 'https://church-management-cbf7d-default-rtdb.firebaseio.com',
+    storageBucket: 'church-management-cbf7d.appspot.com',
   );
 }

@@ -28,6 +28,7 @@ import '../models/user_model.dart';
 import '../services/messages_firecrud.dart';
 import '../services/user_firecrud.dart';
 import 'about_church_view.dart';
+import 'audio_podcasts_view.dart';
 import 'blogs_list_view.dart';
 import 'intro_view.dart';
 import 'languages_view.dart';
@@ -74,9 +75,18 @@ class _HomeViewState extends State<HomeView>
 
   @override
   void initState() {
-    tabController = TabController(length: 4, vsync: this);
+    tabController = TabController(length: 5, vsync: this);
     setNotificationStop();
+    setChurchDetails();
     super.initState();
+  }
+
+  setChurchDetails() async {
+    var doc = await FirebaseFirestore.instance.collection('ChurchDetails').get();
+    setState(() {
+      churchName = doc.docs.first.get("name");
+      churchImgUrl = doc.docs.first.get("logo");
+    });
   }
 
   setNotificationStop() async {
@@ -137,6 +147,9 @@ class _HomeViewState extends State<HomeView>
     });
   }
 
+  String churchName = '';
+  String churchImgUrl = '';
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -156,7 +169,7 @@ class _HomeViewState extends State<HomeView>
                   padding: const EdgeInsets.all(8.0),
                   child: InkWell(
                     onTap: (){
-                      showImageModel(context,(user.imgUrl == "" ||user.imgUrl == null) ? "https://firebasestorage.googleapis.com/v0/b/church-management-cbf7d.appspot.com/o/dailyupdates%2Fblank-profile-picture-973460_1280.png?alt=media&token=a9cde0ad-6cac-49d3-ae62-851a174e44b4" : user.imgUrl!);
+                      showImageModel(context,(churchImgUrl == "") ? "https://firebasestorage.googleapis.com/v0/b/church-management-cbf7d.appspot.com/o/dailyupdates%2Fblank-profile-picture-973460_1280.png?alt=media&token=a9cde0ad-6cac-49d3-ae62-851a174e44b4" : churchImgUrl);
                     },
                     child: Container(
                       decoration: BoxDecoration(
@@ -164,9 +177,9 @@ class _HomeViewState extends State<HomeView>
                         shape: BoxShape.circle,
                         image: DecorationImage(
                           fit: BoxFit.fill,
-                          image: (user.imgUrl != null)
+                          image: (churchImgUrl != "")
                               ? CachedNetworkImageProvider(
-                                  user.imgUrl!,
+                                  churchImgUrl,
                                 )
                               : const CachedNetworkImageProvider(
                                   "https://firebasestorage.googleapis.com/v0/b/church-management-cbf7d.appspot.com/o/dailyupdates%2Fblank-profile-picture-973460_1280.png?alt=media&token=a9cde0ad-6cac-49d3-ae62-851a174e44b4"),
@@ -181,7 +194,7 @@ class _HomeViewState extends State<HomeView>
           ),
         ),
         title: Text(
-          "IKIA",
+          churchName,
           style: GoogleFonts.amaranth(
             color: Colors.white,
             fontSize: Constants().getFontSize(context, "L"),
@@ -702,6 +715,15 @@ class _HomeViewState extends State<HomeView>
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
+                                        const Text('Audio Podcasts'),
+                                      ],
+                                    ),
+                                  ),
+                                  Tab(
+                                    height: size.height / 17,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
                                         const Text('Video Ceremonies'),
                                       ],
                                     ),
@@ -725,6 +747,7 @@ class _HomeViewState extends State<HomeView>
                                         hasScroll: tabIsScrollable),
                                     EventsListView(userId: widget.userDocId,phone: widget.phone,scrollController: tabScrollController,),
                                     BlogsListView(phone: widget.phone,scrollController: tabScrollController,),
+                                    AudioPodcastsView(scrollController: tabScrollController,),
                                     VideoCeremoniesView(scrollController: tabScrollController,),
                                   ],
                                 ),

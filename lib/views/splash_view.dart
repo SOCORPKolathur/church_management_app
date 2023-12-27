@@ -53,10 +53,10 @@ class _SplashViewState extends State<SplashView> {
             SvgPicture.asset("assets/logo1.jpg"),
             SizedBox(height: size.height/57.733333333),
             Text(
-              "BCAG CHURCH",
+              "CHURCH",
               style: TextStyle(
                 color: Constants().primaryAppColor,
-                fontSize: size.width/10.275,
+                fontSize: 30,
                 letterSpacing: 8,
                 fontWeight: FontWeight.bold,
                 fontFamily: "ArgentumSans",

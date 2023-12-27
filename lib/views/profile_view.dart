@@ -1823,7 +1823,7 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
 
   Future<bool> checkMemberAccess(String phone) async {
     bool isHaveAccess = false;
-    var members = await FirebaseFirestore.instance.collection('Members').get();
+    var members = await FirebaseFirestore.instance.collection('Members').where("phone", isEqualTo: phone).get();
     members.docs.forEach((member) {
       if(phone == member.get("phone")){
         isHaveAccess = true;
