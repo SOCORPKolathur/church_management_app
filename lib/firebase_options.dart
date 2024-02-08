@@ -26,10 +26,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for ios - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return ios;
       case TargetPlatform.macOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for macos - '
@@ -54,10 +51,21 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBAuQUgGKVZWAm3gskviJXIhLrIiYNoey8',
-    appId: '1:804008888688:android:510213fa1c3fdc287a67b5',
+    appId: '1:804008888688:android:5a0ad455060354f77a67b5',
     messagingSenderId: '804008888688',
     projectId: 'church-management-cbf7d',
     databaseURL: 'https://church-management-cbf7d-default-rtdb.firebaseio.com',
     storageBucket: 'church-management-cbf7d.appspot.com',
+  );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyAIXqkAoYFP-weaIiDsUR_kW1AoltWsIZY',
+    appId: '1:804008888688:ios:6d6e58313be087e77a67b5',
+    messagingSenderId: '804008888688',
+    projectId: 'church-management-cbf7d',
+    databaseURL: 'https://church-management-cbf7d-default-rtdb.firebaseio.com',
+    storageBucket: 'church-management-cbf7d.appspot.com',
+    androidClientId: '804008888688-9nt22c34rameeavgg3r142cvgvas53vp.apps.googleusercontent.com',
+    iosBundleId: 'com.example.churchManagementClient',
   );
 }

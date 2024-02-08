@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class Constants{
-  Color primaryAppColor = const Color(0xff967039);
+ // Color primaryAppColor = const Color(0xff377DFF);
+  Color primaryAppColor = const Color(0xff37d1d3);
+
   //Color primaryAppColor = const Color(0xff573902);
 
   double getFontSize(BuildContext context, String textType){

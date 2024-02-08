@@ -1,4 +1,4 @@
-package church.ikia.bcag
+package info.socorp.ikia
 
 import io.flutter.embedding.android.FlutterActivity
 
