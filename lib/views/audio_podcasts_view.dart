@@ -30,7 +30,7 @@ class _AudioPodcastsViewState extends State<AudioPodcastsView> {
         width: size.width,
         padding: const EdgeInsets.all(10),
         child: StreamBuilder(
-          stream: FirebaseFirestore.instance.collection("AudioPodcasts").snapshots(),
+          stream: FirebaseFirestore.instance.collection("AudioPodcasts").orderBy("timestamp",descending: true).snapshots(),
           builder: (ctx, snapshot) {
             if (snapshot.hasData) {
               List<DocumentSnapshot> podcasts = snapshot.data!.docs;

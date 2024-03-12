@@ -160,12 +160,7 @@ class _HomeViewState extends State<HomeView>
         leading: SizedBox(
           height: size.height / 43.3,
           width: size.width / 20.55,
-          child: StreamBuilder(
-            stream: UserFireCrud.fetchUsersWithId(widget.uid),
-            builder: (ctx, snaps) {
-              if (snaps.hasData) {
-                UserModel user = snaps.data!;
-                return Padding(
+          child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: InkWell(
                     onTap: (){
@@ -187,12 +182,10 @@ class _HomeViewState extends State<HomeView>
                       ),
                     ),
                   ),
-                );
-              }
-              return Container();
-            },
+                )
+
           ),
-        ),
+
         title: Text(
           churchName,
           style: GoogleFonts.amaranth(

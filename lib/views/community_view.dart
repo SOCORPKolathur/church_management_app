@@ -105,6 +105,8 @@ class _CommunityViewState extends State<CommunityView>  with SingleTickerProvide
                       setState(() {
                         searchString = val;
                       });
+                      print(searchString);
+                      getMembers();
                     },
                     decoration: InputDecoration(
                       border: InputBorder.none,
@@ -535,6 +537,7 @@ class _CommunityViewState extends State<CommunityView>  with SingleTickerProvide
   }
 
   getMembers() async {
+    print("sxdsf");
     if (!hasMore1) {
       print('No More Users');
       return;
@@ -552,7 +555,8 @@ class _CommunityViewState extends State<CommunityView>  with SingleTickerProvide
           .orderBy("timestamp", descending: true)
           .limit(documentLimit)
           .get();
-    } else {
+    }
+    else {
       querySnapshot = await FirebaseFirestore.instance
           .collection('Members')
           .orderBy("timestamp", descending: true)
@@ -568,12 +572,17 @@ class _CommunityViewState extends State<CommunityView>  with SingleTickerProvide
     print("----------------------------------------------------------------------------------");
     print(searchString);
     if(searchString != ""){
+      print("clearing");
       for(int i = 0; i < querySnapshot.docs.length; i ++){
         if(querySnapshot.docs[i].get("firstName").toString().toLowerCase().startsWith(searchString.toLowerCase()) || querySnapshot.docs[i].get("lastName").toString().toLowerCase().startsWith(searchString.toLowerCase())){
-          membersList.add(querySnapshot.docs[i]);
+          setState(() {
+            membersList.add(querySnapshot.docs[i]);
+          });
+
         }
       }
-    }else{
+    }
+    else{
       membersList.addAll(querySnapshot.docs);
     }
 

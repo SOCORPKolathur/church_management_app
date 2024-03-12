@@ -167,7 +167,9 @@ class _LoginViewState extends State<LoginView> {
   authenticate() async {
     bool isRegistered = false;
     var document = await FirebaseFirestore.instance.collection("Users").get();
+    print( emailController.text);
     for (int i = 0; i < document.docs.length; i++) {
+      print(document.docs[i]['phone']);
       if (document.docs[i]['phone'] == emailController.text) {
         isRegistered = true;
       }

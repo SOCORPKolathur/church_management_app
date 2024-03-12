@@ -61,8 +61,9 @@ class _EditProfileViewState extends State<EditProfileView> {
     anniversaryDateController.text = user.get("anniversaryDate");
     localityController.text = user.get("locality");
     professionController.text = user.get("profession");
-    aboutController.text = user.get("about");
-    addressController.text = user.get("address");
+    //aboutController.text = user.get("about");
+    //addressController.text = user.get("address");
+    addressController.text = user.get("about");
 
     var requests = await FirebaseFirestore.instance.collection('ProfileEditRequest').get();
     requests.docs.forEach((request) {
@@ -494,7 +495,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                     ],
                   ),
                   const SizedBox(height: 10),
-                  Column(
+                 /* Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const SizedBox(height: 4),
@@ -532,7 +533,7 @@ class _EditProfileViewState extends State<EditProfileView> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 10),*/
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

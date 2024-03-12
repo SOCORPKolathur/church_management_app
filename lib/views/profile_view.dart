@@ -218,7 +218,7 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
                               children: [
                                 SizedBox(height: size.height / 86.6),
                                 SizedBox(height: size.height / 86.6),
-                                Card(
+                               /* Card(
                                   color: Colors.white,
                                   child: SizedBox(
                                     width: double.infinity,
@@ -304,7 +304,7 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
                                     ),
                                   ),
                                 ),
-                                SizedBox(height: size.height / 86.6),
+                                SizedBox(height: size.height / 86.6),*/
                                 Card(
                                   color: Colors.white,
                                   child: SizedBox(
@@ -540,8 +540,8 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
                                 if (snapshot.hasData) {
                                   var data;
                                   snapshot.data!.docs.forEach((element) {
-                                    if (element.get("contactNumber") ==
-                                        user.phone) {
+                                    if (element.get("familyId") ==
+                                        user) {
                                       data = element;
                                       noData = false;
                                     }

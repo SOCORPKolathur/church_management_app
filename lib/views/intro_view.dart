@@ -40,10 +40,10 @@ class _IntroViewState extends State<IntroView> {
             height: size.height,
             width: size.width,
             decoration: const BoxDecoration(
-                image: DecorationImage(
+             /*   image: DecorationImage(
                   fit: BoxFit.fill,
                   image: AssetImage("assets/dolomite-alps-peaks-italy 1.png"),
-                )
+                )*/
             ),
           ),
           Container(
@@ -104,7 +104,7 @@ class _IntroViewState extends State<IntroView> {
                            ),
                          ),
                          Text(
-                           "CHURCH",
+                           "IKIA CHURCH",
                            style: GoogleFonts.openSans(
                              fontSize: size.width/10.275,
                              fontWeight: FontWeight.w900,
