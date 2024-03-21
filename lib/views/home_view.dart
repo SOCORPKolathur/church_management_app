@@ -278,8 +278,8 @@ class _HomeViewState extends State<HomeView>
                           itemBuilder: (context) => [
                             PopupMenuItem(
                               value: 'Languages',
-                              child: KText(
-                                text: 'Languages',
+                              child: Text(
+                                'Languages',
                                 style: TextStyle(
                                     fontSize: Constants().getFontSize(context, "S")),
                               ),

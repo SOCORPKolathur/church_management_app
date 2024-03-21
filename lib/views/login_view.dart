@@ -38,10 +38,10 @@ class _LoginViewState extends State<LoginView> {
             height: size.height,
             width: size.width,
             decoration: const BoxDecoration(
-                image: DecorationImage(
+               /* image: DecorationImage(
               fit: BoxFit.fill,
               image: AssetImage("assets/dolomite-alps-peaks-italy 1.png"),
-            )),
+            )*/),
           ),
           Container(
             height: size.height,

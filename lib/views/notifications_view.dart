@@ -67,6 +67,7 @@ class _NotificationsViewState extends State<NotificationsView> {
                       var visiblePercentage = visibilityInfo.visibleFraction * 6;
                       //if(visiblePercentage >= 0.2){
                         if(!snap.data!.docs[i]['isViewed']) {
+                          print("viewed");
                           updateNottificationStatus(id:snap.data!.docs[i].id);
                         }
                       //}
