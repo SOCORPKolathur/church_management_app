@@ -537,6 +537,7 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
                                   .snapshots(),
                               builder: (ctx, snapshot) {
                                 bool noData = true;
+
                                 if (snapshot.hasData) {
                                   var data;
                                   snapshot.data!.docs.forEach((element) {
