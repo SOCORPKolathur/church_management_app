@@ -5,6 +5,7 @@ class Constants{
   Color primaryAppColor = const Color(0xff37d1d3);
 
   //Color primaryAppColor = const Color(0xff573902);
+  static String apiKeyForNotification = 'AAAAuzKqCXA:APA91bHpckZw1E2JuVr8MTPvoic6pDOOtxmTddTsSBno2ZYd3fMDo7kFmbsHHRfmuZurh0ut8n_46FgPAI5YdtfpwmJk85o9qeTMca9QgVhy7CiDUOdSer_ifyqaAQcGtF_oyBaX8UMQ';
 
   double getFontSize(BuildContext context, String textType){
     double fontSize = 13.0;

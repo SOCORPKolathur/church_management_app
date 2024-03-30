@@ -35,6 +35,7 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
   @override
   void initState() {
     tabController = TabController(length: 5, vsync: this);
+    getfamilyid();
     super.initState();
   }
 
@@ -541,8 +542,7 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
                                 if (snapshot.hasData) {
                                   var data;
                                   snapshot.data!.docs.forEach((element) {
-                                    if (element.get("familyId") ==
-                                        user) {
+                                    if (element.get("familyId") == familyID) {
                                       data = element;
                                       noData = false;
                                     }
@@ -1424,6 +1424,10 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
                                         ),
                                         InkWell(
                                           onTap: (){
+                                            setState(() {
+                                              prayerTitleCon.clear();
+                                              prayerDescriptionCon.clear();
+                                            });
                                             showRequestPrayerPopUp(context, user);
                                           },
                                           child: Material(
@@ -1458,6 +1462,10 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
                                         SizedBox(height: size.height / 86.6),
                                         InkWell(
                                           onTap: (){
+                                            setState(() {
+                                              prayerTitleCon.clear();
+                                              prayerDescriptionCon.clear();
+                                            });
                                             showRequestPrayerPopUp(context, user);
                                           },
                                           child: Material(
@@ -1609,6 +1617,10 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
                                         ),
                                         InkWell(
                                           onTap: (){
+                                            setState(() {
+                                              prayerTitleCon.clear();
+                                              prayerDescriptionCon.clear();
+                                            });
                                             showRequestTestimonialPopUp(context, user);
                                           },
                                           child: Material(
@@ -1643,6 +1655,10 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
                                         SizedBox(height: size.height / 86.6),
                                         InkWell(
                                           onTap: (){
+                                            setState(() {
+                                              prayerTitleCon.clear();
+                                              prayerDescriptionCon.clear();
+                                            });
                                             showRequestTestimonialPopUp(context, user);
                                           },
                                           child: Material(
@@ -1820,6 +1836,16 @@ class _ProfileViewState extends State<ProfileView> with SingleTickerProviderStat
           },
         )
     );
+  }
+
+  String familyID = "";
+
+  getfamilyid() async {
+    var members = await FirebaseFirestore.instance.collection('Members').doc(widget.userDocId).get();
+    Map<String, dynamic> ? val = members.data();
+    setState(() {
+      familyID= val!["familyid"];
+    });
   }
 
   Future<bool> checkMemberAccess(String phone) async {

@@ -22,7 +22,7 @@ void main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown
   ]);
-  //await FirebaseApi().initNotifications();
+  await FirebaseApi().initNotifications();
   var delegate = await LocalizationDelegate.create(
       basePath: 'assets/i18n/',
       fallbackLocale: 'en_US',

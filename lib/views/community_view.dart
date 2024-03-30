@@ -775,14 +775,14 @@ class _CommunityViewState extends State<CommunityView>  with SingleTickerProvide
     if (lastDocument == null) {
       querySnapshot = await FirebaseFirestore.instance
           .collection('Users')
-          .orderBy("timestamp", descending: true)
+          .where("isPrivacyEnabled",isEqualTo: false)
           .limit(documentLimit)
           .get();
     }
     else {
       querySnapshot = await FirebaseFirestore.instance
           .collection('Users')
-          .orderBy("timestamp", descending: true)
+          .where("isPrivacyEnabled",isEqualTo: false)
           .startAfterDocument(lastDocument!)
           .limit(documentLimit)
           .get();
@@ -811,7 +811,7 @@ class _CommunityViewState extends State<CommunityView>  with SingleTickerProvide
       List<DocumentSnapshot> temp=[];
      var que= await FirebaseFirestore.instance
           .collection('Users')
-          .orderBy("timestamp", descending: true)
+         .where("isPrivacyEnabled",isEqualTo: false)
           .get();
       for(int i=0;i<que.docs.length;i++) {
         if (que.docs[i]["firstName"].toString().toLowerCase().startsWith(searchString.toLowerCase()) ||

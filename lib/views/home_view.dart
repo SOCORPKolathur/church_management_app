@@ -1517,7 +1517,8 @@ class _HomeViewState extends State<HomeView>
                                   Response response =
                                       await MessagesFireCrud.addMessage(
                                     content: descriptionController.text,
-                                    userId: user.email!,
+                                    userId: user.firstName!,
+                                          phone: user.phone!
                                   );
                                   if (response.code == 200) {
                                     await CoolAlert.show(
@@ -1745,7 +1746,8 @@ class _HomeViewState extends State<HomeView>
                                   Response response =
                                       await MessagesFireCrud.addMessage(
                                     content: descriptionController.text,
-                                    userId: user.email!,
+                                    userId: user.firstName!,
+                                          phone: user.phone!
                                   );
                                   if (response.code == 200) {
                                     await CoolAlert.show(

@@ -63,7 +63,7 @@ class _EditProfileViewState extends State<EditProfileView> {
     professionController.text = user.get("profession");
     //aboutController.text = user.get("about");
     //addressController.text = user.get("address");
-    addressController.text = user.get("about");
+    addressController.text = user.get("resaddress");
 
     var requests = await FirebaseFirestore.instance.collection('ProfileEditRequest').get();
     requests.docs.forEach((request) {
@@ -82,6 +82,7 @@ class _EditProfileViewState extends State<EditProfileView> {
       profileImage = File(pickedFile!.path);
       imageForShow = pickedFile;
     });
+    print(profileImage!.path);
   }
 
   @override
@@ -685,8 +686,7 @@ class _EditProfileViewState extends State<EditProfileView> {
     var snapshot = await  FirebaseStorage.instance
         .ref()
         .child('dailyupdates')
-        .child("${file.name}")
-        .putBlob(file);
+        .child("${file.path}").putFile(file);
     String downloadUrl = await snapshot.ref.getDownloadURL();
     return downloadUrl;
   }
